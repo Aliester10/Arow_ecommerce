@@ -9,3 +9,35 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Skeleton Loading Styles */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(
+        90deg,
+        #e5e7eb 0%,
+        #f3f4f6 50%,
+        #e5e7eb 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+[data-skeleton] {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.4s ease-in-out;
+}
+
+[data-skeleton].active {
+    display: flex;
+    opacity: 1;
+}

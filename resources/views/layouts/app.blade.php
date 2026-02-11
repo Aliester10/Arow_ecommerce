@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-network-speed="">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,50 +9,49 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Topbar -->
-    <div class="bg-orange-600 text-white text-sm py-2">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
+    <div class="bg-orange-600 text-white text-xs sm:text-sm py-2 hidden sm:block">
+        <div class="container mx-auto px-2 sm:px-4 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center flex-wrap gap-2 sm:gap-4">
                 @if($perusahaan)
-                    <div class="flex items-center">
-                        <i class="fas fa-phone-alt mr-2"></i>
-                        <span>{{ $perusahaan->notelp_perusahaan }}</span>
+                    <div class="flex items-center gap-1 sm:gap-2">
+                        <i class="fas fa-phone-alt"></i>
+                        <span class="line-clamp-1">{{ $perusahaan->notelp_perusahaan }}</span>
                     </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-envelope mr-2"></i>
-                        <span>{{ $perusahaan->email_perusahaan }}</span>
+                    <div class="flex items-center gap-1 sm:gap-2">
+                        <i class="fas fa-envelope"></i>
+                        <span class="line-clamp-1 hidden sm:inline">{{ $perusahaan->email_perusahaan }}</span>
                     </div>
                 @endif
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="#" class="hover:underline">Bantuan</a>
-                <a href="#" class="hover:underline">Tentang Kami</a>
+            <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                <a href="#" class="hover:underline whitespace-nowrap">Bantuan</a>
+                <a href="#" class="hover:underline whitespace-nowrap">Tentang Kami</a>
             </div>
         </div>
     </div>
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
+        <div class="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
+            <div class="flex justify-between items-center gap-2 sm:gap-4">
                 <!-- Logo & Mobile Toggle -->
-                <div class="flex items-center">
-
-                    <a href="{{ route('home') }}" class="text-2xl font-bold text-orange-600 flex items-center">
+                <div class="flex items-center flex-shrink-0">
+                    <a href="{{ route('home') }}" class="text-lg sm:text-2xl font-bold text-orange-600 flex items-center gap-1 sm:gap-2">
                         @if($perusahaan && $perusahaan->logo_perusahaan)
-                            <img src="{{ asset('storage/' . $perusahaan->logo_perusahaan) }}" alt="Logo" class="h-10 md:h-12 w-auto object-contain" style="max-height: 48px;">
+                            <img src="{{ asset('storage/' . $perusahaan->logo_perusahaan) }}" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto object-contain" style="max-height: 48px;">
                         @else
-                            <i class="fas fa-shopping-bag mr-2"></i>
-                            {{ $perusahaan?->nama_perusahaan ?? 'AROW' }}
+                            <i class="fas fa-shopping-bag hidden sm:inline"></i>
+                            <span class="line-clamp-1 text-sm sm:text-2xl">{{ $perusahaan?->nama_perusahaan ?? 'AROW' }}</span>
                         @endif
                     </a>
                 </div>
 
                 <!-- Search Bar -->
-                <div class="flex-1 mx-4 md:mx-8 relative">
+                <div class="hidden md:flex flex-1 relative">
                     <form action="{{ route('products.index') }}" method="GET" class="flex w-full">
                         <div class="flex w-full items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500 transition">
                             <div class="relative h-full flex items-center border-r border-gray-300 bg-gray-50">
-                                <select name="category" class="h-full pl-3 pr-8 bg-transparent text-gray-600 text-sm focus:outline-none appearance-none cursor-pointer hover:bg-gray-100 transition py-2.5">
+                                <select name="category" class="h-full pl-3 pr-8 bg-transparent text-gray-600 text-sm focus:outline-none appearance-none cursor-pointer hover:bg-gray-100 transition py-2">
                                     <option value="">Semua</option>
                                     @foreach($categories as $cat)
                                         <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
@@ -62,8 +61,8 @@
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
                             </div>
-                            <input type="text" name="search" placeholder="Cari sekarang hanya di aro baskara era" class="flex-1 px-4 py-2.5 text-sm focus:outline-none border-none w-full">
-                            <button type="submit" class="bg-orange-600 text-white px-6 py-2.5 hover:bg-orange-700 transition h-full">
+                            <input type="text" name="search" placeholder="Cari sekarang hanya di aro baskara era" class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full">
+                            <button type="submit" class="bg-orange-600 text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
@@ -71,39 +70,39 @@
                 </div>
 
                 <!-- Icons -->
-                <div class="flex items-center space-x-6 text-gray-600">
-                    <a href="#" class="relative hover:text-orange-600 transition flex flex-col items-center">
+                <div class="flex items-center gap-2 sm:gap-4 text-gray-600">
+                    <a href="#" class="relative hover:text-orange-600 transition flex flex-col items-center text-xs sm:text-sm">
                         <div class="relative">
-                            <i class="far fa-heart text-2xl"></i>
+                            <i class="far fa-heart text-lg sm:text-2xl"></i>
                             @auth
                                 @if($wishlistCount > 0)
-                                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $wishlistCount }}</span>
+                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-xs">{{ $wishlistCount }}</span>
                                 @endif
                             @endauth
                         </div>
-                        <span class="text-xs mt-1 block">Wishlist</span>
+                        <span class="mt-0.5 hidden sm:block">Wishlist</span>
                     </a>
                     
-                    <a href="{{ route('cart.index') }}" class="relative hover:text-orange-600 transition flex flex-col items-center">
+                    <a href="{{ route('cart.index') }}" class="relative hover:text-orange-600 transition flex flex-col items-center text-xs sm:text-sm">
                         <div class="relative">
-                            <i class="fas fa-shopping-cart text-2xl"></i>
+                            <i class="fas fa-shopping-cart text-lg sm:text-2xl"></i>
                             @auth
                                 @if($cartCount > 0)
-                                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
+                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-xs">{{ $cartCount }}</span>
                                 @endif
                             @endauth
                         </div>
-                        <span class="text-xs mt-1 block">Cart</span>
+                        <span class="mt-0.5 hidden sm:block">Cart</span>
                     </a>
 
-                    <div class="border-l pl-6 border-gray-300">
+                    <div class="hidden sm:block border-l pl-4 border-gray-300">
                         @auth
                             <div class="relative group">
-                                <button class="flex items-center space-x-2 text-sm font-medium hover:text-orange-600 focus:outline-none">
-                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 uppercase">
+                                <button class="flex items-center gap-1 text-xs sm:text-sm font-medium hover:text-orange-600 focus:outline-none">
+                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 uppercase text-xs">
                                         {{ substr(Auth::user()->nama_user, 0, 1) }}
                                     </div>
-                                    <span class="block">{{ Str::limit(Auth::user()->nama_user, 10) }}</span>
+                                    <span class="hidden sm:block">{{ Str::limit(Auth::user()->nama_user, 10) }}</span>
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </button>
                                 <!-- Dropdown -->
@@ -118,35 +117,44 @@
                                 </div>
                             </div>
                         @else
-                            <div class="flex items-center space-x-2 text-sm font-medium">
+                            <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
                                 <a href="{{ route('login') }}" class="hover:text-orange-600">Masuk</a>
-                                <span class="text-gray-300">|</span>
-                                <a href="{{ route('register') }}" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition">Daftar</a>
+                                <span class="text-gray-300 hidden sm:inline">|</span>
+                                <a href="{{ route('register') }}" class="px-2 py-1 sm:px-4 sm:py-2 bg-orange-600 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition whitespace-nowrap">Daftar</a>
                             </div>
                         @endauth
                     </div>
                 </div>
             </div>
+
+            <!-- Mobile Search Bar -->
+            <div class="block md:hidden mt-2">
+                <form action="{{ route('products.index') }}" method="GET" class="flex gap-1">
+                    <input type="text" name="search" placeholder="Cari produk..." class="flex-1 px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-orange-500">
+                    <button type="submit" class="bg-orange-600 text-white px-3 py-1.5 rounded hover:bg-orange-700 transition text-xs">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </header>
 
     <!-- Main Navigation / Categories Bar (Optional) -->
-    <nav class="bg-white border-b border-gray-200 block">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center space-x-6 overflow-x-auto py-3 text-sm font-medium text-gray-600">
+    <nav class="bg-white border-b border-gray-200 hidden sm:block">
+        <div class="container mx-auto px-2 sm:px-4">
+            <div class="flex items-center gap-2 sm:gap-6 overflow-x-auto py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-600">
                 <div class="relative group">
-                    <button class="flex items-center space-x-2 text-orange-600 hover:text-orange-700">
-                        <i class="fas fa-bars"></i>
-                        <span>KATEGORI</span>
+                    <button class="flex items-center gap-1 sm:gap-2 text-orange-600 hover:text-orange-700 whitespace-nowrap">
+                        <i class="fas fa-bars text-sm"></i>
+                        <span class="hidden sm:inline">KATEGORI</span>
                     </button>
-                    <!-- Mega Menu handled in home sidebar, but redundant here if sidebar is always visible. -->
                 </div>
                 <!-- Other links -->
-                <a href="{{ route('home') }}" class="hover:text-orange-600 whitespace-nowrap">Beranda</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap">Official Stores</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap">Promo Hari Ini</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap">Flash Sale</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap">Partnership</a>
+                <a href="{{ route('home') }}" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Beranda</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Official Stores</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Promo Hari Ini</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">Flash Sale</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">Partnership</a>
             </div>
         </div>
     </nav>

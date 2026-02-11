@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4">
-    <div class="flex flex-col md:flex-row gap-6">
+<div class="container mx-auto px-2 sm:px-4">
+    <div class="flex flex-col md:flex-row gap-4 md:gap-6">
         <!-- Sidebar -->
         <aside class="w-full md:w-1/4 lg:w-1/5 hidden md:block">
             @include('partials.sidebar')
@@ -11,8 +11,8 @@
         <!-- Main Content -->
         <div class="w-full md:w-3/4 lg:w-4/5">
             <!-- Breadcrumbs / Title -->
-            <div class="mb-6 flex justify-between items-center">
-                <h1 class="text-xl font-bold text-gray-800">
+            <div class="mb-4 md:mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                <h1 class="text-lg sm:text-xl font-bold text-gray-800">
                     @if(request('category'))
                         Kategori: {{ request('category') }}
                     @elseif(request('search'))
@@ -21,55 +21,73 @@
                         Semua Produk
                     @endif
                 </h1>
-                <div class="text-sm text-gray-500">
+                <div class="text-xs sm:text-sm text-gray-500">
                     Menampilkan {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk
                 </div>
             </div>
 
             <!-- Products Grid -->
             @if($products->count() > 0)
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                     @foreach($products as $product)
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group overflow-hidden">
-                            <div class="relative h-48 bg-gray-100 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group overflow-hidden" data-skeleton-container>
+                            <div class="relative h-32 sm:h-40 md:h-48 bg-gray-100 overflow-hidden">
+                                <!-- Skeleton Loading -->
+                                <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0 z-10"></div>
+
                                 <!-- Product Image Placeholder -->
-                                <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
-                                    <i class="fas fa-box text-4xl"></i>
-                                </div>
+                                @if($product->gambar_produk && file_exists(public_path('storage/produk/' . $product->gambar_produk)))
+                                    <img src="{{ asset('storage/produk/' . $product->gambar_produk) }}"
+                                         alt="{{ $product->nama_produk }}"
+                                         data-skeleton-image
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                         style="display: none;">
+                                @else
+                                    <div data-fallback-image class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50 absolute inset-0 z-0" style="display: none;">
+                                        <img src="{{ asset('hitam-putih.svg') }}" 
+                                             alt="No Image" 
+                                             class="w-12 h-12 sm:w-16 sm:h-16 object-contain opacity-60">
+                                    </div>
+                                    <img src="{{ asset('hitam-putih.svg') }}" 
+                                         alt="{{ $product->nama_produk }}"
+                                         data-skeleton-image
+                                         class="w-full h-full object-contain p-4 sm:p-6 bg-white"
+                                         style="display: block;">
+                                @endif
                                 
                                 <!-- Overlay Actions -->
-                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
-                                    <a href="{{ route('products.show', $product->id_produk) }}" class="p-2 bg-white rounded-full text-gray-800 hover:text-orange-600 mx-1 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300">
+                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2">
+                                    <a href="{{ route('products.show', $product->id_produk) }}" class="p-1 sm:p-2 bg-white rounded-full text-gray-800 hover:text-orange-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 text-xs sm:text-base">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="p-2 bg-orange-600 rounded-full text-white hover:bg-orange-700 mx-1 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 delay-75">
+                                        <button type="submit" class="p-1 sm:p-2 bg-orange-600 rounded-full text-white hover:bg-orange-700 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 delay-75 text-xs sm:text-base">
                                             <i class="fas fa-shopping-cart"></i>
                                         </button>
                                     </form>
                                 </div>
                             </div>
-                            <div class="p-4">
-                                <div class="text-xs text-gray-500 mb-1">{{ $product->brand->nama_brand ?? 'Brand' }}</div>
-                                <a href="{{ route('products.show', $product->id_produk) }}" class="block text-gray-800 font-medium text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2.5rem]">
+                            <div class="p-2 sm:p-4">
+                                <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">{{ $product->brand->nama_brand ?? 'Brand' }}</div>
+                                <a href="{{ route('products.show', $product->id_produk) }}" class="block text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2em] sm:min-h-[2.5rem]">
                                     {{ $product->nama_produk }}
                                 </a>
-                                <div class="font-bold text-orange-600">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</div>
+                                <div class="font-bold text-orange-600 text-xs sm:text-sm">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-6 md:mt-8">
                     {{ $products->links() }}
                 </div>
             @else
-                <div class="text-center py-12 bg-white rounded-lg shadow-sm">
-                    <i class="fas fa-search text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-600">Tidak ada produk ditemukan</h3>
-                    <p class="text-gray-500 mt-2">Coba kata kunci lain atau reset filter.</p>
-                    <a href="{{ route('products.index') }}" class="inline-block mt-4 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition">Lihat Semua Produk</a>
+                <div class="text-center py-8 sm:py-12 bg-white rounded-lg shadow-sm">
+                    <i class="fas fa-search text-gray-300 text-5xl sm:text-6xl mb-2 sm:mb-4"></i>
+                    <h3 class="text-base sm:text-lg font-medium text-gray-600">Tidak ada produk ditemukan</h3>
+                    <p class="text-gray-500 mt-2 text-sm sm:text-base">Coba kata kunci lain atau reset filter.</p>
+                    <a href="{{ route('products.index') }}" class="inline-block mt-4 px-4 sm:px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm sm:text-base">Lihat Semua Produk</a>
                 </div>
             @endif
         </div>
