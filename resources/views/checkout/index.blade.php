@@ -1,0 +1,86 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-6">Checkout</h1>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Billing & Shipping Details (Mockup for now as we use user data) -->
+        <div class="w-full lg:w-3/5">
+             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Alamat Pengiriman</h3>
+                <div class="text-sm text-gray-600">
+                    <p class="font-bold text-gray-800">{{ Auth::user()->nama_user }}</p>
+                    <p class="mt-1">{{ Auth::user()->email_user }}</p>
+                    <p class="mt-1">Jl. Contoh Alamat No. 123, Kota Mockup, Indonesia</p>
+                    <p class="mt-1">08123456789</p>
+                </div>
+                <!-- Usually a button to change address would go here -->
+             </div>
+
+             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                 <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Metode Pembayaran</h3>
+                 <form id="checkout-form" action="{{ route('checkout.placeOrder') }}" method="POST">
+                     @csrf
+                     <div class="space-y-3">
+                         <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                             <input type="radio" name="payment_method" value="transfer" class="form-radio text-orange-600 focus:ring-orange-500" checked>
+                             <div class="flex-1">
+                                 <span class="block font-medium text-gray-800">Bank Transfer</span>
+                                 <span class="block text-xs text-gray-500">BCA, Mandiri, BNI, BRI</span>
+                             </div>
+                             <i class="fas fa-university text-gray-400"></i>
+                         </label>
+                         <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                             <input type="radio" name="payment_method" value="credit_card" class="form-radio text-orange-600 focus:ring-orange-500" disabled>
+                             <div class="flex-1">
+                                 <span class="block font-medium text-gray-400">Kartu Kredit (Segera Hadir)</span>
+                             </div>
+                             <i class="fas fa-credit-card text-gray-300"></i>
+                         </label>
+                         <!-- Add more methods -->
+                     </div>
+                 </form>
+             </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="w-full lg:w-2/5">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 sticky top-24">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan Pesanan</h3>
+                
+                <ul class="divide-y divide-gray-100 mb-4 max-h-64 overflow-y-auto pr-2">
+                    @foreach($cart->details as $detail)
+                        <li class="py-3 flex justify-between text-sm">
+                            <div class="flex items-center">
+                                <span class="bg-gray-100 text-gray-500 w-6 h-6 rounded flex items-center justify-center text-xs mr-2">{{ $detail->qty_cart }}x</span>
+                                <span class="text-gray-600 line-clamp-1">{{ $detail->produk->nama_produk }}</span>
+                            </div>
+                            <span class="font-medium text-gray-800">Rp {{ number_format($detail->harga * $detail->qty_cart, 0, ',', '.') }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <div class="border-t border-gray-100 pt-4 space-y-2 text-sm text-gray-600 mb-6">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Ongkos Kirim</span>
+                        <span class="text-green-600 font-medium">Gratis</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold text-orange-600 border-t border-gray-100 pt-2 mt-2">
+                        <span>Total Tagihan</span>
+                        <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('checkout-form').submit()" class="block w-full text-center bg-orange-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-700 transition">
+                    Buat Pesanan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Produk;
+use App\Models\Banner;
+use App\Models\Kategori;
+use App\Models\Brand;
+
+class HomeController extends Controller
+{
+    public function index()
+    {
+        $banners = Banner::all();
+        $kategoris = Kategori::all();
+        $products = Produk::with(['brand', 'subkategori'])->inRandomOrder()->take(6)->get();
+        $brands = Brand::all();
+        
+        // Get products grouped by brand (5 products per brand)
+        $productsByBrand = [];
+        foreach ($brands as $brand) {
+            $productsByBrand[$brand->id_brand] = Produk::where('id_brand', $brand->id_brand)
+                                                        ->with(['brand', 'subkategori'])
+                                                        ->inRandomOrder()
+                                                        ->take(5)
+                                                        ->get();
+        }
+
+        return view('home', compact('banners', 'kategoris', 'products', 'brands', 'productsByBrand'));
+    }
+}
