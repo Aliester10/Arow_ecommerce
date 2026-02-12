@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Brand;
+use App\Models\Produk;
+use App\Models\SubSubkategori;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class AdminProductController extends Controller
+{
+    public function create()
+    {
+        $brands = Brand::all();
+        // Load sub-subkategories with their parent subkategori and kategori for better display
+        $subSubkategoris = SubSubkategori::with('subkategori.kategori')->get();
+
+        return view('admin.products.create', compact('brands', 'subSubkategoris'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_produk' => 'required|string|max:255',
+            'id_brand' => 'required|exists:brand,id_brand',
+            'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
+            'harga_produk' => 'required|numeric|min:0',
+            'stok_produk' => 'required|integer|min:0',
+            'berat_produk' => 'required|numeric|min:0',
+            'deskripsi_produk' => 'required|string',
+            'gambar_produk' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status_produk' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('gambar_produk')) {
+            $image = $request->file('gambar_produk');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            // Store directly in public/storage/images/produk as per current structure
+            $image->move(public_path('storage/images/produk'), $imageName);
+            $data['gambar_produk'] = $imageName;
+        }
+
+        Produk::create($data);
+
+        return redirect()->route('admin.products.create')->with('success', 'Produk berhasil ditambahkan!');
+    }
+}
