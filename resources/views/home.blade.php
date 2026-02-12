@@ -138,7 +138,7 @@
                                          alt="{{ $product->nama_produk }}"
                                          data-skeleton-image
                                          class="object-contain w-full h-full"
-                                         style="display: none; transform: scale(0.75); transform-origin: center;">
+                                         style="transform: scale(0.75); transform-origin: center;">
                                 </div>
                             @else
                                 <div data-fallback-image class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50 absolute inset-0 z-0" style="display: none;">

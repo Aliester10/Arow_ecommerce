@@ -87,7 +87,7 @@
                                         <div class="absolute inset-0 flex items-center justify-center">
                                             <img src="{{ asset($imagePath) }}" alt="{{ $product->nama_produk }}" data-skeleton-image
                                                 class="object-contain w-full h-full"
-                                                style="display: none; transform: scale(0.75); transform-origin: center;">
+                                                style="transform: scale(0.75); transform-origin: center;">
                                         </div>
                                     @else
                                         <div data-fallback-image
