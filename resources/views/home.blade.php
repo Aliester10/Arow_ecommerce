@@ -108,7 +108,7 @@
                             <!-- Skeleton Loading -->
                             <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0 z-10"></div>
 
-                            <img src="{{ asset('storage/images/frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
+                            <img src="{{ asset('frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-fill">
                             
                             @php
                                 $imagePath = null;
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Brand Products Data
 const productsByBrand = @json($productsByBrand);
-const frameUrl = "{{ asset('storage/images/frame.png') }}";
+const frameUrl = "{{ asset('frame.png') }}";
 const fallbackIconUrl = "{{ asset('hitam-putih.svg') }}";
 
 // Show products for selected brand
@@ -415,7 +415,7 @@ function showBrandProducts(brandId, tabElement) {
                 <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <a href="/products/${product.id_produk}" class="block w-full h-full">
                         <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                            <img src="${frameUrl}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
+                            <img src="${frameUrl}" alt="Frame" class="absolute inset-0 w-full h-full object-fill">
                             ${imageUrl ? 
                                 `<div class="absolute inset-0 flex items-center justify-center">
                                     <img src="${imageUrl}" alt="${product.nama_produk}" class="object-contain w-full h-full" style="transform: scale(0.75); transform-origin: center;">

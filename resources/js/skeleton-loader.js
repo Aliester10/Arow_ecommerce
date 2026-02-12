@@ -17,17 +17,17 @@ class SkeletonLoader {
         if ('connection' in navigator) {
             const connection = navigator.connection;
             const effectiveType = connection.effectiveType || '4g';
-            
+
             const speedMap = {
                 '4g': { label: 'fast', delay: 1500 },
                 '3g': { label: 'medium', delay: 3000 },
                 '2g': { label: 'slow', delay: 5000 },
                 'slow-2g': { label: 'very-slow', delay: 7000 }
             };
-            
+
             return speedMap[effectiveType] || speedMap['4g'];
         }
-        
+
         // Fallback jika API tidak tersedia
         return { label: 'unknown', delay: 2000 };
     }
@@ -54,15 +54,20 @@ class SkeletonLoader {
      */
     setupImageLoadingWithSkeleton() {
         const images = document.querySelectorAll('[data-skeleton-image]');
-        
+
         images.forEach(img => {
             const container = img.closest('[data-skeleton-container]');
             const skeletonElement = container?.querySelector('[data-skeleton]');
-            
+
             if (!skeletonElement) return;
 
             // Mulai animasi skeleton
             this.startSkeletonAnimation(skeletonElement);
+
+            // Check if image is already loaded (fix for race condition)
+            if (img.complete) {
+                this.hideSkeletonWithTransition(skeletonElement, img);
+            }
 
             // Handle load image
             img.addEventListener('load', () => {
@@ -97,7 +102,7 @@ class SkeletonLoader {
     hideSkeletonWithTransition(skeleton, image) {
         skeleton.style.transition = 'opacity 0.4s ease-in-out';
         skeleton.style.opacity = '0';
-        
+
         setTimeout(() => {
             skeleton.style.display = 'none';
             if (image) {
@@ -112,12 +117,12 @@ class SkeletonLoader {
     showFallbackImage(container) {
         const fallback = container?.querySelector('[data-fallback-image]');
         const skeleton = container?.querySelector('[data-skeleton]');
-        
+
         if (skeleton) {
             skeleton.style.opacity = '0';
             skeleton.style.display = 'none';
         }
-        
+
         if (fallback) {
             fallback.style.display = 'flex';
         }
