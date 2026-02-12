@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('header_title', 'Daftar Brand')
 
 @section('content')
     <div class="container mx-auto px-4 py-8">

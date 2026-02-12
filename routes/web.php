@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
 
 // Simple Admin Product Upload & Management
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('/', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/products', [App\Http\Controllers\AdminProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [App\Http\Controllers\AdminProductController::class, 'create'])->name('products.create');
     Route::post('/products', [App\Http\Controllers\AdminProductController::class, 'store'])->name('products.store');
