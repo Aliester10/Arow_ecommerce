@@ -45,6 +45,69 @@ class AdminProductController extends Controller
 
         Produk::create($data);
 
-        return redirect()->route('admin.products.create')->with('success', 'Produk berhasil ditambahkan!');
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
+    }
+
+    public function index()
+    {
+        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori'])->latest()->paginate(10);
+        return view('admin.products.index', compact('products'));
+    }
+
+    public function edit($id)
+    {
+        $product = Produk::findOrFail($id);
+        $brands = Brand::all();
+        $subSubkategoris = SubSubkategori::with('subkategori.kategori')->get();
+
+        return view('admin.products.edit', compact('product', 'brands', 'subSubkategoris'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $product = Produk::findOrFail($id);
+
+        $request->validate([
+            'nama_produk' => 'required|string|max:255',
+            'id_brand' => 'required|exists:brand,id_brand',
+            'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
+            'harga_produk' => 'required|numeric|min:0',
+            'stok_produk' => 'required|integer|min:0',
+            'berat_produk' => 'required|numeric|min:0',
+            'deskripsi_produk' => 'required|string',
+            'gambar_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status_produk' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $data = $request->except(['gambar_produk']);
+
+        if ($request->hasFile('gambar_produk')) {
+            // Delete old image
+            if ($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk))) {
+                unlink(public_path('storage/images/produk/' . $product->gambar_produk));
+            }
+
+            $image = $request->file('gambar_produk');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('storage/images/produk'), $imageName);
+            $data['gambar_produk'] = $imageName;
+        }
+
+        $product->update($data);
+
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $product = Produk::findOrFail($id);
+
+        if ($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk))) {
+            unlink(public_path('storage/images/produk/' . $product->gambar_produk));
+        }
+
+        $product->delete();
+
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus!');
     }
 }

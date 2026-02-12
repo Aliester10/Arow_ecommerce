@@ -67,8 +67,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 });
 
-// Simple Admin Product Upload (Temporary / Simple)
+// Simple Admin Product Upload & Management
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('/products', [App\Http\Controllers\AdminProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [App\Http\Controllers\AdminProductController::class, 'create'])->name('products.create');
     Route::post('/products', [App\Http\Controllers\AdminProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}/edit', [App\Http\Controllers\AdminProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'destroy'])->name('products.destroy');
 });
