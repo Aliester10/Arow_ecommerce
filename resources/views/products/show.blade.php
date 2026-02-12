@@ -222,9 +222,6 @@
                         </div>
                     </div>
 
-                    <div class="text-3xl font-bold text-orange-600 mb-6">
-                        Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                    </div>
 
                     <div class="mb-6">
                         <h3 class="text-sm font-bold text-gray-900 mb-2">Deskripsi Produk</h3>
@@ -340,9 +337,6 @@
                                         class="text-sm font-medium text-gray-800 mb-1 group-hover:text-orange-600 line-clamp-2 transition-colors">
                                         {{ $related->nama_produk }}
                                     </h4>
-                                    <div class="mt-auto pt-2 border-t border-gray-50 text-orange-600 font-bold text-sm">
-                                        Rp {{ number_format($related->harga_produk, 0, ',', '.') }}
-                                    </div>
                                 </div>
                             </a>
                         </div>

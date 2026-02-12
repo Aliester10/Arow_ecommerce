@@ -36,14 +36,12 @@
 
                                 <div class="p-4">
                                     <div class="text-xs text-gray-500 mb-1 line-clamp-1">
-                                        {{ $item->produk->brand->nama_brand ?? 'Brand' }}</div>
+                                        {{ $item->produk->brand->nama_brand ?? 'Brand' }}
+                                    </div>
                                     <a href="{{ route('products.show', $item->produk->id_produk) }}"
                                         class="block text-sm font-medium text-gray-800 hover:text-orange-600 line-clamp-2 min-h-[2.5rem]">
                                         {{ $item->produk->nama_produk }}
                                     </a>
-                                    <div class="mt-2 font-bold text-orange-600 text-sm">
-                                        Rp {{ number_format($item->produk->harga_produk, 0, ',', '.') }}
-                                    </div>
 
                                     <div class="mt-4 flex gap-2">
                                         <a href="{{ route('products.show', $item->produk->id_produk) }}"

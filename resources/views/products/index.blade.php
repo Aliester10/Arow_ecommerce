@@ -126,8 +126,6 @@
                                         class="block text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2em] sm:min-h-[2.5rem]">
                                         {{ $product->nama_produk }}
                                     </a>
-                                    <div class="font-bold text-orange-600 text-xs sm:text-sm">Rp
-                                        {{ number_format($product->harga_produk, 0, ',', '.') }}</div>
                                 </div>
                             </div>
                         @endforeach

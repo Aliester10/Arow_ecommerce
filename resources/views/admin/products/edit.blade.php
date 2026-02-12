@@ -3,7 +3,12 @@
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <h1 class="text-2xl font-bold mb-6 text-gray-800">Upload Produk Baru</h1>
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">Edit Produk: {{ $product->nama_produk }}</h1>
+                <a href="{{ route('admin.products.index') }}" class="text-orange-600 hover:text-orange-700 font-medium">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali
+                </a>
+            </div>
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -21,15 +26,17 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', $product->id_produk) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
 
                 <!-- Nama Produk -->
                 <div class="mb-4">
                     <label for="nama_produk" class="block text-gray-700 text-sm font-bold mb-2">Nama Produk</label>
                     <input type="text" name="nama_produk" id="nama_produk"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required value="{{ old('nama_produk') }}">
+                        required value="{{ old('nama_produk', $product->nama_produk) }}">
                 </div>
 
                 <!-- Brand & Kategori Row -->
@@ -42,7 +49,8 @@
                                 required>
                                 <option value="">Pilih Brand</option>
                                 @foreach($brands as $brand)
-                                    <option value="{{ $brand->id_brand }}" {{ old('id_brand') == $brand->id_brand ? 'selected' : '' }}>{{ $brand->nama_brand }}</option>
+                                    <option value="{{ $brand->id_brand }}" {{ old('id_brand', $product->id_brand) == $brand->id_brand ? 'selected' : '' }}>{{ $brand->nama_brand }}
+                                    </option>
                                 @endforeach
                             </select>
                             <div
@@ -62,7 +70,7 @@
                                 required>
                                 <option value="">Pilih Kategori</option>
                                 @foreach($subSubkategoris as $sub)
-                                    <option value="{{ $sub->id_sub_subkategori }}" {{ old('id_sub_subkategori') == $sub->id_sub_subkategori ? 'selected' : '' }}>
+                                    <option value="{{ $sub->id_sub_subkategori }}" {{ old('id_sub_subkategori', $product->id_sub_subkategori) == $sub->id_sub_subkategori ? 'selected' : '' }}>
                                         {{ $sub->subkategori->kategori->nama_kategori ?? 'Unknown' }} >
                                         {{ $sub->subkategori->nama_subkategori ?? 'Unknown' }} >
                                         {{ $sub->nama_sub_subkategori }}
@@ -79,19 +87,19 @@
                     </div>
                 </div>
 
-                <!-- Harga & Stok Row -->
+                <!-- Stok & Berat Row -->
                 <div class="flex flex-wrap -mx-3 mb-4">
-                    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label for="stok_produk" class="block text-gray-700 text-sm font-bold mb-2">Stok</label>
                         <input type="number" name="stok_produk" id="stok_produk"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            required min="0" value="{{ old('stok_produk') }}">
+                            required min="0" value="{{ old('stok_produk', $product->stok_produk) }}">
                     </div>
-                    <div class="w-full md:w-1/3 px-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label for="berat_produk" class="block text-gray-700 text-sm font-bold mb-2">Berat (Gram)</label>
                         <input type="number" name="berat_produk" id="berat_produk"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            required min="0" step="0.01" value="{{ old('berat_produk') }}">
+                            required min="0" step="0.01" value="{{ old('berat_produk', $product->berat_produk) }}">
                     </div>
                 </div>
 
@@ -101,16 +109,23 @@
                         Produk</label>
                     <textarea name="deskripsi_produk" id="deskripsi_produk" rows="5"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required>{{ old('deskripsi_produk') }}</textarea>
+                        required>{{ old('deskripsi_produk', $product->deskripsi_produk) }}</textarea>
                 </div>
 
                 <!-- Gambar & Status Row -->
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <label for="gambar_produk" class="block text-gray-700 text-sm font-bold mb-2">Gambar Produk</label>
+                        <label for="gambar_produk" class="block text-gray-700 text-sm font-bold mb-2">Gambar Produk
+                            (Kosongkan jika tidak diubah)</label>
+                        @if($product->gambar_produk)
+                            <div class="mb-2">
+                                <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}" alt="Current Image"
+                                    class="w-32 h-32 object-cover rounded border">
+                            </div>
+                        @endif
                         <input type="file" name="gambar_produk" id="gambar_produk"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            required accept="image/*">
+                            accept="image/*">
                         <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIFF. Max: 2MB.</p>
                     </div>
                     <div class="w-full md:w-1/2 px-3">
@@ -119,8 +134,8 @@
                             <select name="status_produk" id="status_produk"
                                 class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                                 required>
-                                <option value="aktif" {{ old('status_produk') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                <option value="nonaktif" {{ old('status_produk') == 'nonaktif' ? 'selected' : '' }}>Nonaktif
+                                <option value="aktif" {{ old('status_produk', $product->status_produk) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status_produk', $product->status_produk) == 'nonaktif' ? 'selected' : '' }}>Nonaktif
                                 </option>
                             </select>
                             <div
@@ -136,7 +151,7 @@
                 <div class="flex items-center justify-end">
                     <button type="submit"
                         class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
-                        Simpan Produk
+                        Update Produk
                     </button>
                 </div>
             </form>

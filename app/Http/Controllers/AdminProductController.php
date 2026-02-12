@@ -25,7 +25,7 @@ class AdminProductController extends Controller
             'nama_produk' => 'required|string|max:255',
             'id_brand' => 'required|exists:brand,id_brand',
             'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
-            'harga_produk' => 'required|numeric|min:0',
+            'harga_produk' => 'nullable|numeric|min:0',
             'stok_produk' => 'required|integer|min:0',
             'berat_produk' => 'required|numeric|min:0',
             'deskripsi_produk' => 'required|string',
@@ -34,6 +34,7 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->all();
+        $data['harga_produk'] = $request->harga_produk ?? 0;
 
         if ($request->hasFile('gambar_produk')) {
             $image = $request->file('gambar_produk');
@@ -71,7 +72,7 @@ class AdminProductController extends Controller
             'nama_produk' => 'required|string|max:255',
             'id_brand' => 'required|exists:brand,id_brand',
             'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
-            'harga_produk' => 'required|numeric|min:0',
+            'harga_produk' => 'nullable|numeric|min:0',
             'stok_produk' => 'required|integer|min:0',
             'berat_produk' => 'required|numeric|min:0',
             'deskripsi_produk' => 'required|string',
@@ -80,6 +81,7 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->except(['gambar_produk']);
+        $data['harga_produk'] = $request->harga_produk ?? $product->harga_produk;
 
         if ($request->hasFile('gambar_produk')) {
             // Delete old image using Storage

@@ -160,10 +160,6 @@
                                 <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm">
                                     Habis
                                 </div>
-                            @elseif($product->harga_produk < 100000) 
-                                <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-green-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm">
-                                    Hemat
-                                </div>
                             @endif
                         </div>
     
@@ -180,14 +176,6 @@
                             </h3>
     
                             <!-- Bottom Section (Price & Stock pushed to bottom) -->
-                            <div class="mt-auto pt-1 sm:pt-2 border-t border-gray-50 flex items-center justify-between">
-                                <div class="flex flex-col gap-0.5">
-                                    <span class="text-[7px] sm:text-xs text-gray-400 line-through">Rp {{ number_format(($product->harga_produk * 1.2), 0, ',', '.') }}</span>
-                                    <span class="text-orange-600 font-bold text-xs sm:text-sm">
-                                        Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                    </span>
-                                </div>
-                            </div>
                         </div>
                     </a>
                 </div>
@@ -435,14 +423,6 @@ function showBrandProducts(brandId, tabElement) {
                                 ${product.nama_produk}
                             </h3>
     
-                            <div class="mt-auto pt-1 sm:pt-2 border-t border-gray-50 flex items-center justify-between">
-                                 <div class="flex flex-col gap-0.5">
-                                    <span class="text-[7px] sm:text-xs text-gray-400 line-through">Rp ${Number((product.harga_produk || 0) * 1.2).toLocaleString('id-ID')}</span>
-                                    <span class="text-orange-600 font-bold text-xs sm:text-sm">
-                                        Rp ${Number(product.harga_produk || 0).toLocaleString('id-ID')}
-                                    </span>
-                                </div>
-                            </div>
                         </div>
                     </a>
                 </div>
