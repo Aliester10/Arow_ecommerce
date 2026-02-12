@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Topbar -->
-    <div class="bg-orange-600 text-white text-xs sm:text-sm py-2 hidden sm:block">
+    <div class="text-white text-xs sm:text-sm py-2 hidden sm:block" style="background-color:#F7931E">
         <div class="container mx-auto px-2 sm:px-4 flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center flex-wrap gap-2 sm:gap-4">
                 @if($perusahaan)
@@ -24,8 +24,11 @@
                 @endif
             </div>
             <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
-                <a href="#" class="hover:underline whitespace-nowrap">Bantuan</a>
-                <a href="#" class="hover:underline whitespace-nowrap">Tentang Kami</a>
+                <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
+                <a href="{{ route('language.switch', app()->getLocale() === 'id' ? 'en' : 'id') }}" class="hover:underline whitespace-nowrap font-semibold">
+                    {{ app()->getLocale() === 'id' ? 'EN' : 'ID' }}
+                </a>
+                <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
             </div>
         </div>
     </div>
@@ -38,7 +41,7 @@
                 <div class="flex items-center flex-shrink-0">
                     <a href="{{ route('home') }}" class="text-lg sm:text-2xl font-bold text-orange-600 flex items-center gap-1 sm:gap-2">
                         @if($perusahaan && $perusahaan->logo_perusahaan)
-                            <img src="{{ asset('storage/' . $perusahaan->logo_perusahaan) }}" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto object-contain" style="max-height: 48px;">
+                            <img src="{{ asset('storage/images/' . $perusahaan->logo_perusahaan) }}" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto object-contain" style="max-height: 48px;">
                         @else
                             <i class="fas fa-shopping-bag hidden sm:inline"></i>
                             <span class="line-clamp-1 text-sm sm:text-2xl">{{ $perusahaan?->nama_perusahaan ?? 'AROW' }}</span>
@@ -62,7 +65,7 @@
                                 </div>
                             </div>
                             <input type="text" name="search" placeholder="Cari sekarang hanya di aro baskara era" class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full">
-                            <button type="submit" class="bg-orange-600 text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm">
+                            <button type="submit" class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm" style="background-color:#F7931E">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
@@ -71,7 +74,7 @@
 
                 <!-- Icons -->
                 <div class="flex items-center gap-2 sm:gap-4 text-gray-600">
-                    <a href="#" class="relative hover:text-orange-600 transition flex flex-col items-center text-xs sm:text-sm">
+                    <a href="@auth{{ route('wishlist.index') }}@else{{ route('login') }}@endauth" class="relative hover:text-orange-600 transition flex flex-col items-center text-xs sm:text-sm">
                         <div class="relative">
                             <i class="far fa-heart text-lg sm:text-2xl"></i>
                             @auth
@@ -80,7 +83,7 @@
                                 @endif
                             @endauth
                         </div>
-                        <span class="mt-0.5 hidden sm:block">Wishlist</span>
+                        <span class="mt-0.5 hidden sm:block">{{ __('messages.wishlist') }}</span>
                     </a>
                     
                     <a href="{{ route('cart.index') }}" class="relative hover:text-orange-600 transition flex flex-col items-center text-xs sm:text-sm">
@@ -92,7 +95,7 @@
                                 @endif
                             @endauth
                         </div>
-                        <span class="mt-0.5 hidden sm:block">Cart</span>
+                        <span class="mt-0.5 hidden sm:block">{{ __('messages.cart') }}</span>
                     </a>
 
                     <div class="hidden sm:block border-l pl-4 border-gray-300">
@@ -118,9 +121,9 @@
                             </div>
                         @else
                             <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
-                                <a href="{{ route('login') }}" class="hover:text-orange-600">Masuk</a>
+                                <a href="{{ route('login') }}" class="hover:text-orange-600">{{ __('messages.login') }}</a>
                                 <span class="text-gray-300 hidden sm:inline">|</span>
-                                <a href="{{ route('register') }}" class="px-2 py-1 sm:px-4 sm:py-2 bg-orange-600 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition whitespace-nowrap">Daftar</a>
+                                <a href="{{ route('register') }}" class="px-2 py-1 sm:px-4 sm:py-2 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition whitespace-nowrap" style="background-color:#F7931E">{{ __('messages.register') }}</a>
                             </div>
                         @endauth
                     </div>
@@ -144,17 +147,17 @@
         <div class="container mx-auto px-2 sm:px-4">
             <div class="flex items-center gap-2 sm:gap-6 overflow-x-auto py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-600">
                 <div class="relative group">
-                    <button class="flex items-center gap-1 sm:gap-2 text-orange-600 hover:text-orange-700 whitespace-nowrap">
+                    <button class="flex items-center gap-1 sm:gap-2 whitespace-nowrap" style="color:#F7931E">
                         <i class="fas fa-bars text-sm"></i>
-                        <span class="hidden sm:inline">KATEGORI</span>
+                        <span class="hidden sm:inline">{{ __('messages.categories') }}</span>
                     </button>
                 </div>
                 <!-- Other links -->
-                <a href="{{ route('home') }}" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Beranda</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Official Stores</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">Promo Hari Ini</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">Flash Sale</a>
-                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">Partnership</a>
+                <a href="{{ route('home') }}" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.home') }}</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.official_stores') }}</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.today_promo') }}</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">{{ __('messages.flash_sale') }}</a>
+                <a href="#" class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">{{ __('messages.partnership') }}</a>
             </div>
         </div>
     </nav>

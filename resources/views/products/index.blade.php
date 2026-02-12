@@ -1,15 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+@media (min-width: 768px) {
+    .products-row-layout { --sidebar-width: 30%; }
+    .products-row-layout .products-sidebar { flex: 0 0 var(--sidebar-width); max-width: var(--sidebar-width); }
+    .products-row-layout .products-content { flex: 1 1 0; min-width: 0; }
+}
+</style>
 <div class="container mx-auto px-2 sm:px-4">
-    <div class="flex flex-col md:flex-row gap-4 md:gap-6">
+    <div class="products-row-layout flex flex-col md:flex-row gap-4 md:gap-6 relative" style="--sidebar-width: 30%; --sidebar-gap: 1.5rem;">
         <!-- Sidebar -->
-        <aside class="w-full md:w-1/4 lg:w-1/5 hidden md:block">
+        <aside class="products-sidebar w-full hidden md:block">
             @include('partials.sidebar')
         </aside>
 
         <!-- Main Content -->
-        <div class="w-full md:w-3/4 lg:w-4/5">
+        <div class="products-content w-full">
             <!-- Breadcrumbs / Title -->
             <div class="mb-4 md:mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <h1 class="text-lg sm:text-xl font-bold text-gray-800">
@@ -36,8 +43,8 @@
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0 z-10"></div>
 
                                 <!-- Product Image Placeholder -->
-                                @if($product->gambar_produk && file_exists(public_path('storage/produk/' . $product->gambar_produk)))
-                                    <img src="{{ asset('storage/produk/' . $product->gambar_produk) }}"
+                                @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                                    <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
                                          alt="{{ $product->nama_produk }}"
                                          data-skeleton-image
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -69,9 +76,9 @@
                                 </div>
                             </div>
                             <div class="p-2 sm:p-4">
-                                <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">{{ $product->brand->nama_brand ?? 'Brand' }}</div>
+                                <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">@dbt($product->brand->nama_brand ?? 'Brand')</div>
                                 <a href="{{ route('products.show', $product->id_produk) }}" class="block text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2em] sm:min-h-[2.5rem]">
-                                    {{ $product->nama_produk }}
+                                    @dbt($product->nama_produk)
                                 </a>
                                 <div class="font-bold text-orange-600 text-xs sm:text-sm">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</div>
                             </div>

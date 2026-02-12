@@ -12,17 +12,21 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produk::with(['brand', 'subkategori']);
+        $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori']);
 
         if ($request->has('search')) {
             $query->where('nama_produk', 'like', '%' . $request->search . '%');
         }
 
         if ($request->has('category')) {
-            $query->whereHas('subkategori', function ($q) use ($request) {
-                $q->where('nama_kategori', $request->category); // Check subcategory name
-            })->orWhereHas('subkategori.kategori', function($q) use ($request) {
-                $q->where('nama_kategori', $request->category); // Check parent category name
+            $query->whereHas('subSubkategori', function ($q) use ($request) {
+                $q->where('nama_sub_subkategori', $request->category);
+            })
+            ->orWhereHas('subSubkategori.subkategori', function ($q) use ($request) {
+                $q->where('nama_subkategori', $request->category);
+            })
+            ->orWhereHas('subSubkategori.subkategori.kategori', function ($q) use ($request) {
+                $q->where('nama_kategori', $request->category);
             });
         }
 
@@ -35,8 +39,8 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Produk::with(['brand', 'subkategori', 'ulasan.user'])->findOrFail($id);
-        $relatedProducts = Produk::where('id_subkategori', $product->id_subkategori)
+        $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user'])->findOrFail($id);
+        $relatedProducts = Produk::where('id_sub_subkategori', $product->id_sub_subkategori)
                                  ->where('id_produk', '!=', $id)
                                  ->take(4)
                                  ->get();

@@ -11,16 +11,16 @@ class Produk extends Model
 
     protected $table = 'produk';
     protected $primaryKey = 'id_produk';
-    protected $fillable = ['id_brand', 'id_subkategori', 'nama_produk', 'deskripsi_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk', 'gambar_produk'];
+    protected $fillable = ['id_brand', 'id_sub_subkategori', 'nama_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
 
     public function brand()
     {
         return $this->belongsTo(Brand::class, 'id_brand');
     }
 
-    public function subkategori()
+    public function subSubkategori()
     {
-        return $this->belongsTo(Subkategori::class, 'id_subkategori');
+        return $this->belongsTo(SubSubkategori::class, 'id_sub_subkategori');
     }
 
     public function ulasan()

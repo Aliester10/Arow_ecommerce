@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WishlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,16 @@ use App\Http\Controllers\OrderController;
 
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/language/{locale}', function (string $locale) {
+    if (!in_array($locale, ['id', 'en'], true)) {
+        abort(404);
+    }
+
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('language.switch');
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -32,6 +43,11 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
+    // Wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/{id}', [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
     // Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');

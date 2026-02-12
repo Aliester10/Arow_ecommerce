@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Produk;
 use App\Models\Kategori;
 use App\Models\Subkategori;
+use App\Models\SubSubkategori;
 use App\Models\Brand;
 use App\Models\Ulasan;
 use App\Models\User;
@@ -20,9 +21,10 @@ class ProductSeeder extends Seeder
         // Get some references
         $brands = Brand::all();
         $subkategoris = Subkategori::all();
+        $subSubkategoris = SubSubkategori::with('subkategori')->get();
         $users = User::where('role_user', 'user')->get();
 
-        if ($brands->count() == 0 || $subkategoris->count() == 0) {
+        if ($brands->count() == 0 || $subkategoris->count() == 0 || $subSubkategoris->count() == 0) {
             $this->command->info('Please run MasterDataSeeder first!');
             return;
         }
@@ -37,7 +39,7 @@ class ProductSeeder extends Seeder
                 'berat_produk' => 0.5,
                 'gambar_produk' => 'samsung-galaxy-s24-ultra.jpg',
                 'id_brand' => $brands->where('nama_brand', 'Samsung')->first()->id_brand ?? $brands->first()->id_brand,
-                'id_subkategori' => $subkategoris->where('nama_kategori', 'Handphone')->first()->id_subkategori ?? $subkategoris->first()->id_subkategori,
+                'id_sub_subkategori' => $subSubkategoris->firstWhere('subkategori.nama_subkategori', 'Handphone')->id_sub_subkategori ?? $subSubkategoris->first()->id_sub_subkategori,
             ],
             [
                 'nama_produk' => 'MacBook Pro M3',
@@ -47,7 +49,7 @@ class ProductSeeder extends Seeder
                 'berat_produk' => 1.5,
                 'gambar_produk' => 'macbook-pro-m3.jpg',
                 'id_brand' => $brands->where('nama_brand', 'Apple')->first()->id_brand ?? $brands->first()->id_brand,
-                'id_subkategori' => $subkategoris->where('nama_kategori', 'Laptop')->first()->id_subkategori ?? $subkategoris->first()->id_subkategori,
+                'id_sub_subkategori' => $subSubkategoris->firstWhere('subkategori.nama_subkategori', 'Laptop')->id_sub_subkategori ?? $subSubkategoris->first()->id_sub_subkategori,
             ],
             [
                 'nama_produk' => 'Nike Air Jordan 1',
@@ -57,7 +59,7 @@ class ProductSeeder extends Seeder
                 'berat_produk' => 1.0,
                 'gambar_produk' => 'nike-air-jordan-1.jpg',
                 'id_brand' => $brands->where('nama_brand', 'Nike')->first()->id_brand ?? $brands->first()->id_brand,
-                'id_subkategori' => $subkategoris->where('nama_kategori', 'Pria')->first()->id_subkategori ?? $subkategoris->first()->id_subkategori,
+                'id_sub_subkategori' => $subSubkategoris->firstWhere('subkategori.nama_subkategori', 'Pria')->id_sub_subkategori ?? $subSubkategoris->first()->id_sub_subkategori,
             ],
         ];
 

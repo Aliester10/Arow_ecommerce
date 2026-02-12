@@ -18,8 +18,20 @@ class Subkategori extends Model
         return $this->belongsTo(Kategori::class, 'id_kategori');
     }
 
+    public function subSubkategori()
+    {
+        return $this->hasMany(SubSubkategori::class, 'id_subkategori');
+    }
+
     public function produk()
     {
-        return $this->hasMany(Produk::class, 'id_subkategori');
+        return $this->hasManyThrough(
+            Produk::class,
+            SubSubkategori::class,
+            'id_subkategori',
+            'id_sub_subkategori',
+            'id_subkategori',
+            'id_sub_subkategori'
+        );
     }
 }

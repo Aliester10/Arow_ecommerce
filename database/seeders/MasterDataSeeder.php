@@ -53,14 +53,14 @@ class MasterDataSeeder extends Seeder
         ]);
 
         // Kategori & Subkategori
-        $elektronik = Kategori::create(['nama_kategori' => 'Elektronik']);
-        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_kategori' => 'Handphone']);
-        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_kategori' => 'Laptop']);
-        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_kategori' => 'Aksesoris Utk Gadget']);
+        $elektronik = Kategori::create(['nama_kategori' => 'Elektronik', 'icon_kategori' => 'elektronik.png']);
+        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_subkategori' => 'Handphone']);
+        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_subkategori' => 'Laptop']);
+        Subkategori::create(['id_kategori' => $elektronik->id_kategori, 'nama_subkategori' => 'Aksesoris Utk Gadget']);
 
-        $fashion = Kategori::create(['nama_kategori' => 'Fashion']);
-        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_kategori' => 'Pria']);
-        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_kategori' => 'Wanita']);
-        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_kategori' => 'Anak-anak']);
+        $fashion = Kategori::create(['nama_kategori' => 'Fashion', 'icon_kategori' => 'fashion.png']);
+        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_subkategori' => 'Pria']);
+        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_subkategori' => 'Wanita']);
+        Subkategori::create(['id_kategori' => $fashion->id_kategori, 'nama_subkategori' => 'Anak-anak']);
     }
 }

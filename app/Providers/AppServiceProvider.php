@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
+use App\Services\RuntimeTranslator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,9 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Blade::directive('dbt', function ($expression) {
+            return "<?php echo app(" . RuntimeTranslator::class . "::class)->translate($expression); ?>";
+        });
+
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             $perusahaan = \App\Models\Perusahaan::first();
-            $categories = \App\Models\Kategori::with('subkategori')->get();
+            $categories = \App\Models\Kategori::with('subkategori.subSubkategori')->get();
             
             $view->with('perusahaan', $perusahaan);
             $view->with('categories', $categories);
