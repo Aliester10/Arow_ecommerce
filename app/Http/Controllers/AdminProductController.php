@@ -38,8 +38,8 @@ class AdminProductController extends Controller
         if ($request->hasFile('gambar_produk')) {
             $image = $request->file('gambar_produk');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            // Store directly in public/storage/images/produk as per current structure
-            $image->move(public_path('storage/images/produk'), $imageName);
+            // Use Storage facade for better production compatibility
+            Storage::disk('public')->putFileAs('images/produk', $image, $imageName);
             $data['gambar_produk'] = $imageName;
         }
 
@@ -82,14 +82,14 @@ class AdminProductController extends Controller
         $data = $request->except(['gambar_produk']);
 
         if ($request->hasFile('gambar_produk')) {
-            // Delete old image
-            if ($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk))) {
-                unlink(public_path('storage/images/produk/' . $product->gambar_produk));
+            // Delete old image using Storage
+            if ($product->gambar_produk) {
+                Storage::disk('public')->delete('images/produk/' . $product->gambar_produk);
             }
 
             $image = $request->file('gambar_produk');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('storage/images/produk'), $imageName);
+            Storage::disk('public')->putFileAs('images/produk', $image, $imageName);
             $data['gambar_produk'] = $imageName;
         }
 
@@ -102,8 +102,8 @@ class AdminProductController extends Controller
     {
         $product = Produk::findOrFail($id);
 
-        if ($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk))) {
-            unlink(public_path('storage/images/produk/' . $product->gambar_produk));
+        if ($product->gambar_produk) {
+            Storage::disk('public')->delete('images/produk/' . $product->gambar_produk);
         }
 
         $product->delete();
