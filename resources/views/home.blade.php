@@ -212,9 +212,19 @@
             </div>
 
             <!-- Brand Logos Horizontal Scroll -->
-            <div class="relative">
+            <div class="relative group/slider">
+                <!-- Navigation Buttons -->
+                <button onclick="scrollBrandSlider('left')" 
+                        class="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-orange-600 w-10 h-10 rounded-full shadow-lg border border-gray-100 flex items-center justify-center -ml-5 opacity-0 group-hover/slider:opacity-100 transition-all duration-300 focus:outline-none">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button onclick="scrollBrandSlider('right')" 
+                        class="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-orange-600 w-10 h-10 rounded-full shadow-lg border border-gray-100 flex items-center justify-center -mr-5 opacity-0 group-hover/slider:opacity-100 transition-all duration-300 focus:outline-none">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
                 <!-- Brand Container -->
-                <div id="official-store-container" class="relative flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide snap-x" style="-ms-overflow-style: none; scrollbar-width: none;">
+                <div id="official-store-container" class="relative flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide snap-x scroll-smooth" style="-ms-overflow-style: none; scrollbar-width: none;">
                     <style>
                         .scrollbar-hide::-webkit-scrollbar { display: none; }
                         .brand-card {
@@ -441,6 +451,16 @@ function showBrandProducts(brandId, tabElement) {
     
     // Update container
     document.getElementById('brandProductsContainer').innerHTML = productsHtml;
+}
+
+function scrollBrandSlider(direction) {
+    const container = document.getElementById('official-store-container');
+    const scrollAmount = 300; // Adjust as needed
+    if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
 }
 
 // Load first brand products on page load

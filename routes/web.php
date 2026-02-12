@@ -83,4 +83,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/brands/{id}/edit', [App\Http\Controllers\AdminBrandController::class, 'edit'])->name('brands.edit');
     Route::put('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'update'])->name('brands.update');
     Route::delete('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'destroy'])->name('brands.destroy');
+
+    // Admin Banner Management
+    Route::get('/banners', [App\Http\Controllers\AdminBannerController::class, 'index'])->name('banners.index');
+    Route::get('/banners/create', [App\Http\Controllers\AdminBannerController::class, 'create'])->name('banners.create');
+    Route::post('/banners', [App\Http\Controllers\AdminBannerController::class, 'store'])->name('banners.store');
+    Route::get('/banners/{id}/edit', [App\Http\Controllers\AdminBannerController::class, 'edit'])->name('banners.edit');
+    Route::put('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'update'])->name('banners.update');
+    Route::delete('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'destroy'])->name('banners.destroy');
 });

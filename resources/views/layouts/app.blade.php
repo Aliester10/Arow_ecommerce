@@ -135,6 +135,8 @@
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kelola Produk</a>
                                     <a href="{{ route('admin.brands.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kelola Brand</a>
+                                    <a href="{{ route('admin.banners.index') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kelola Banner</a>
                                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                                     <div class="border-t border-gray-100"></div>
                                     <form method="POST" action="{{ route('logout') }}">
