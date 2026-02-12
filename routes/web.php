@@ -75,4 +75,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/products/{id}/edit', [App\Http\Controllers\AdminProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'destroy'])->name('products.destroy');
+
+    // Admin Brand Management
+    Route::get('/brands', [App\Http\Controllers\AdminBrandController::class, 'index'])->name('brands.index');
+    Route::get('/brands/create', [App\Http\Controllers\AdminBrandController::class, 'create'])->name('brands.create');
+    Route::post('/brands', [App\Http\Controllers\AdminBrandController::class, 'store'])->name('brands.store');
+    Route::get('/brands/{id}/edit', [App\Http\Controllers\AdminBrandController::class, 'edit'])->name('brands.edit');
+    Route::put('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'update'])->name('brands.update');
+    Route::delete('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'destroy'])->name('brands.destroy');
 });
