@@ -16,13 +16,145 @@
                         <i class="fas fa-box text-6xl text-gray-300"></i>
                     @endif
                 </div>
-                <!-- Thumbnails (Static for now) -->
-                <div class="grid grid-cols-4 gap-2">
-                    @for($i=0; $i<4; $i++)
-                        <div class="aspect-square bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition flex items-center justify-center">
-                            <i class="fas fa-image text-gray-300"></i>
+                @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                    <div class="flex gap-2">
+                        <div class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden">
+                            <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}" 
+                                 alt="{{ $product->nama_produk }}" 
+                                 class="w-full h-full object-contain p-2">
                         </div>
-                    @endfor
+                    </div>
+                @endif
+
+                <div class="bg-white rounded-lg border border-gray-100 overflow-hidden">
+                    <div class="flex border-b border-gray-100">
+                        <button type="button" id="tabSpecBtn" class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50">
+                            Spesifikasi Produk
+                        </button>
+                        <button type="button" id="tabReviewBtn" class="flex-1 px-4 py-3 text-sm font-semibold text-gray-600 hover:text-orange-600">
+                            Ulasan
+                        </button>
+                    </div>
+
+                    <div id="tabSpec" class="p-4">
+                        <dl class="text-sm divide-y divide-gray-100">
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">NAMA</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->nama_produk }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">MEREK</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->brand->nama_brand ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">SKU</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->sku_produk ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">TYPE/COVER</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">ASAL NEGARA</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->asal_produk ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">SUB KATEGORI</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->subSubkategori->subkategori->nama_subkategori ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">SUB SUB KATEGORI</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->subSubkategori->nama_sub_subkategori ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">DIMENSI</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
+                            </div>
+                        </dl>
+
+                        @if($product->spesifikasi_produk)
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="text-sm font-semibold text-gray-800 mb-2">Spesifikasi</div>
+                                <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ $product->spesifikasi_produk }}</div>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div id="tabReview" class="p-4 hidden">
+                        @if(session('success'))
+                            <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        <div class="space-y-4">
+                            @if($product->ulasan->count() > 0)
+                                @foreach($product->ulasan as $review)
+                                    <div class="border border-gray-100 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="text-sm font-semibold text-gray-800">{{ $review->user->nama_user ?? 'User' }}</div>
+                                            <div class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($review->tanggal_ulasan)->format('d M Y') }}</div>
+                                        </div>
+                                        <div class="mt-1 text-yellow-500 text-sm">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="{{ $i <= (int) $review->rating_ulasan ? 'fas' : 'far' }} fa-star"></i>
+                                            @endfor
+                                        </div>
+                                        @if($review->komentar_ulasan)
+                                            <div class="mt-2 text-sm text-gray-600">{{ $review->komentar_ulasan }}</div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-sm text-gray-500">Belum ada ulasan.</div>
+                            @endif
+
+                            <div class="border-t border-gray-100 pt-4">
+                                @auth
+                                    <form action="{{ route('ulasan.store', $product->id_produk) }}" method="POST" class="space-y-3">
+                                        @csrf
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Rating</label>
+                                            <select name="rating_ulasan" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" required>
+                                                <option value="">Pilih rating</option>
+                                                <option value="5">5</option>
+                                                <option value="4">4</option>
+                                                <option value="3">3</option>
+                                                <option value="2">2</option>
+                                                <option value="1">1</option>
+                                            </select>
+                                            @error('rating_ulasan')
+                                                <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Komentar</label>
+                                            <textarea name="komentar_ulasan" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Tulis ulasan..."></textarea>
+                                            @error('komentar_ulasan')
+                                                <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <button type="submit" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                            Kirim Ulasan
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" class="block w-full text-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                        Login untuk memberi ulasan
+                                    </a>
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -48,11 +180,11 @@
                     </ol>
                 </nav>
 
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">@dbt($product->nama_produk)</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ $product->nama_produk }}</h1>
                 
                 <div class="flex items-center mb-4 space-x-4">
                     <div class="text-sm text-gray-500 border-r border-gray-300 pr-4">
-                        Brand: <span class="text-orange-600 font-medium">@dbt($product->brand->nama_brand ?? 'N/A')</span>
+                        Brand: <span class="text-orange-600 font-medium">{{ $product->brand->nama_brand ?? 'N/A' }}</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-star text-yellow-400 text-sm"></i>
@@ -68,7 +200,7 @@
                 <div class="mb-6">
                     <h3 class="text-sm font-bold text-gray-900 mb-2">Deskripsi Produk</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        @dbt($product->deskripsi_produk)
+                        {{ $product->deskripsi_produk }}
                     </p>
                 </div>
 
@@ -112,10 +244,6 @@
                                 <i class="far fa-heart mr-2"></i> Wishlist
                             </a>
                         @endauth
-
-                        <button type="button" class="flex-1 px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition">
-                            Beli Langsung
-                        </button>
 
                         <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" class="flex-1">
                             @csrf
@@ -193,5 +321,35 @@
             if (hidden) hidden.value = input.value;
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const specBtn = document.getElementById('tabSpecBtn');
+        const reviewBtn = document.getElementById('tabReviewBtn');
+        const specTab = document.getElementById('tabSpec');
+        const reviewTab = document.getElementById('tabReview');
+
+        if (!specBtn || !reviewBtn || !specTab || !reviewTab) return;
+
+        function setActive(active) {
+            if (active === 'spec') {
+                specTab.classList.remove('hidden');
+                reviewTab.classList.add('hidden');
+                specBtn.classList.add('text-orange-600', 'border-b-2', 'border-orange-600', 'bg-orange-50');
+                specBtn.classList.remove('text-gray-600');
+                reviewBtn.classList.remove('text-orange-600', 'border-b-2', 'border-orange-600', 'bg-orange-50');
+                reviewBtn.classList.add('text-gray-600');
+            } else {
+                reviewTab.classList.remove('hidden');
+                specTab.classList.add('hidden');
+                reviewBtn.classList.add('text-orange-600', 'border-b-2', 'border-orange-600', 'bg-orange-50');
+                reviewBtn.classList.remove('text-gray-600');
+                specBtn.classList.remove('text-orange-600', 'border-b-2', 'border-orange-600', 'bg-orange-50');
+                specBtn.classList.add('text-gray-600');
+            }
+        }
+
+        specBtn.addEventListener('click', function () { setActive('spec'); });
+        reviewBtn.addEventListener('click', function () { setActive('review'); });
+    });
 </script>
 @endsection

@@ -165,12 +165,12 @@
                         <div class="p-2 sm:p-3 flex flex-col flex-grow">
                             <!-- Category/Brand (Meta) -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
-                                @dbt($product->brand->nama_brand ?? 'Generic')
+                                {{ $product->brand->nama_brand ?? 'Generic' }}
                             </div>
     
                             <!-- Title -->
                             <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
-                                @dbt($product->nama_produk)
+                                {{ $product->nama_produk }}
                             </h3>
     
                             <!-- Bottom Section (Price & Stock pushed to bottom) -->
@@ -325,7 +325,7 @@
                                {{ $index == 0 ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}"
                         data-brand-id="{{ $brand->id_brand }}"
                         onclick="showBrandProducts({{ $brand->id_brand }}, this)">
-                        @dbt($brand->nama_brand)
+                        {{ $brand->nama_brand }}
                     </button>
                 @empty
                     <p class="text-gray-500 text-sm">No brands available</p>
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Brand Products Data
-const productsByBrand = @json($productsByBrandForJs);
+const productsByBrand = @json($productsByBrand);
 
 // Show products for selected brand
 function showBrandProducts(brandId, tabElement) {
@@ -401,8 +401,6 @@ function showBrandProducts(brandId, tabElement) {
     
     if (products.length > 0) {
         products.forEach(product => {
-            const productName = product.nama_produk_i18n || product.nama_produk;
-            const brandName = product.brand?.nama_brand_i18n || product.brand?.nama_brand || 'Generic';
             const imageUrl = product.gambar_produk ? `/storage/images/produk/${product.gambar_produk}` : null;
             
             productsHtml += `
@@ -419,11 +417,11 @@ function showBrandProducts(brandId, tabElement) {
                         <div class="p-2 sm:p-3 flex flex-col flex-grow">
                             <!-- Category/Brand -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
-                                ${brandName}
+                                ${product.brand?.nama_brand || 'Generic'}
                             </div>
     
                             <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
-                                ${productName}
+                                ${product.nama_produk}
                             </h3>
     
                             <div class="mt-auto pt-1 sm:pt-2 border-t border-gray-50 flex items-center justify-between">

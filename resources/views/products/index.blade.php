@@ -76,9 +76,9 @@
                                 </div>
                             </div>
                             <div class="p-2 sm:p-4">
-                                <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">@dbt($product->brand->nama_brand ?? 'Brand')</div>
+                                <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">{{ $product->brand->nama_brand ?? 'Brand' }}</div>
                                 <a href="{{ route('products.show', $product->id_produk) }}" class="block text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2em] sm:min-h-[2.5rem]">
-                                    @dbt($product->nama_produk)
+                                    {{ $product->nama_produk }}
                                 </a>
                                 <div class="font-bold text-orange-600 text-xs sm:text-sm">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</div>
                             </div>

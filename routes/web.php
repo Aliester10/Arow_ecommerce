@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\UlasanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,8 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
+    Route::post('/products/{id}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/{id}', [WishlistController::class, 'store'])->name('wishlist.store');
@@ -57,6 +60,8 @@ Route::middleware('auth')->group(function () {
     // Checkout & Orders
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout.index');
     Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
+    Route::get('/checkout/qris/{id}', [OrderController::class, 'qris'])->name('checkout.qris');
+    Route::get('/checkout/quotation/{id}', [OrderController::class, 'quotation'])->name('checkout.quotation');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 });

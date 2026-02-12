@@ -64,7 +64,7 @@
                                 <i class="fas fa-tag"></i>
                             </span>
                         @endif
-                        <span class="truncate">@dbt($category->nama_kategori)</span>
+                        <span class="truncate">{{ $category->nama_kategori }}</span>
                     </span>
                 </a>
 
@@ -82,7 +82,7 @@
                         <div class="p-6 h-full overflow-y-auto">
                             <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
                                 <h4 class="font-bold text-gray-800 text-lg">
-                                    @dbt($category->nama_kategori)
+                                    {{ $category->nama_kategori }}
                                 </h4>
                                 <a href="{{ route('products.index', ['category' => $category->nama_kategori]) }}" class="text-xs text-orange-600 hover:underline">
                                     Lihat Semua
@@ -94,7 +94,7 @@
                                     <div>
                                         <a href="{{ route('products.index', ['category' => $sub->nama_subkategori]) }}"
                                            class="block text-sm font-semibold text-gray-700 hover:text-orange-600 transition-colors duration-200 py-1">
-                                            @dbt($sub->nama_subkategori)
+                                            {{ $sub->nama_subkategori }}
                                         </a>
 
                                         @if($sub->subSubkategori->count() > 0)
@@ -102,7 +102,7 @@
                                                 @foreach($sub->subSubkategori as $subSub)
                                                     <a href="{{ route('products.index', ['category' => $subSub->nama_sub_subkategori]) }}"
                                                        class="block text-xs text-gray-500 hover:text-orange-600 hover:translate-x-1 transition-transform duration-200">
-                                                        @dbt($subSub->nama_sub_subkategori)
+                                                        {{ $subSub->nama_sub_subkategori }}
                                                     </a>
                                                 @endforeach
                                             </div>
