@@ -107,6 +107,8 @@
                         <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
                             <!-- Skeleton Loading -->
                             <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0 z-10"></div>
+
+                            <img src="{{ asset('storage/images/frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
                             
                             @php
                                 $imagePath = null;
@@ -131,22 +133,26 @@
                             @endphp
 
                             @if($imagePath)
-                                <img src="{{ asset($imagePath) }}"
-                                     alt="{{ $product->nama_produk }}"
-                                     data-skeleton-image
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                     style="display: none;">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <img src="{{ asset($imagePath) }}"
+                                         alt="{{ $product->nama_produk }}"
+                                         data-skeleton-image
+                                         class="object-contain w-full h-full"
+                                         style="display: none; transform: scale(0.75); transform-origin: center;">
+                                </div>
                             @else
                                 <div data-fallback-image class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50 absolute inset-0 z-0" style="display: none;">
                                     <img src="{{ asset('hitam-putih.svg') }}" 
                                          alt="No Image" 
                                          class="w-12 h-12 sm:w-20 sm:h-20 object-contain opacity-60">
                                 </div>
-                                <img src="{{ asset('hitam-putih.svg') }}" 
-                                     alt="{{ $product->nama_produk }}"
-                                     data-skeleton-image
-                                     class="w-full h-full object-contain p-4 sm:p-8 bg-white"
-                                     style="display: block;">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <img src="{{ asset('hitam-putih.svg') }}" 
+                                         alt="{{ $product->nama_produk }}"
+                                         data-skeleton-image
+                                         class="object-contain w-12 h-12 sm:w-20 sm:h-20 opacity-60"
+                                         style="display: block;">
+                                </div>
                             @endif
                             
                             <!-- Badges (Optional) -->
@@ -382,6 +388,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Brand Products Data
 const productsByBrand = @json($productsByBrand);
+const frameUrl = "{{ asset('storage/images/frame.png') }}";
+const fallbackIconUrl = "{{ asset('hitam-putih.svg') }}";
 
 // Show products for selected brand
 function showBrandProducts(brandId, tabElement) {
@@ -407,10 +415,13 @@ function showBrandProducts(brandId, tabElement) {
                 <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <a href="/products/${product.id_produk}" class="block w-full h-full">
                         <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                            <img src="${frameUrl}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
                             ${imageUrl ? 
-                                `<img src="${imageUrl}" alt="${product.nama_produk}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">` :
-                                `<div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
-                                    <img src="{{ asset('hitam-putih.svg') }}" alt="No Image" class="w-12 h-12 sm:w-16 sm:h-16 object-contain opacity-60">
+                                `<div class="absolute inset-0 flex items-center justify-center">
+                                    <img src="${imageUrl}" alt="${product.nama_produk}" class="object-contain w-full h-full" style="transform: scale(0.75); transform-origin: center;">
+                                </div>` :
+                                `<div class="absolute inset-0 flex items-center justify-center">
+                                    <img src="${fallbackIconUrl}" alt="No Image" class="w-12 h-12 sm:w-16 sm:h-16 object-contain opacity-60">
                                 </div>`
                             }
                         </div>

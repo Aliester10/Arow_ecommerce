@@ -6,14 +6,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
             <!-- Image Gallery -->
             <div class="space-y-4">
-                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border border-gray-200">
-                    <!-- Main Image Placeholder -->
+                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative">
+                    <img src="{{ asset('storage/images/frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
                     @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
-                        <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}" 
-                             alt="{{ $product->nama_produk }}" 
-                             class="w-full h-full object-contain p-4">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
+                                 alt="{{ $product->nama_produk }}"
+                                 class="object-contain w-full h-full"
+                                 style="transform: scale(0.75); transform-origin: center;">
+                        </div>
                     @else
-                        <i class="fas fa-box text-6xl text-gray-300"></i>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-box text-6xl text-gray-300"></i>
+                        </div>
                     @endif
                 </div>
                 @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
@@ -265,7 +270,8 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach($relatedProducts as $related)
                      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition">
-                        <div class="h-32 bg-gray-100 rounded-md mb-3 flex items-center justify-center overflow-hidden">
+                        <div class="h-32 bg-gray-100 rounded-md mb-3 overflow-hidden relative border border-gray-200">
+                            <img src="{{ asset('storage/images/frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-contain">
                             @php
                                 $relatedImagePath = null;
                                 if ($related->gambar_produk) {
@@ -280,11 +286,16 @@
                             @endphp
 
                             @if($relatedImagePath)
-                                <img src="{{ asset($relatedImagePath) }}" 
-                                     alt="{{ $related->nama_produk }}" 
-                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <img src="{{ asset($relatedImagePath) }}" 
+                                         alt="{{ $related->nama_produk }}" 
+                                         class="object-contain w-full h-full"
+                                         style="transform: scale(0.78); transform-origin: center;">
+                                </div>
                             @else
-                                <i class="fas fa-box text-2xl text-gray-300"></i>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="fas fa-box text-2xl text-gray-300"></i>
+                                </div>
                             @endif
                         </div>
                         <a href="{{ route('products.show', $related->id_produk) }}" class="block text-sm font-medium text-gray-800 mb-1 hover:text-orange-600 line-clamp-2">

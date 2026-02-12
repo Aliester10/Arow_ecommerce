@@ -18,8 +18,8 @@
             --}}
             <li class="group" data-category="{{ $category->id_kategori }}" style="position: static;">
                 <a href="{{ route('products.index', ['category' => $category->nama_kategori]) }}"
-                   class="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">
-                    <span class="flex items-center gap-2 min-w-0">
+                   class="relative flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-orange-700 group-hover:text-orange-700 hover:font-semibold group-hover:font-semibold transition before:content-[''] before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:rounded-r before:bg-orange-500 before:opacity-0 hover:before:opacity-100 group-hover:before:opacity-100 before:transition">
+                    <span class="flex items-center gap-2 min-w-0 px-2 py-1 rounded-md hover:bg-orange-300 group-hover:bg-orange-300 transition">
                         @php
                             $iconPath = $category->icon_kategori;
                             $isSvg = $iconPath ? (strtolower(pathinfo($iconPath, PATHINFO_EXTENSION)) === 'svg') : false;

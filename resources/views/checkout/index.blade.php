@@ -67,16 +67,8 @@
                      <div class="space-y-3">
                          @php
                              $selected = $selectedMethod ?? null;
-                             $defaultMethod = in_array($selected, ['transfer', 'qris', 'quotation'], true) ? $selected : 'transfer';
+                             $defaultMethod = in_array($selected, ['qris', 'quotation'], true) ? $selected : 'qris';
                          @endphp
-                         <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                             <input type="radio" name="payment_method" value="transfer" class="form-radio text-orange-600 focus:ring-orange-500" {{ $defaultMethod === 'transfer' ? 'checked' : '' }}>
-                             <div class="flex-1">
-                                 <span class="block font-medium text-gray-800">Bank Transfer</span>
-                                 <span class="block text-xs text-gray-500">BCA, Mandiri, BNI, BRI</span>
-                             </div>
-                             <i class="fas fa-university text-gray-400"></i>
-                         </label>
 
                          <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
                              <input type="radio" name="payment_method" value="qris" class="form-radio text-orange-600 focus:ring-orange-500" {{ $defaultMethod === 'qris' ? 'checked' : '' }}>
@@ -95,15 +87,6 @@
                              </div>
                              <i class="fas fa-file-invoice text-gray-400"></i>
                          </label>
-
-                         <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                             <input type="radio" name="payment_method" value="credit_card" class="form-radio text-orange-600 focus:ring-orange-500" disabled>
-                             <div class="flex-1">
-                                 <span class="block font-medium text-gray-400">Kartu Kredit (Segera Hadir)</span>
-                             </div>
-                             <i class="fas fa-credit-card text-gray-300"></i>
-                         </label>
-                         <!-- Add more methods -->
                      </div>
                  </form>
              </div>

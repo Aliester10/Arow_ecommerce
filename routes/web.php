@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
     Route::get('/checkout/qris/{id}', [OrderController::class, 'qris'])->name('checkout.qris');
     Route::get('/checkout/quotation/{id}', [OrderController::class, 'quotation'])->name('checkout.quotation');
+    Route::get('/checkout/quotation/{id}/download', [OrderController::class, 'downloadQuotationExcel'])->name('checkout.quotation.download');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 });

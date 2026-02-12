@@ -29,6 +29,13 @@
                     </div>
                 </div>
 
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{{ route('checkout.quotation.download', $order->id_order) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700 transition">
+                        <i class="fas fa-file-excel mr-2"></i>
+                        Download Quotation (Excel)
+                    </a>
+                </div>
+
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-4 rounded-lg border border-gray-200">
                         <div class="text-sm text-gray-500">ID Quotation</div>

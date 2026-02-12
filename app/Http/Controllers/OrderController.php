@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\Quotation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
@@ -32,7 +33,7 @@ class OrderController extends Controller
     public function placeOrder(Request $request)
     {
         $request->validate([
-            'payment_method' => 'required|in:transfer,qris,quotation',
+            'payment_method' => 'required|in:qris,quotation',
             'shipping_name' => 'required|string|max:255',
             'shipping_phone' => 'required|string|max:30',
             'shipping_address' => 'required|string',
@@ -129,6 +130,73 @@ class OrderController extends Controller
             $order->load('quotation');
         }
         return view('checkout.quotation', compact('order'));
+    }
+
+    public function downloadQuotationExcel($id)
+    {
+        $order = Order::with(['items.produk', 'quotation', 'payment'])
+            ->where('id_user', Auth::user()->id_user)
+            ->findOrFail($id);
+
+        if (($order->payment->metode ?? null) !== 'quotation') {
+            abort(404);
+        }
+
+        $filename = 'quotation_order_' . $order->id_order . '.xls';
+
+        $response = new StreamedResponse(function () use ($order) {
+            $total = 0;
+
+            echo "<html><head><meta charset=\"UTF-8\"></head><body>";
+            echo "<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\">";
+            echo "<tr><th colspan=\"6\" style=\"font-size:16px;\">QUOTATION</th></tr>";
+            echo "<tr><td><b>Order ID</b></td><td colspan=\"5\">#" . $order->id_order . "</td></tr>";
+            echo "<tr><td><b>ID Quotation</b></td><td colspan=\"5\">" . ($order->quotation->id_quotation ?? '-') . "</td></tr>";
+            echo "<tr><td><b>Tanggal</b></td><td colspan=\"5\">" . optional($order->tanggal_order)->format('Y-m-d H:i') . "</td></tr>";
+            echo "<tr><td><b>Status Quotation</b></td><td colspan=\"5\">" . ($order->quotation->status_quotation ?? '-') . "</td></tr>";
+            echo "<tr><td><b>Nama Penerima</b></td><td colspan=\"5\">" . e($order->shipping_name) . "</td></tr>";
+            echo "<tr><td><b>No. HP</b></td><td colspan=\"5\">" . e($order->shipping_phone) . "</td></tr>";
+            echo "<tr><td><b>Alamat</b></td><td colspan=\"5\">" . nl2br(e($order->shipping_address)) . "</td></tr>";
+            echo "<tr><td><b>Kota/Provinsi/Kode Pos</b></td><td colspan=\"5\">" . e($order->shipping_city) . ", " . e($order->shipping_province) . " " . e($order->shipping_postcode) . "</td></tr>";
+            echo "<tr><td colspan=\"6\"></td></tr>";
+
+            echo "<tr>";
+            echo "<th>No</th>";
+            echo "<th>Produk</th>";
+            echo "<th>Qty</th>";
+            echo "<th>Harga</th>";
+            echo "<th>Subtotal</th>";
+            echo "<th>Keterangan</th>";
+            echo "</tr>";
+
+            foreach ($order->items as $idx => $item) {
+                $subtotal = (float) $item->qty * (float) $item->price;
+                $total += $subtotal;
+
+                echo "<tr>";
+                echo "<td>" . ($idx + 1) . "</td>";
+                echo "<td>" . e($item->produk->nama_produk ?? '-') . "</td>";
+                echo "<td>" . e($item->qty) . "</td>";
+                echo "<td>" . number_format((float) $item->price, 0, ',', '.') . "</td>";
+                echo "<td>" . number_format($subtotal, 0, ',', '.') . "</td>";
+                echo "<td></td>";
+                echo "</tr>";
+            }
+
+            echo "<tr>";
+            echo "<td colspan=\"4\" style=\"text-align:right;\"><b>Total</b></td>";
+            echo "<td><b>" . number_format($total, 0, ',', '.') . "</b></td>";
+            echo "<td></td>";
+            echo "</tr>";
+
+            echo "</table>";
+            echo "</body></html>";
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel; charset=UTF-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+        return $response;
     }
 
     public function index()
