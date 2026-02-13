@@ -49,9 +49,9 @@
                 @if($products->count() > 0)
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                         @foreach($products as $product)
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group overflow-hidden"
+                            <div class="bg-white rounded-lg sm:rounded-xl shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
                                 data-skeleton-container>
-                                <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                                <div class="relative aspect-[4/3] bg-white overflow-hidden">
                                     <!-- Skeleton Loading (z-30) -->
                                     <div data-skeleton
                                         class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;">
@@ -105,7 +105,7 @@
                                         </form>
                                     </div>
                                 </div>
-                                <div class="p-2 sm:p-4">
+                                <div class="p-2 sm:p-4 border-t border-gray-100">
                                     <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">
                                         {{ $product->brand->nama_brand ?? 'Brand' }}</div>
                                     <a href="{{ route('products.show', $product->id_produk) }}"

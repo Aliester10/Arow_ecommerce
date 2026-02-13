@@ -127,20 +127,20 @@
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </button>
                                 <!-- Dropdown -->
-                                <div
-                                    class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-50">
-                                    <a href="{{ route('orders.index') }}"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
-                                    <a href="{{ route('admin.dashboard') }}"
-                                        class="block px-4 py-2 text-sm text-orange-600 font-bold hover:bg-gray-100">Panel
-                                        Admin</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                                    <div class="border-t border-gray-100"></div>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit"
-                                            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</button>
-                                    </form>
+                                <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
+                                    <div class="bg-white rounded-md shadow-lg py-1 border border-gray-100">
+                                        <a href="{{ route('orders.index') }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Pesanan
+                                            Saya</a>
+                                        <a href="#"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Profile</a>
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">Logout</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         @else
