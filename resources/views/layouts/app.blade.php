@@ -7,6 +7,7 @@
     <title>{{ $perusahaan?->nama_perusahaan ?? 'Arow Ecommerce' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="shortcut icon" href="{{ asset('fav.png') }}" type="image/png">
 </head>
 
 <body class="bg-gray-100 font-sans antialiased">
@@ -199,11 +200,13 @@
 
                         <div class="space-y-3">
                             <div class="flex items-start gap-4">
-                                <div class="w-6 flex justify-center"><i class="fas fa-phone-alt mt-1 text-orange-500"></i></div>
+                                <div class="w-6 flex justify-center"><i
+                                        class="fas fa-phone-alt mt-1 text-orange-500"></i></div>
                                 <span>(021) 38835187 / +62 822-8888-6009</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <div class="w-6 flex justify-center"><i class="fas fa-envelope text-orange-500"></i></div>
+                                <div class="w-6 flex justify-center"><i class="fas fa-envelope text-orange-500"></i>
+                                </div>
                                 <span>sales@ayobelanja.co.id</span>
                             </div>
                         </div>
@@ -225,9 +228,11 @@
                             <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Layanan Pelanggan</h4>
                             <ul class="space-y-4 text-sm text-gray-500">
                                 <li><a href="#" class="hover:text-orange-600 transition-colors">Bantuan</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Metode Pembayaran</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Metode Pembayaran</a>
+                                </li>
                                 <li><a href="#" class="hover:text-orange-600 transition-colors">Lacak Pesanan</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Kebijakan Privasi</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Kebijakan Privasi</a>
+                                </li>
                             </ul>
                         </div>
 
@@ -235,8 +240,10 @@
                         <div class="space-y-6">
                             <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Pengiriman</h4>
                             <div class="flex items-center gap-4 flex-wrap">
-                                <img src="{{ asset('storage/images/tiki.png') }}" alt="TIKI" class="h-8 object-contain grayscale hover:grayscale-0 transition">
-                                <img src="{{ asset('storage/images/JNE.png') }}" alt="JNE" class="h-8 object-contain grayscale hover:grayscale-0 transition">
+                                <img src="{{ asset('storage/images/tiki.png') }}" alt="TIKI"
+                                    class="h-8 object-contain grayscale hover:grayscale-0 transition">
+                                <img src="{{ asset('storage/images/JNE.png') }}" alt="JNE"
+                                    class="h-8 object-contain grayscale hover:grayscale-0 transition">
                             </div>
                         </div>
 
@@ -276,7 +283,8 @@
             <!-- Bottom Copyright -->
             <div class="text-center pt-8 border-t border-gray-200 mt-8">
                 <p class="text-gray-500 text-xs">
-                    &copy; {{ date('Y') }} <strong>Ayobelanja.co.id</strong> | Member of PT. Aro Baskara Esa. All rights reserved.
+                    &copy; {{ date('Y') }} <strong>Ayobelanja.co.id</strong> | Member of PT. Aro Baskara Esa. All rights
+                    reserved.
                 </p>
             </div>
         </div>
