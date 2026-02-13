@@ -170,32 +170,6 @@
         </div>
     </header>
 
-    <!-- Main Navigation / Categories Bar (Optional) -->
-    <nav class="bg-white border-b border-gray-200 hidden sm:block">
-        <div class="container mx-auto px-2 sm:px-4">
-            <div
-                class="flex items-center gap-2 sm:gap-6 overflow-x-auto py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-600">
-                <div class="relative group">
-                    <button class="flex items-center gap-1 sm:gap-2 whitespace-nowrap" style="color:#F7931E">
-                        <i class="fas fa-bars text-sm"></i>
-                        <span class="hidden sm:inline">{{ __('messages.categories') }}</span>
-                    </button>
-                </div>
-                <!-- Other links -->
-                <a href="{{ route('home') }}"
-                    class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.home') }}</a>
-                <a href="#"
-                    class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.official_stores') }}</a>
-                <a href="#"
-                    class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm">{{ __('messages.today_promo') }}</a>
-                <a href="#"
-                    class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">{{ __('messages.flash_sale') }}</a>
-                <a href="#"
-                    class="hover:text-orange-600 whitespace-nowrap text-xs sm:text-sm hidden md:inline">{{ __('messages.partnership') }}</a>
-            </div>
-        </div>
-    </nav>
-
     <!-- Content -->
     <main class="min-h-screen py-6">
         @yield('content')

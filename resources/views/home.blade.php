@@ -43,7 +43,7 @@
                                 <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
                                     <div class="text-center px-4">
                                         <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
-                                        <p class="font-bold text-sm sm:text-xl">Banner Image</p>
+                                        <p class="font-bold text-sm sm:text-xl">{{ __('messages.banner_image') }}</p>
                                     </div>
                                 </div>
                             @endif
@@ -53,7 +53,7 @@
                         <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
                             <div class="text-center px-4">
                                 <i class="fas fa-images text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
-                                <p class="font-bold text-sm sm:text-xl">No Banners Available</p>
+                                <p class="font-bold text-sm sm:text-xl">{{ __('messages.no_banners_available') }}</p>
                             </div>
                         </div>
                     @endforelse
@@ -88,12 +88,12 @@
             <div class="flex items-center gap-2">
                 <i class="fas fa-star text-orange-500 text-lg sm:text-xl"></i>
                 <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
-                    New Arrival Products
+                    {{ __('messages.new_arrival_products') }}
                 </h2>
             </div>
 
             <a href="{{ route('products.index') }}" class="text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1 text-sm sm:text-base">
-                View All
+                {{ __('messages.view_all') }}
                 <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </div>
@@ -192,7 +192,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 leading-none">
-                            Official Store
+                            {{ __('messages.official_store') }}
                         </h2>
                         <p class="text-xs sm:text-sm text-gray-500 mt-1">
                             Temukan Banyak Pilihan di Toko-Toko Resmi Kami
@@ -266,7 +266,7 @@
                     @empty
                         <div class="flex-shrink-0 w-full text-center py-6 sm:py-8 border border-dashed border-gray-300 rounded-lg">
                             <i class="fas fa-store text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
-                            <p class="text-gray-500 text-sm sm:text-base">No brands available</p>
+                            <p class="text-gray-500 text-sm sm:text-base">{{ __('messages.no_brands_available') }}</p>
                         </div>
                     @endforelse
                     
@@ -300,12 +300,12 @@
             <div class="flex items-center gap-2">
                 <i class="fas fa-fire text-orange-500 text-lg sm:text-xl"></i>
                 <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
-                    Popular Brands
+                    {{ __('messages.popular_brands') }}
                 </h2>
             </div>
 
             <a href="{{ route('products.index') }}" class="text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1 text-sm sm:text-base">
-                View All
+                {{ __('messages.view_all') }}
                 <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </div>
@@ -322,7 +322,7 @@
                         {{ $brand->nama_brand }}
                     </button>
                 @empty
-                    <p class="text-gray-500 text-sm">No brands available</p>
+                    <p class="text-gray-500 text-sm">{{ __('messages.no_brands_available') }}</p>
                 @endforelse
             </div>
         </div>
