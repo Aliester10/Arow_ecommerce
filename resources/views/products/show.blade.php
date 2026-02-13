@@ -113,7 +113,7 @@
                                         @method('DELETE')
                                         <button type="submit"
                                             class="w-full px-6 py-3 border border-red-600 text-red-600 font-bold rounded-lg hover:bg-red-50 transition flex items-center justify-center">
-                                            <i class="fas fa-heart mr-2"></i> Wishlist
+                                            <i class="fas fa-heart mr-2"></i> Favorit
                                         </button>
                                     </form>
                                 @else
@@ -121,14 +121,14 @@
                                         @csrf
                                         <button type="submit"
                                             class="w-full px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                            <i class="far fa-heart mr-2"></i> Wishlist
+                                            <i class="far fa-heart mr-2"></i> Favorit
                                         </button>
                                     </form>
                                 @endif
                             @else
                                 <a href="{{ route('login') }}"
                                     class="flex-1 px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                    <i class="far fa-heart mr-2"></i> Wishlist
+                                    <i class="far fa-heart mr-2"></i> Favorit
                                 </a>
                             @endauth
 

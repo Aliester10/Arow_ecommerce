@@ -4,7 +4,7 @@
     <div class="container mx-auto px-2 sm:px-4">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-4 sm:p-6 border-b border-gray-100 flex items-center justify-between">
-                <h1 class="text-lg sm:text-xl font-bold text-gray-800">Wishlist</h1>
+                <h1 class="text-lg sm:text-xl font-bold text-gray-800">Favorit Saya</h1>
                 <a href="{{ route('products.index') }}"
                     class="text-orange-600 font-medium text-sm hover:text-orange-700">Lanjut Belanja</a>
             </div>

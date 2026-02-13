@@ -17,7 +17,7 @@ return [
     'flash_sale' => 'Flash Sale',
     'partnership' => 'Kemitraan',
     'wishlist' => 'Favorit',
-    'cart' => 'Keranjang',
+
     'login' => 'Masuk',
     'register' => 'Daftar',
 ];

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-network-speed="">
+<html lang="id" data-network-speed="">
 
 <head>
     <meta charset="utf-8">
@@ -28,10 +28,7 @@
             </div>
             <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
-                <a href="{{ route('language.switch', app()->getLocale() === 'id' ? 'en' : 'id') }}"
-                    class="hover:underline whitespace-nowrap font-semibold">
-                    {{ app()->getLocale() === 'id' ? 'EN' : 'ID' }}
-                </a>
+                <div id="gtranslate-dropdown" style="position:relative;"></div>
                 <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
             </div>
         </div>
@@ -98,7 +95,7 @@
                                 @endif
                             @endauth
                         </div>
-                        <span class="mt-0.5 hidden sm:block">{{ __('messages.wishlist') }}</span>
+
                     </a>
 
                     <a href="{{ route('cart.index') }}"
@@ -112,7 +109,7 @@
                                 @endif
                             @endauth
                         </div>
-                        <span class="mt-0.5 hidden sm:block">{{ __('messages.cart') }}</span>
+
                     </a>
 
                     <div class="hidden sm:block border-l pl-4 border-gray-300">
@@ -134,12 +131,12 @@
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Pesanan
                                             Saya</a>
                                         <a href="#"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Profile</a>
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Profil</a>
                                         <div class="border-t border-gray-100 my-1"></div>
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <button type="submit"
-                                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">Logout</button>
+                                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">Keluar</button>
                                         </form>
                                     </div>
                                 </div>
@@ -290,9 +287,107 @@
         </div>
     </footer>
 
-    <script>
+    {{-- Google Translate hidden container (required — must NOT use display:none) --}}
+    <div id="google_translate_element" style="height:0;overflow:hidden;position:absolute;left:-9999px;"></div>
 
-    </script>
+    {{-- Flag Dropdown + Google Translate Override Styles --}}
+    <style>
+        /* Google Translate banner/toolbar override */
+        .goog-te-banner-frame,
+        .goog-te-banner-frame.skiptranslate,
+        iframe.goog-te-banner-frame {
+            display: none !important;
+            height: 0 !important;
+            visibility: hidden !important;
+        }
+
+        #goog-gt-tt,
+        .goog-te-balloon-frame,
+        .goog-te-ftab,
+        .goog-text-highlight {
+            display: none !important;
+        }
+
+        html,
+        body {
+            top: 0 !important;
+            margin-top: 0 !important;
+            position: static !important;
+        }
+
+        body>.skiptranslate {
+            display: none !important;
+            height: 0 !important;
+        }
+
+        /* Flag Dropdown */
+        .gtranslate-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .gtranslate-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .gtranslate-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 6px;
+            display: flex;
+            gap: 4px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .gtranslate-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            color: #e2e8f0;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+            min-width: 44px;
+        }
+
+        .gtranslate-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .gtranslate-item.active {
+            background: rgba(249, 115, 22, 0.3);
+            border-color: rgba(249, 115, 22, 0.5);
+            color: #fb923c;
+        }
+    </style>
+
+    {{-- Google Translate Script --}}
+    <script src="{{ asset('js/google-translate.js') }}"></script>
 </body>
 
 </html>

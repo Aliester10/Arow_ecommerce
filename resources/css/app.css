@@ -15,18 +15,17 @@
     0% {
         background-position: -1000px 0;
     }
+
     100% {
         background-position: 1000px 0;
     }
 }
 
 .skeleton-shimmer {
-    background: linear-gradient(
-        90deg,
-        #e5e7eb 0%,
-        #f3f4f6 50%,
-        #e5e7eb 100%
-    );
+    background: linear-gradient(90deg,
+            #e5e7eb 0%,
+            #f3f4f6 50%,
+            #e5e7eb 100%);
     background-size: 1000px 100%;
     animation: shimmer 2s infinite;
 }
@@ -40,4 +39,43 @@
 [data-skeleton].active {
     display: flex;
     opacity: 1;
+}
+
+/* ===== Google Translate UI Override ===== */
+/* Hide the banner bar that Google Translate shows at the top */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame {
+    display: none !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Hide tooltips and other popups */
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-te-ftab,
+.goog-text-highlight {
+    display: none !important;
+}
+
+/* Reset body position — Google Translate adds top: 40px for its banner */
+html,
+body {
+    top: 0 !important;
+    margin-top: 0 !important;
+    position: static !important;
+}
+
+/* Hide the Google Translate select widget (we use our own dropdown) */
+#google_translate_element {
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Fix: Google Translate sometimes wraps text in <font> tags */
+font[style] {
+    vertical-align: inherit !important;
 }

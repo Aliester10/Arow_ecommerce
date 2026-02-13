@@ -155,7 +155,7 @@
                         <div class="p-2 sm:p-3 flex flex-col flex-1 border-t border-gray-100">
                             <!-- Category/Brand (Meta) -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
-                                {{ $product->brand->nama_brand ?? 'Generic' }}
+                                {{ $product->brand->nama_brand ?? 'Umum' }}
                             </div>
                             <span class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
                                 {{ $product->nama_produk }}
@@ -188,6 +188,40 @@
 
     </div>
     <!-- ================= END ROW 2 ================= -->
+
+    <!-- Custom Style for Banner Stacking -->
+    <style>
+        @media (min-width: 768px) {
+            .stack-md { flex-direction: column !important; }
+        }
+    </style>
+    <!-- ================= ROW 2.5 : PROMO BANNERS ================= -->
+    <div class="mb-8 md:mb-12">
+        <div class="flex flex-col md:flex-row gap-3 md:gap-4" style="min-height: 200px;">
+            <!-- Left: Large Banner (gambar1) -->
+            <a href="#" class="block md:w-3/5 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                <img src="{{ asset('gambar1.png') }}" 
+                     alt="Waspada Penipuan Online" 
+                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                     style="min-height: 200px;">
+            </a>
+
+            <!-- Right: Two Stacked Banners (gambar2 + gambar3) -->
+            <div class="md:w-2/5 flex flex-row stack-md gap-3 md:gap-4">
+                <a href="#" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                    <img src="{{ asset('gambar2.png') }}" 
+                         alt="Jangan Lewatkan Penawaran Terbaik" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                </a>
+                <a href="#" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                    <img src="{{ asset('gambar3.png') }}" 
+                         alt="Pahami Cara Berbelanja dengan Mudah" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- ================= END ROW 2.5 ================= -->
 
    <!-- ================= ROW 3 : OFFICIAL STORE ================= -->
         <div class="mb-8 md:mb-12">
@@ -426,7 +460,7 @@ function showBrandProducts(brandId, tabElement) {
                         <div class="p-2 sm:p-3 flex flex-col flex-grow border-t border-gray-100">
                             <!-- Category/Brand -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
-                                ${product.brand?.nama_brand || 'Generic'}
+                                ${product.brand?.nama_brand || 'Umum'}
                             </div>
     
                             <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-1 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
