@@ -11,7 +11,7 @@ class Produk extends Model
 
     protected $table = 'produk';
     protected $primaryKey = 'id_produk';
-    protected $fillable = ['id_brand', 'id_sub_subkategori', 'nama_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
+    protected $fillable = ['id_brand', 'id_sub_subkategori', 'nama_produk', 'sku_produk', 'tipe_produk', 'asal_produk', 'dimensi_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
 
     public function brand()
     {

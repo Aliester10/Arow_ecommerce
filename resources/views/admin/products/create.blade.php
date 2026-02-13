@@ -81,6 +81,38 @@
                     </div>
                 </div>
 
+                <!-- Spesifikasi Row 1 -->
+                <div class="flex flex-wrap -mx-3 mb-4">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label for="sku_produk" class="block text-gray-700 text-sm font-bold mb-2">SKU</label>
+                        <input type="text" name="sku_produk" id="sku_produk"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value="{{ old('sku_produk') }}">
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label for="tipe_produk" class="block text-gray-700 text-sm font-bold mb-2">Tipe/Cover</label>
+                        <input type="text" name="tipe_produk" id="tipe_produk"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value="{{ old('tipe_produk') }}">
+                    </div>
+                </div>
+
+                <!-- Spesifikasi Row 2 -->
+                <div class="flex flex-wrap -mx-3 mb-4">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label for="asal_produk" class="block text-gray-700 text-sm font-bold mb-2">Asal Negara</label>
+                        <input type="text" name="asal_produk" id="asal_produk"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value="{{ old('asal_produk') }}">
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label for="dimensi_produk" class="block text-gray-700 text-sm font-bold mb-2">Dimensi</label>
+                        <input type="text" name="dimensi_produk" id="dimensi_produk"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value="{{ old('dimensi_produk') }}">
+                    </div>
+                </div>
+
                 <!-- Harga & Stok Row -->
                 <div class="flex flex-wrap -mx-3 mb-4">
                     <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">

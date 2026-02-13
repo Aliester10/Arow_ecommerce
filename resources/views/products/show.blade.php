@@ -7,18 +7,21 @@
                 <!-- Image Gallery -->
                 <div class="space-y-4">
                     <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative">
-                        <img src="{{ asset('frame.png') }}" alt="Frame" class="absolute inset-0 w-full h-full object-fill">
+                        <!-- Product Image (z-10) -->
                         @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                 <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
                                     alt="{{ $product->nama_produk }}" class="object-contain w-full h-full"
                                     style="transform: scale(0.75); transform-origin: center;">
                             </div>
                         @else
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                 <i class="fas fa-box text-6xl text-gray-300"></i>
                             </div>
                         @endif
+                        <!-- Frame (z-20) -->
+                        <img src="{{ asset('frame.png') }}" alt="Frame"
+                            class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
                     </div>
                     @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                         <div class="flex gap-2">
@@ -302,8 +305,6 @@
                             class="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition h-full group">
                             <a href="{{ route('products.show', $related->id_produk) }}" class="block w-full h-full flex flex-col">
                                 <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                                    <img src="{{ asset('frame.png') }}" alt="Frame"
-                                        class="absolute inset-0 w-full h-full object-fill z-10">
                                     @php
                                         $relatedImagePath = null;
                                         if ($related->gambar_produk) {
@@ -320,17 +321,22 @@
                                         }
                                     @endphp
 
+                                    <!-- Product Image (z-10) -->
                                     @if($relatedImagePath)
-                                        <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <img src="{{ asset($relatedImagePath) }}" alt="{{ $related->nama_produk }}"
                                                 class="object-contain w-full h-full"
                                                 style="transform: scale(0.75); transform-origin: center;">
                                         </div>
                                     @else
-                                        <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <i class="fas fa-box text-2xl text-gray-300"></i>
                                         </div>
                                     @endif
+
+                                    <!-- Frame (z-20) -->
+                                    <img src="{{ asset('frame.png') }}" alt="Frame"
+                                        class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
                                 </div>
                                 <div class="p-3 flex flex-col flex-grow">
                                     <h4

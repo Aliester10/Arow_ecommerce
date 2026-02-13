@@ -52,60 +52,46 @@
                             <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group overflow-hidden"
                                 data-skeleton-container>
                                 <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
-                                    <!-- Skeleton Loading -->
+                                    <!-- Skeleton Loading (z-30) -->
                                     <div data-skeleton
-                                        class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0 z-10">
+                                        class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;">
                                     </div>
 
-                                    <img src="{{ asset('frame.png') }}" alt="Frame"
-                                        class="absolute inset-0 w-full h-full object-fill">
-
-                                    <!-- Product Image -->
+                                    <!-- Product Image (z-10) -->
                                     @php
                                         $imagePath = null;
                                         if ($product->gambar_produk) {
-                                            // 1. Try exact match
                                             $path1 = 'storage/images/produk/' . $product->gambar_produk;
-
-                                            // 2. Try removing spaces (e.g. "PLC with VFD" -> "PLCwithVFD")
                                             $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-
-                                            // 3. Try lowercase no spaces (e.g. "Video Wall" -> "videowall")
                                             $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-
-                                            if (file_exists(public_path($path1))) {
-                                                $imagePath = $path1;
-                                            } elseif (file_exists(public_path($path2))) {
-                                                $imagePath = $path2;
-                                            } elseif (file_exists(public_path($path3))) {
-                                                $imagePath = $path3;
-                                            }
+                                            
+                                            if (file_exists(public_path($path1))) $imagePath = $path1;
+                                            elseif (file_exists(public_path($path2))) $imagePath = $path2;
+                                            elseif (file_exists(public_path($path3))) $imagePath = $path3;
                                         }
                                     @endphp
 
                                     @if($imagePath)
-                                        <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <img src="{{ asset($imagePath) }}" alt="{{ $product->nama_produk }}" data-skeleton-image
                                                 class="object-contain w-full h-full"
                                                 style="transform: scale(0.75); transform-origin: center;">
                                         </div>
                                     @else
-                                        <div data-fallback-image
-                                            class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50 absolute inset-0 z-0"
-                                            style="display: none;">
-                                            <img src="{{ asset('hitam-putih.svg') }}" alt="No Image"
-                                                class="w-12 h-12 sm:w-16 sm:h-16 object-contain opacity-60">
-                                        </div>
-                                        <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <img src="{{ asset('hitam-putih.svg') }}" alt="{{ $product->nama_produk }}"
                                                 data-skeleton-image class="object-contain w-12 h-12 sm:w-20 sm:h-20 opacity-60"
                                                 style="display: block;">
                                         </div>
                                     @endif
 
-                                    <!-- Overlay Actions -->
+                                    <!-- Frame (z-20) -->
+                                    <img src="{{ asset('frame.png') }}" alt="Frame"
+                                        class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
+
+                                    <!-- Overlay Actions (z-40) -->
                                     <div
-                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2 z-20">
+                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2" style="z-index: 40;">
                                         <a href="{{ route('products.show', $product->id_produk) }}"
                                             class="p-1 sm:p-2 bg-white rounded-full text-gray-800 hover:text-orange-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 text-xs sm:text-base">
                                             <i class="fas fa-eye"></i>
