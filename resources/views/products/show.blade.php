@@ -6,13 +6,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
                 <!-- Image Gallery -->
                 <div class="space-y-4">
-                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative">
+                    <div class="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200 relative group cursor-zoom-in" onclick="openZoomModal()">
                         <!-- Product Image (z-10) -->
                         @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
+                                <img id="mainProductImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
                                     alt="{{ $product->nama_produk }}" class="object-contain w-full h-full"
                                     style="transform: scale(0.75); transform-origin: center;">
+                            </div>
+                            <!-- Search Icon Overlay -->
+                            <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
                             </div>
                         @else
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
@@ -302,9 +308,9 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     @foreach($relatedProducts as $related)
                         <div
-                            class="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition h-full group">
+                            class="flex flex-col bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full group">
                             <a href="{{ route('products.show', $related->id_produk) }}" class="block w-full h-full flex flex-col">
-                                <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                                <div class="relative aspect-[4/3] overflow-hidden bg-white">
                                     @php
                                         $relatedImagePath = null;
                                         if ($related->gambar_produk) {
@@ -338,7 +344,7 @@
                                     <img src="{{ asset('frame.png') }}" alt="Frame"
                                         class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
                                 </div>
-                                <div class="p-3 flex flex-col flex-grow">
+                                <div class="p-3 flex flex-col flex-grow border-t border-gray-100">
                                     <h4
                                         class="text-sm font-medium text-gray-800 mb-1 group-hover:text-orange-600 line-clamp-2 transition-colors">
                                         {{ $related->nama_produk }}
@@ -403,5 +409,186 @@
             specBtn.addEventListener('click', function () { setActive('spec'); });
             reviewBtn.addEventListener('click', function () { setActive('review'); });
         });
+    </script>
+
+    <!-- Zoom Modal -->
+    <div id="zoomModal" class="hidden" style="position: fixed; inset: 0; z-index: 99999; width: 100vw; height: 100vh;">
+        <!-- Background backdrop -->
+        <div class="absolute inset-0 transition-opacity backdrop-blur-sm" 
+             style="background-color: rgba(0, 0, 0, 0.9);"
+             onclick="closeZoomModal()"></div>
+
+        <!-- Content container -->
+        <div class="relative w-full h-full flex flex-col pointer-events-none">
+            
+            <!-- Header (Close only) -->
+            <div class="absolute top-0 right-0 p-6 z-50 pointer-events-auto">
+                <button onclick="closeZoomModal()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-md border border-white/10 group">
+                    <i class="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-300"></i>
+                </button>
+            </div>
+
+            <!-- Image Container -->
+            <div class="flex-1 flex items-center justify-center overflow-hidden relative pointer-events-auto w-full h-full" 
+                 id="zoomContainer"
+                 onmousedown="startDrag(event)" 
+                 onmousemove="drag(event)" 
+                 onmouseup="endDrag()" 
+                 onmouseleave="endDrag()"
+                 onwheel="handleWheel(event)"
+                 ondblclick="toggleZoom(event)">
+                
+                <img id="zoomImage" src="" alt="Zoomed Product" 
+                     class="max-w-none transition-transform duration-100 ease-out select-none will-change-transform shadow-2xl"
+                     style="transform: scale(1) translate(0px, 0px); max-height: 90vh; max-width: 90vw; object-fit: contain;">
+                     
+            </div>
+            
+            <!-- Bottom Controls -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-auto" style="width: max-content;">
+                 <div class="rounded-full px-6 py-3 flex items-center gap-6 backdrop-blur-xl border border-white/10 shadow-2xl"
+                      style="background-color: rgba(20, 20, 20, 0.8);">
+                    <button onclick="zoomOut()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom Out">
+                        <i class="fas fa-minus text-lg"></i>
+                    </button>
+                    
+                    <span id="zoomLevelDisplay" class="text-white font-mono font-medium text-sm w-12 text-center select-none">100%</span>
+                    
+                    <button onclick="zoomIn()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom In">
+                        <i class="fas fa-plus text-lg"></i>
+                    </button>
+                    
+                    <div class="w-px h-5 bg-white/20"></div>
+                    
+                    <button onclick="resetZoom()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Reset View">
+                        <i class="fas fa-expand text-lg"></i>
+                    </button>
+                </div>
+                <p class="text-white/30 text-[10px] text-center mt-3 font-light tracking-wider uppercase">
+                    Scroll • Double Click • Drag
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Zoom functionality variables
+        let scale = 1;
+        let pannedX = 0;
+        let pannedY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        const zoomStep = 0.5;
+        const maxZoom = 5;
+        const minZoom = 1;
+
+        const modal = document.getElementById('zoomModal');
+        const zoomImage = document.getElementById('zoomImage');
+        const zoomDisplay = document.getElementById('zoomLevelDisplay');
+        const mainImage = document.getElementById('mainProductImage');
+
+        function openZoomModal() {
+            if (!mainImage) return;
+            
+            zoomImage.src = mainImage.src;
+            resetZoom();
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; 
+            document.addEventListener('keydown', handleEscKey);
+        }
+
+        function closeZoomModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscKey);
+        }
+
+        function handleEscKey(e) {
+            if (e.key === 'Escape') closeZoomModal();
+        }
+
+        function updateTransform() {
+            if (scale <= 1) {
+                pannedX = 0;
+                pannedY = 0;
+                scale = 1;
+            }
+
+            zoomImage.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
+            zoomDisplay.innerText = Math.round(scale * 100) + '%';
+            
+            const container = document.getElementById('zoomContainer');
+            if (scale > 1) {
+                container.style.cursor = isDragging ? 'grabbing' : 'grab';
+            } else {
+                container.style.cursor = 'default';
+            }
+        }
+
+        function toggleZoom(e) {
+            if (scale > 1) {
+                resetZoom();
+            } else {
+                scale = 2.5;
+                updateTransform();
+            }
+        }
+
+        function zoomIn() {
+            if (scale < maxZoom) {
+                scale = Math.min(scale + zoomStep, maxZoom);
+                updateTransform();
+            }
+        }
+
+        function zoomOut() {
+            if (scale > minZoom) {
+                scale = Math.max(scale - zoomStep, minZoom);
+                updateTransform();
+            }
+        }
+
+        function resetZoom() {
+            scale = 1;
+            pannedX = 0;
+            pannedY = 0;
+            updateTransform();
+        }
+
+        function handleWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY * -0.001;
+            const newScale = Math.min(Math.max(minZoom, scale + delta * 5), maxZoom);
+            
+            if (newScale !== scale) {
+                scale = newScale;
+                updateTransform();
+            }
+        }
+
+        function startDrag(e) {
+            if (scale > 1) {
+                isDragging = true;
+                startX = e.clientX - pannedX;
+                startY = e.clientY - pannedY;
+                zoomImage.style.transition = 'none'; 
+            }
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            pannedX = e.clientX - startX;
+            pannedY = e.clientY - startY;
+            
+            zoomImage.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
+        }
+
+        function endDrag() {
+            isDragging = false;
+            zoomImage.style.transition = 'transform 0.1s ease-out';
+        }
     </script>
 @endsection

@@ -101,10 +101,10 @@
         <!-- Product Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
             @forelse($products as $product)
-                <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-skeleton-container>
+                <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-md group hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skeleton-container>
                     <a href="{{ route('products.show', $product->id_produk) }}" class="block w-full h-full">
                         <!-- Product Image -->
-                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-white">
                             <!-- Skeleton Loading -->
                             <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
 
@@ -152,7 +152,7 @@
                         </div>
     
                         <!-- Product Info -->
-                        <div class="p-2 sm:p-3 flex flex-col flex-grow">
+                        <div class="p-2 sm:p-3 flex flex-col flex-grow border-t border-gray-100">
                             <!-- Category/Brand (Meta) -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
                                 {{ $product->brand->nama_brand ?? 'Generic' }}
@@ -398,9 +398,9 @@ function showBrandProducts(brandId, tabElement) {
             const imageUrl = product.gambar_produk ? `/storage/images/produk/${product.gambar_produk}` : null;
             
             productsHtml += `
-                <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="flex flex-col bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-md group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <a href="/products/${product.id_produk}" class="block w-full h-full">
-                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-white">
                             <!-- Product Image (z-10) -->
                             ${imageUrl ? 
                                 `<div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
@@ -413,7 +413,7 @@ function showBrandProducts(brandId, tabElement) {
                             <!-- Frame (z-20) -->
                             <img src="${frameUrl}" alt="Frame" class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
                         </div>
-                        <div class="p-2 sm:p-3 flex flex-col flex-grow">
+                        <div class="p-2 sm:p-3 flex flex-col flex-grow border-t border-gray-100">
                             <!-- Category/Brand -->
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
                                 ${product.brand?.nama_brand || 'Generic'}
