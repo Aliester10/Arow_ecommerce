@@ -38,7 +38,7 @@
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
+        <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
             <div class="flex justify-between items-center gap-2 sm:gap-4">
                 <!-- Logo & Mobile Toggle -->
                 <div class="flex items-center flex-shrink-0">
@@ -178,60 +178,106 @@
     <!-- Mobile Menu Removed as per user request -->
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 pt-16 pb-8">
+    <!-- Footer -->
+    <footer class="bg-gray-50 border-t border-gray-200 pt-16 pb-12 text-gray-600 text-sm">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <!-- Footer content (same as before) -->
-                <div>
-                    <h3 class="text-orange-600 font-bold mb-4 flex items-center">
-                        <i class="fas fa-shopping-bag mr-2"></i> {{ $perusahaan->nama_perusahaan ?? 'AROW' }}
-                    </h3>
-                    @if($perusahaan)
-                        <p class="text-gray-500 text-sm mb-4">{{ $perusahaan->alamat_perusahaan }}</p>
-                        <div class="text-gray-500 text-sm">
-                            <p class="mb-2"><i class="fas fa-phone-alt mr-2"></i> {{ $perusahaan->notelp_perusahaan }}</p>
-                            <p><i class="fas fa-envelope mr-2"></i> {{ $perusahaan->email_perusahaan }}</p>
+            <div class="flex flex-col md:flex-row gap-12 lg:gap-20 mb-16">
+                <!-- Left Side: Brand & Info (Width ~30% on LG) -->
+                <div class="w-full lg:w-4/12 space-y-8">
+                    <!-- Logo -->
+                    <div class="mb-6">
+                        <img src="{{ asset('storage/images/logo/logo.png') }}" alt="Ayobelanja.co.id"
+                            class="h-12 md:h-16 object-contain">
+                    </div>
+
+                    <!-- Address & Contact Grid -->
+                    <div class="space-y-4 text-sm text-gray-500 leading-relaxed">
+                        <p>
+                            Jl. TM. Slamet Riyadi Raya No. 9 RT.1 RW.4 Kb. Manggis.
+                            Kec. Matraman, Daerah Khusus Ibukota Jakarta 13150
+                        </p>
+
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-4">
+                                <div class="w-6 flex justify-center"><i class="fas fa-phone-alt mt-1 text-orange-500"></i></div>
+                                <span>(021) 38835187 / +62 822-8888-6009</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-6 flex justify-center"><i class="fas fa-envelope text-orange-500"></i></div>
+                                <span>sales@ayobelanja.co.id</span>
+                            </div>
                         </div>
-                    @endif
+                    </div>
+
+                    <!-- Member of -->
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Member of</p>
+                        <img src="{{ asset('storage/images/logoaro.png') }}" alt="ARO Baskara Esa"
+                            class="h-10 object-contain grayscale hover:grayscale-0 transition duration-300">
+                    </div>
                 </div>
-                <div>
-                    <h4 class="font-bold text-gray-700 mb-4">Layanan Pelanggan</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-orange-600">Bantuan</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Metode Pembayaran</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Lacak Pesanan</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Kebijakan Privasi</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-700 mb-4">Jelajahi</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-orange-600">Tentang Kami</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Karir</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Blog</a></li>
-                        <li><a href="#" class="hover:text-orange-600">Mitra</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-700 mb-4">Ikuti Kami</h4>
-                    <div class="flex space-x-4">
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-600 hover:text-white transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-600 hover:text-white transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-600 hover:text-white transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
+
+                <!-- Right Side: Links Grid (Width ~70% on LG) -->
+                <div class="w-full lg:w-8/12">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+                        <!-- Col 1: Layanan Pelanggan -->
+                        <div class="space-y-6">
+                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Layanan Pelanggan</h4>
+                            <ul class="space-y-4 text-sm text-gray-500">
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Bantuan</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Metode Pembayaran</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Lacak Pesanan</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Kebijakan Privasi</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Col 2: Pengiriman -->
+                        <div class="space-y-6">
+                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Pengiriman</h4>
+                            <div class="flex items-center gap-4 flex-wrap">
+                                <img src="{{ asset('storage/images/tiki.png') }}" alt="TIKI" class="h-8 object-contain grayscale hover:grayscale-0 transition">
+                                <img src="{{ asset('storage/images/JNE.png') }}" alt="JNE" class="h-8 object-contain grayscale hover:grayscale-0 transition">
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Jelajahi -->
+                        <div class="space-y-6">
+                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Jelajahi</h4>
+                            <ul class="space-y-4 text-sm text-gray-500">
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Tentang Kami</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Karir</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Blog</a></li>
+                                <li><a href="#" class="hover:text-orange-600 transition-colors">Mitra</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Col 4: Ikuti Kami -->
+                        <div class="space-y-6">
+                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Ikuti Kami</h4>
+                            <div class="flex space-x-3">
+                                <a href="#"
+                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                    <i class="fab fa-facebook-f text-sm"></i>
+                                </a>
+                                <a href="#"
+                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                    <i class="fab fa-instagram text-sm"></i>
+                                </a>
+                                <a href="#"
+                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                    <i class="fab fa-twitter text-sm"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-100 pt-8 text-center text-sm text-gray-400">
-                &copy; {{ date('Y') }} {{ $perusahaan?->nama_perusahaan ?? 'Arow Ecommerce' }}. All rights reserved.
+
+            <!-- Bottom Copyright -->
+            <div class="text-center pt-8 border-t border-gray-200 mt-8">
+                <p class="text-gray-500 text-xs">
+                    &copy; {{ date('Y') }} <strong>Ayobelanja.co.id</strong> | Member of PT. Aro Baskara Esa. All rights reserved.
+                </p>
             </div>
         </div>
     </footer>
