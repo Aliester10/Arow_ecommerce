@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori']);
+        $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan']);
 
         if ($request->has('search')) {
             $query->where('nama_produk', 'like', '%' . $request->search . '%');
@@ -22,12 +22,12 @@ class ProductController extends Controller
             $query->whereHas('subSubkategori', function ($q) use ($request) {
                 $q->where('nama_sub_subkategori', $request->category);
             })
-            ->orWhereHas('subSubkategori.subkategori', function ($q) use ($request) {
-                $q->where('nama_subkategori', $request->category);
-            })
-            ->orWhereHas('subSubkategori.subkategori.kategori', function ($q) use ($request) {
-                $q->where('nama_kategori', $request->category);
-            });
+                ->orWhereHas('subSubkategori.subkategori', function ($q) use ($request) {
+                    $q->where('nama_subkategori', $request->category);
+                })
+                ->orWhereHas('subSubkategori.subkategori.kategori', function ($q) use ($request) {
+                    $q->where('nama_kategori', $request->category);
+                });
         }
 
         $products = $query->paginate(12);
@@ -40,10 +40,11 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user'])->findOrFail($id);
-        $relatedProducts = Produk::where('id_sub_subkategori', $product->id_sub_subkategori)
-                                 ->where('id_produk', '!=', $id)
-                                 ->take(4)
-                                 ->get();
+        $relatedProducts = Produk::with('ulasan')
+            ->where('id_sub_subkategori', $product->id_sub_subkategori)
+            ->where('id_produk', '!=', $id)
+            ->take(4)
+            ->get();
 
         return view('products.show', compact('product', 'relatedProducts'));
     }

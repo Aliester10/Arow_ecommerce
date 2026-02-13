@@ -160,6 +160,15 @@
                             <span class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
                                 {{ $product->nama_produk }}
                             </span>
+                            
+                            <!-- Rating Info -->
+                            <div class="flex items-center gap-1 mb-2">
+                                <i class="fas fa-star text-yellow-400 text-[10px] sm:text-xs"></i>
+                                <span class="text-gray-600 text-[10px] sm:text-xs font-medium">
+                                    {{ $product->ulasan->count() > 0 ? number_format($product->ulasan->avg('rating_ulasan'), 1) : '0.0' }}
+                                </span>
+                                <span class="text-gray-400 text-[10px] sm:text-xs">| {{ $product->ulasan->count() }} terjual</span>
+                            </div>
                             @if($product->harga_produk)
                                 <div class="text-orange-600 font-bold text-sm sm:text-base mt-auto">
                                     Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
@@ -420,9 +429,20 @@ function showBrandProducts(brandId, tabElement) {
                                 ${product.brand?.nama_brand || 'Generic'}
                             </div>
     
-                            <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
+                            <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-1 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
                                 ${product.nama_produk}
                             </h3>
+
+                            <!-- Rating Info -->
+                            <div class="flex items-center gap-1 mb-2">
+                                <i class="fas fa-star text-yellow-400 text-[10px] sm:text-xs"></i>
+                                <span class="text-gray-600 text-[10px] sm:text-xs font-medium">
+                                    ${product.ulasan && product.ulasan.length > 0 
+                                        ? (product.ulasan.reduce((a, b) => a + parseInt(b.rating_ulasan), 0) / product.ulasan.length).toFixed(1) 
+                                        : '0.0'}
+                                </span>
+                                <span class="text-gray-400 text-[10px] sm:text-xs">| ${product.ulasan ? product.ulasan.length : 0} terjual</span>
+                            </div>
     
                         </div>
                     </a>

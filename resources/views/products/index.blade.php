@@ -54,7 +54,8 @@
                                 <div class="relative aspect-[4/3] bg-white overflow-hidden">
                                     <!-- Skeleton Loading (z-30) -->
                                     <div data-skeleton
-                                        class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;">
+                                        class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
+                                        style="z-index: 30;">
                                     </div>
 
                                     <!-- Product Image (z-10) -->
@@ -64,10 +65,13 @@
                                             $path1 = 'storage/images/produk/' . $product->gambar_produk;
                                             $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
                                             $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                            
-                                            if (file_exists(public_path($path1))) $imagePath = $path1;
-                                            elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                            elseif (file_exists(public_path($path3))) $imagePath = $path3;
+
+                                            if (file_exists(public_path($path1)))
+                                                $imagePath = $path1;
+                                            elseif (file_exists(public_path($path2)))
+                                                $imagePath = $path2;
+                                            elseif (file_exists(public_path($path3)))
+                                                $imagePath = $path3;
                                         }
                                     @endphp
 
@@ -90,8 +94,8 @@
                                         class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
 
                                     <!-- Overlay Actions (z-40) -->
-                                    <div
-                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2" style="z-index: 40;">
+                                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2"
+                                        style="z-index: 40;">
                                         <a href="{{ route('products.show', $product->id_produk) }}"
                                             class="p-1 sm:p-2 bg-white rounded-full text-gray-800 hover:text-orange-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 text-xs sm:text-base">
                                             <i class="fas fa-eye"></i>
@@ -107,11 +111,22 @@
                                 </div>
                                 <div class="p-2 sm:p-4 border-t border-gray-100">
                                     <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">
-                                        {{ $product->brand->nama_brand ?? 'Brand' }}</div>
+                                        {{ $product->brand->nama_brand ?? 'Brand' }}
+                                    </div>
                                     <a href="{{ route('products.show', $product->id_produk) }}"
                                         class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
                                         {{ $product->nama_produk }}
                                     </a>
+
+                                    <!-- Rating Info -->
+                                    <div class="flex items-center gap-1 mb-2">
+                                        <i class="fas fa-star text-yellow-400 text-[10px] sm:text-xs"></i>
+                                        <span class="text-gray-600 text-[10px] sm:text-xs font-medium">
+                                            {{ $product->ulasan->count() > 0 ? number_format($product->ulasan->avg('rating_ulasan'), 1) : '0.0' }}
+                                        </span>
+                                        <span class="text-gray-400 text-[10px] sm:text-xs">| {{ $product->ulasan->count() }}
+                                            terjual</span>
+                                    </div>
                                     @if($product->harga_produk)
                                         <div class="text-orange-600 font-bold text-sm sm:text-base">
                                             Rp {{ number_format($product->harga_produk, 0, ',', '.') }}

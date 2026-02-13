@@ -14,17 +14,17 @@ class HomeController extends Controller
     {
         $banners = Banner::all();
         $kategoris = Kategori::all();
-        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori'])->inRandomOrder()->take(6)->get();
+        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan'])->inRandomOrder()->take(6)->get();
         $brands = Brand::all();
-        
+
         // Get products grouped by brand (5 products per brand)
         $productsByBrand = [];
         foreach ($brands as $brand) {
             $productsByBrand[$brand->id_brand] = Produk::where('id_brand', $brand->id_brand)
-                                                        ->with(['brand', 'subSubkategori.subkategori.kategori'])
-                                                        ->inRandomOrder()
-                                                        ->take(5)
-                                                        ->get();
+                ->with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan'])
+                ->inRandomOrder()
+                ->take(5)
+                ->get();
         }
 
         return view('home', compact('banners', 'kategoris', 'products', 'brands', 'productsByBrand'));
