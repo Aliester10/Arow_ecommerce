@@ -157,13 +157,15 @@
                             <div class="text-[8px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wide font-semibold line-clamp-1">
                                 {{ $product->brand->nama_brand ?? 'Generic' }}
                             </div>
-    
-                            <!-- Title -->
-                            <h3 class="font-medium text-gray-800 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 min-h-[2em] sm:min-h-[2.5em] group-hover:text-orange-600 transition-colors">
+                            <a href="{{ route('products.show', $product->id_produk) }}"
+                                class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
                                 {{ $product->nama_produk }}
-                            </h3>
-    
-                            <!-- Bottom Section (Price & Stock pushed to bottom) -->
+                            </a>
+                            @if($product->harga_produk)
+                                <div class="text-orange-600 font-bold text-sm sm:text-base">
+                                    Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
+                                </div>
+                            @endif
                         </div>
                     </a>
                 </div>

@@ -109,9 +109,14 @@
                                     <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">
                                         {{ $product->brand->nama_brand ?? 'Brand' }}</div>
                                     <a href="{{ route('products.show', $product->id_produk) }}"
-                                        class="block text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 min-h-[2em] sm:min-h-[2.5rem]">
+                                        class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
                                         {{ $product->nama_produk }}
                                     </a>
+                                    @if($product->harga_produk)
+                                        <div class="text-orange-600 font-bold text-sm sm:text-base">
+                                            Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

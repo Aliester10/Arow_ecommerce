@@ -116,6 +116,17 @@
                 <!-- Harga & Stok Row -->
                 <div class="flex flex-wrap -mx-3 mb-4">
                     <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                        <label for="harga_produk" class="block text-gray-700 text-sm font-bold mb-2">Harga (Rp) -
+                            Optional</label>
+                        <input type="number" name="harga_produk" id="harga_produk"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            min="0" step="100" value="{{ old('harga_produk') }}" placeholder="Contoh: 150000">
+                    </div>
+                </div>
+
+                <!-- Stok & Berat Row (Moved here) -->
+                <div class="flex flex-wrap -mx-3 mb-4">
+                    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                         <label for="stok_produk" class="block text-gray-700 text-sm font-bold mb-2">Stok</label>
                         <input type="number" name="stok_produk" id="stok_produk"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

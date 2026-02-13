@@ -6,7 +6,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
                 <!-- Image Gallery -->
                 <div class="space-y-4">
-                    <div class="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200 relative group cursor-zoom-in" onclick="openZoomModal()">
+                    <div class="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200 relative group cursor-zoom-in"
+                        onclick="openZoomModal()">
                         <!-- Product Image (z-10) -->
                         @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
@@ -219,7 +220,13 @@
 
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ $product->nama_produk }}</h1>
 
-                    <div class="flex items-center mb-4 space-x-4">
+                    @if($product->harga_produk)
+                        <div class="text-3xl font-bold text-orange-600 mb-4">
+                            Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
+                        </div>
+                    @endif
+
+                    <div class="flex items-center gap-4 mb-6">
                         <div class="text-sm text-gray-500 border-r border-gray-300 pr-4">
                             Brand: <span
                                 class="text-orange-600 font-medium">{{ $product->brand->nama_brand ?? 'N/A' }}</span>
@@ -414,53 +421,53 @@
     <!-- Zoom Modal -->
     <div id="zoomModal" class="hidden" style="position: fixed; inset: 0; z-index: 99999; width: 100vw; height: 100vh;">
         <!-- Background backdrop -->
-        <div class="absolute inset-0 transition-opacity backdrop-blur-sm" 
-             style="background-color: rgba(0, 0, 0, 0.9);"
-             onclick="closeZoomModal()"></div>
+        <div class="absolute inset-0 transition-opacity backdrop-blur-sm" style="background-color: rgba(0, 0, 0, 0.9);"
+            onclick="closeZoomModal()"></div>
 
         <!-- Content container -->
         <div class="relative w-full h-full flex flex-col pointer-events-none">
-            
+
             <!-- Header (Close only) -->
             <div class="absolute top-0 right-0 p-6 z-50 pointer-events-auto">
-                <button onclick="closeZoomModal()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-md border border-white/10 group">
+                <button onclick="closeZoomModal()"
+                    class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-md border border-white/10 group">
                     <i class="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-300"></i>
                 </button>
             </div>
 
             <!-- Image Container -->
-            <div class="flex-1 flex items-center justify-center overflow-hidden relative pointer-events-auto w-full h-full" 
-                 id="zoomContainer"
-                 onmousedown="startDrag(event)" 
-                 onmousemove="drag(event)" 
-                 onmouseup="endDrag()" 
-                 onmouseleave="endDrag()"
-                 onwheel="handleWheel(event)"
-                 ondblclick="toggleZoom(event)">
-                
-                <img id="zoomImage" src="" alt="Zoomed Product" 
-                     class="max-w-none transition-transform duration-100 ease-out select-none will-change-transform shadow-2xl"
-                     style="transform: scale(1) translate(0px, 0px); max-height: 90vh; max-width: 90vw; object-fit: contain;">
-                     
+            <div class="flex-1 flex items-center justify-center overflow-hidden relative pointer-events-auto w-full h-full"
+                id="zoomContainer" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="endDrag()"
+                onmouseleave="endDrag()" onwheel="handleWheel(event)" ondblclick="toggleZoom(event)">
+
+                <img id="zoomImage" src="" alt="Zoomed Product"
+                    class="max-w-none transition-transform duration-100 ease-out select-none will-change-transform shadow-2xl"
+                    style="transform: scale(1) translate(0px, 0px); max-height: 90vh; max-width: 90vw; object-fit: contain;">
+
             </div>
-            
+
             <!-- Bottom Controls -->
             <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-auto" style="width: max-content;">
-                 <div class="rounded-full px-6 py-3 flex items-center gap-6 backdrop-blur-xl border border-white/10 shadow-2xl"
-                      style="background-color: rgba(20, 20, 20, 0.8);">
-                    <button onclick="zoomOut()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom Out">
+                <div class="rounded-full px-6 py-3 flex items-center gap-6 backdrop-blur-xl border border-white/10 shadow-2xl"
+                    style="background-color: rgba(20, 20, 20, 0.8);">
+                    <button onclick="zoomOut()"
+                        class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom Out">
                         <i class="fas fa-minus text-lg"></i>
                     </button>
-                    
-                    <span id="zoomLevelDisplay" class="text-white font-mono font-medium text-sm w-12 text-center select-none">100%</span>
-                    
-                    <button onclick="zoomIn()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom In">
+
+                    <span id="zoomLevelDisplay"
+                        class="text-white font-mono font-medium text-sm w-12 text-center select-none">100%</span>
+
+                    <button onclick="zoomIn()"
+                        class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Zoom In">
                         <i class="fas fa-plus text-lg"></i>
                     </button>
-                    
+
                     <div class="w-px h-5 bg-white/20"></div>
-                    
-                    <button onclick="resetZoom()" class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95" title="Reset View">
+
+                    <button onclick="resetZoom()"
+                        class="text-white/80 hover:text-white hover:scale-110 transition active:scale-95"
+                        title="Reset View">
                         <i class="fas fa-expand text-lg"></i>
                     </button>
                 </div>
@@ -490,12 +497,12 @@
 
         function openZoomModal() {
             if (!mainImage) return;
-            
+
             zoomImage.src = mainImage.src;
             resetZoom();
-            
+
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
             document.addEventListener('keydown', handleEscKey);
         }
 
@@ -518,7 +525,7 @@
 
             zoomImage.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
             zoomDisplay.innerText = Math.round(scale * 100) + '%';
-            
+
             const container = document.getElementById('zoomContainer');
             if (scale > 1) {
                 container.style.cursor = isDragging ? 'grabbing' : 'grab';
@@ -561,7 +568,7 @@
             e.preventDefault();
             const delta = e.deltaY * -0.001;
             const newScale = Math.min(Math.max(minZoom, scale + delta * 5), maxZoom);
-            
+
             if (newScale !== scale) {
                 scale = newScale;
                 updateTransform();
@@ -573,7 +580,7 @@
                 isDragging = true;
                 startX = e.clientX - pannedX;
                 startY = e.clientY - pannedY;
-                zoomImage.style.transition = 'none'; 
+                zoomImage.style.transition = 'none';
             }
         }
 
@@ -582,7 +589,7 @@
             e.preventDefault();
             pannedX = e.clientX - startX;
             pannedY = e.clientY - startY;
-            
+
             zoomImage.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
         }
 

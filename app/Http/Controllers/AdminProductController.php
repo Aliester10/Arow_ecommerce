@@ -38,7 +38,7 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->all();
-        $data['harga_produk'] = $request->harga_produk ?? 0;
+        // $data['harga_produk'] = $request->harga_produk; // No need to force 0, let it be null if empty
 
         if ($request->hasFile('gambar_produk')) {
             $image = $request->file('gambar_produk');
@@ -89,7 +89,7 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->except(['gambar_produk']);
-        $data['harga_produk'] = $request->harga_produk ?? $product->harga_produk;
+        // $data['harga_produk'] = $request->harga_produk; // Allow null update
 
         if ($request->hasFile('gambar_produk')) {
             // Delete old image using Storage
