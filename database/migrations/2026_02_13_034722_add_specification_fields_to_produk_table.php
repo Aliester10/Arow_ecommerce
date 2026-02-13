@@ -11,10 +11,18 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('produk', function (Blueprint $table) {
-            $table->string('sku_produk')->nullable()->after('nama_produk');
-            $table->string('tipe_produk')->nullable()->after('sku_produk');
-            $table->string('asal_produk')->nullable()->after('tipe_produk');
-            $table->string('dimensi_produk')->nullable()->after('asal_produk');
+            if (!Schema::hasColumn('produk', 'sku_produk')) {
+                $table->string('sku_produk')->nullable()->after('nama_produk');
+            }
+            if (!Schema::hasColumn('produk', 'tipe_produk')) {
+                $table->string('tipe_produk')->nullable()->after('sku_produk');
+            }
+            if (!Schema::hasColumn('produk', 'asal_produk')) {
+                $table->string('asal_produk')->nullable()->after('tipe_produk');
+            }
+            if (!Schema::hasColumn('produk', 'dimensi_produk')) {
+                $table->string('dimensi_produk')->nullable()->after('asal_produk');
+            }
         });
     }
 
