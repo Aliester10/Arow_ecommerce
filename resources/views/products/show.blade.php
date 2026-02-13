@@ -144,7 +144,8 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg border border-gray-100 overflow-hidden order-3 md:order-none md:col-start-1 md:row-start-2">
+                <div
+                    class="bg-white rounded-lg border border-gray-100 overflow-hidden order-3 md:order-none md:col-start-1 md:row-start-2">
                     <div class="flex border-b border-gray-100">
                         <button type="button" id="tabSpecBtn"
                             class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50">
@@ -218,8 +219,7 @@
 
                     <div id="tabReview" class="p-4 hidden">
                         @if(session('success'))
-                            <div
-                                class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                            <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
                                 {{ session('success') }}
                             </div>
                         @endif
@@ -282,185 +282,108 @@
                                             @enderror
                                         </div>
 
-                                            <button type="submit"
-                                                class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
-                                                Kirim Ulasan
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="block w-full text-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
-                                            Login untuk memberi ulasan
-                                        </a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Info -->
-                <div>
-                    <nav class="flex text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                            <li class="inline-flex items-center">
-                                <a href="{{ route('home') }}" class="hover:text-orange-600">Home</a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mx-2"></i>
-                                    <a href="{{ route('products.index', ['category' => $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'All']) }}"
-                                        class="hover:text-orange-600">{{ $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'Kategori' }}</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mx-2"></i>
-                                    <span class="text-gray-400">{{ Str::limit($product->nama_produk, 20) }}</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
-
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ $product->nama_produk }}</h1>
-
-                    <div class="flex items-center mb-4 space-x-4">
-                        <div class="text-sm text-gray-500 border-r border-gray-300 pr-4">
-                            Brand: <span
-                                class="text-orange-600 font-medium">{{ $product->brand->nama_brand ?? 'N/A' }}</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-star text-yellow-400 text-sm"></i>
-                            <span class="text-sm text-gray-600 ml-1 font-bold">4.8</span>
-                            <span class="text-sm text-gray-400 ml-1">(12 Ulasan)</span>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-6">
-                        <h3 class="text-sm font-bold text-gray-900 mb-2">Deskripsi Produk</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            {{ $product->deskripsi_produk }}
-                        </p>
-                    </div>
-
-                    <div class="border-t border-gray-100 pt-6">
-                        <div class="flex items-center space-x-4 mb-6">
-                            <div class="flex items-center border border-gray-300 rounded-lg">
-                                <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                                    onclick="decrementQty()">-</button>
-                                <input type="number" id="quantity" value="1" min="1" max="{{ $product->stok_produk }}"
-                                    class="w-12 text-center text-sm focus:outline-none" readonly>
-                                <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                                    onclick="incrementQty()">+</button>
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                Stok: <span class="font-medium">{{ $product->stok_produk }}</span>
-                            </div>
-                        </div>
-
-                        <div class="flex space-x-3">
-                            @auth
-                                @php
-                                    $isWishlisted = \App\Models\Wishlist::where('id_user', \Illuminate\Support\Facades\Auth::user()->id_user)
-                                        ->where('id_produk', $product->id_produk)
-                                        ->exists();
-                                @endphp
-                                @if($isWishlisted)
-                                    <form action="{{ route('wishlist.destroy', $product->id_produk) }}" method="POST"
-                                        class="flex-1">
-                                        @csrf
-                                        @method('DELETE')
                                         <button type="submit"
-                                            class="w-full px-6 py-3 border border-red-600 text-red-600 font-bold rounded-lg hover:bg-red-50 transition flex items-center justify-center">
-                                            <i class="fas fa-heart mr-2"></i> Wishlist
+                                            class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                            Kirim Ulasan
                                         </button>
                                     </form>
                                 @else
-                                    <form action="{{ route('wishlist.store', $product->id_produk) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                            <i class="far fa-heart mr-2"></i> Wishlist
-                                        </button>
-                                    </form>
-                                @endif
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="flex-1 px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                    <i class="far fa-heart mr-2"></i> Wishlist
-                                </a>
-                            @endauth
-
-                            <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" class="flex-1">
-                                @csrf
-                                <input type="hidden" name="quantity" id="quantityHidden" value="1">
-                                <button type="submit"
-                                    class="w-full px-6 py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Keranjang
-                                </button>
-                            </form>
+                                    <a href="{{ route('login') }}"
+                                        class="block w-full text-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                        Login untuk memberi ulasan
+                                    </a>
+                                @endauth
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
 
-        <!-- Related Products -->
-        @if(isset($relatedProducts) && $relatedProducts->count() > 0)
-            <div class="mt-8">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Produk Terkait</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    @foreach($relatedProducts as $related)
-                        <div
-                            class="flex flex-col bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full group">
-                            <a href="{{ route('products.show', $related->id_produk) }}" class="block w-full h-full flex flex-col">
-                                <div class="relative aspect-[4/3] overflow-hidden bg-white">
-                                    @php
-                                        $relatedImagePath = null;
-                                        if ($related->gambar_produk) {
-                                            $rPath1 = 'storage/images/produk/' . $related->gambar_produk;
-                                            $rPath2 = 'storage/images/produk/' . str_replace(' ', '', $related->gambar_produk);
-                                            $rPath3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $related->gambar_produk));
-
-                                            if (file_exists(public_path($rPath1)))
-                                                $relatedImagePath = $rPath1;
-                                            elseif (file_exists(public_path($rPath2)))
-                                                $relatedImagePath = $rPath2;
-                                            elseif (file_exists(public_path($rPath3)))
-                                                $relatedImagePath = $rPath3;
-                                        }
-                                    @endphp
-
-                                    <!-- Product Image (z-10) -->
-                                    @if($relatedImagePath)
-                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <img src="{{ asset($relatedImagePath) }}" alt="{{ $related->nama_produk }}"
-                                                class="object-contain w-full h-full"
-                                                style="transform: scale(0.75); transform-origin: center;">
-                                        </div>
-                                    @else
-                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <i class="fas fa-box text-2xl text-gray-300"></i>
-                                        </div>
-                                    @endif
-
-                                    <!-- Frame (z-20) -->
-                                    <img src="{{ asset('frame.png') }}" alt="Frame"
-                                        class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
-                                </div>
-                                <div class="p-3 flex flex-col flex-grow border-t border-gray-100">
-                                    <h4
-                                        class="text-sm font-medium text-gray-800 mb-1 group-hover:text-orange-600 line-clamp-2 transition-colors">
-                                        {{ $related->nama_produk }}
-                                    </h4>
-                                </div>
-                            </a>
-                        </div>
-                    @endforeach
+    <!-- Related Products -->
+    @if(isset($relatedProducts) && $relatedProducts->count() > 0)
+        <div class="mt-12 pt-8 border-t border-gray-200">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-star text-orange-500 text-xl"></i>
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Produk Terkait</h3>
                 </div>
+                <a href="{{ route('products.index') }}" class="text-orange-500 hover:text-orange-600 font-medium text-sm sm:text-base flex items-center gap-1 transition-colors">
+                    Lihat Semua <i class="fas fa-arrow-right text-xs"></i>
+                </a>
             </div>
-        @endif
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                @foreach($relatedProducts as $related)
+                    <div class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                        <a href="{{ route('products.show', $related->id_produk) }}" class="flex flex-col h-full">
+                            <!-- Product Image -->
+                            <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
+                                @php
+                                    $relatedImagePath = null;
+                                    if ($related->gambar_produk) {
+                                        $rPath1 = 'storage/images/produk/' . $related->gambar_produk;
+                                        $rPath2 = 'storage/images/produk/' . str_replace(' ', '', $related->gambar_produk);
+                                        $rPath3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $related->gambar_produk));
+
+                                        if (file_exists(public_path($rPath1)))
+                                            $relatedImagePath = $rPath1;
+                                        elseif (file_exists(public_path($rPath2)))
+                                            $relatedImagePath = $rPath2;
+                                        elseif (file_exists(public_path($rPath3)))
+                                            $relatedImagePath = $rPath3;
+                                    }
+                                @endphp
+
+                                <!-- Product Image (z-10) -->
+                                @if($relatedImagePath)
+                                    <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                        <img src="{{ asset($relatedImagePath) }}" alt="{{ $related->nama_produk }}"
+                                            class="object-contain w-full h-full"
+                                            style="transform: scale(0.9); transform-origin: center;">
+                                    </div>
+                                @else
+                                    <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                        <img src="{{ asset('hitam-putih.svg') }}" 
+                                             alt="{{ $related->nama_produk }}"
+                                             class="object-contain w-12 h-12 sm:w-20 sm:h-20 opacity-60">
+                                    </div>
+                                @endif
+
+                                <!-- Frame (z-20) -->
+                                <img src="{{ asset('frame.png') }}" alt="Frame"
+                                    class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
+                                
+                                <!-- Badges (z-30) -->
+                                @if($related->stok_produk <= 0)
+                                    <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm" style="z-index: 30;">
+                                        Habis
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="p-3 flex flex-col flex-1 border-t border-gray-100 text-left">
+                                <!-- Category/Brand (Meta) -->
+                                <div class="text-[9px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold line-clamp-1">
+                                    {{ $related->brand->nama_brand ?? 'Generic' }}
+                                </div>
+                                <h4 class="text-gray-800 font-medium text-xs sm:text-sm mb-2 hover:text-orange-600 line-clamp-2 leading-snug min-h-[2.5em]">
+                                    {{ $related->nama_produk }}
+                                </h4>
+                                @if($related->harga_produk)
+                                    <div class="text-orange-600 font-bold text-sm sm:text-base mt-auto">
+                                        Rp {{ number_format($related->harga_produk, 0, ',', '.') }}
+                                    </div>
+                                @endif
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
     </div>
 
     <script>
