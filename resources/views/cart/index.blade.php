@@ -41,12 +41,13 @@
                                                     <i class="fas fa-box text-gray-400 text-2xl"></i>
                                                 </div>
                                                 <div>
-                                                    <a href="{{ route('products.show', $detail->produk->id_produk) }}"
+                                                    <a href="{{ route('products.show', $detail->produk->slug) }}"
                                                         class="font-medium text-gray-800 hover:text-orange-600 line-clamp-1">
                                                         {{ $detail->produk->nama_produk }}
                                                     </a>
                                                     <div class="text-xs text-gray-500 mt-1">
-                                                        {{ $detail->produk->brand->nama_brand ?? 'Brand' }}</div>
+                                                        {{ $detail->produk->brand->nama_brand ?? 'Brand' }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>

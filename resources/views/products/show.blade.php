@@ -253,8 +253,7 @@
 
                             <div class="border-t border-gray-100 pt-4">
                                 @auth
-                                    <form action="{{ route('ulasan.store', $product->id_produk) }}" method="POST"
-                                        class="space-y-3">
+                                    <form action="{{ route('ulasan.store', $product->slug) }}" method="POST" class="space-y-3">
                                         @csrf
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-1">Rating</label>
@@ -322,7 +321,7 @@
                     @foreach($relatedProducts as $related)
                         <div
                             class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-                            <a href="{{ route('products.show', $related->id_produk) }}" class="flex flex-col h-full">
+                            <a href="{{ route('products.show', $related->slug) }}" class="flex flex-col h-full">
                                 <!-- Product Image -->
                                 <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
                                     @php

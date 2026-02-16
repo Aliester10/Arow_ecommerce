@@ -1,43 +1,61 @@
 @extends('layouts.admin')
 
-@section('header_title', 'Daftar Produk')
+
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Daftar Produk</h1>
-            <a href="{{ route('admin.products.create') }}" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">
-                <i class="fas fa-plus mr-2"></i> Tambah Produk
-            </a>
-        </div>
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-title-md2 font-bold text-black dark:text-white">
+            Daftar Produk
+        </h2>
+        <a href="{{ route('admin.products.create') }}"
+            class="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
+            <i class="fas fa-plus mr-2"></i> Tambah Produk
+        </a>
+    </div>
 
+    <div
+        class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-gray-700 dark:bg-gray-800 sm:px-7.5 xl:pb-1">
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+            <div
+                class="flex w-full border-l-6 border-[#34D399] bg-[#34D399] bg-opacity-[15%] px-7 py-8 shadow-md dark:bg-[#1B1B24] dark:bg-opacity-30 md:p-9 mb-4">
+                <div class="mr-5 flex h-9 w-9 items-center justify-center rounded-lg bg-[#34D399]">
+                    <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15.2984 0.826822L15.2868 0.811827L15.2741 0.797751C14.9173 0.401867 14.3238 0.400754 13.9657 0.794406L5.91888 9.45376L2.05667 5.2868C1.69856 4.89287 1.10487 4.89389 0.747996 5.28987C0.417335 5.65675 0.417335 6.22337 0.747996 6.59026L0.747959 6.59029L0.752701 6.59541L4.86742 11.0348C5.14445 11.3405 5.52858 11.5 5.89581 11.5C6.29242 11.5 6.65178 11.3068 6.91894 10.979L15.2925 1.97485C15.6257 1.6091 15.6269 1.04057 15.2984 0.826822Z"
+                            fill="white" stroke="white"></path>
+                    </svg>
+                </div>
+                <div class="w-full">
+                    <h5 class="mb-3 text-lg font-bold text-black dark:text-[#34D399]">
+                        Sukses
+                    </h5>
+                    <p class="text-base leading-relaxed text-body">
+                        {{ session('success') }}
+                    </p>
+                </div>
             </div>
         @endif
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full leading-normal">
+        <div class="max-w-full overflow-x-auto">
+            <table class="w-full table-auto">
                 <thead>
-                    <tr>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <tr class="bg-gray-2 text-left dark:bg-gray-700">
+                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                             Gambar
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
                             Nama Produk
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                             Kategori
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Stok
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Status
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Aksi
                         </th>
                     </tr>
@@ -45,42 +63,49 @@
                 <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div class="flex-shrink-0 w-16 h-16">
+                            <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
+                                <div class="h-12.5 w-15 rounded-md">
                                     @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
-                                        <img class="w-full h-full object-cover rounded" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}" alt="{{ $product->nama_produk }}" />
+                                        <img class="h-full w-full object-cover rounded-md"
+                                            src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
+                                            alt="{{ $product->nama_produk }}" />
                                     @else
-                                        <div class="w-full h-full bg-gray-200 flex items-center justify-center rounded">
+                                        <div class="h-full w-full bg-gray-200 flex items-center justify-center rounded-md">
                                             <i class="fas fa-image text-gray-400"></i>
                                         </div>
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap font-medium">{{ $product->nama_produk }}</p>
-                                <p class="text-gray-600 whitespace-no-wrap text-xs">{{ $product->brand->nama_brand ?? '-' }}</p>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
+                                <h5 class="font-medium text-black dark:text-white">{{ $product->nama_produk }}</h5>
+                                <p class="text-sm">{{ $product->brand->nama_brand ?? '-' }}</p>
                             </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $product->subSubkategori->nama_sub_subkategori ?? '-' }}</p>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
+                                <p class="text-black dark:text-white">
+                                    {{ $product->subSubkategori->nama_sub_subkategori ?? '-' }}
+                                </p>
                             </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $product->stok_produk }}</p>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
+                                <p class="text-black dark:text-white">{{ $product->stok_produk }}</p>
                             </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <span class="relative inline-block px-3 py-1 font-semibold {{ $product->status_produk == 'aktif' ? 'text-green-900' : 'text-red-900' }} leading-tight">
-                                    <span aria-hidden="true" class="absolute inset-0 {{ $product->status_produk == 'aktif' ? 'bg-green-200' : 'bg-red-200' }} opacity-50 rounded-full"></span>
-                                    <span class="relative capitalize">{{ $product->status_produk }}</span>
-                                </span>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
+                                <p
+                                    class="inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium {{ $product->status_produk == 'aktif' ? 'bg-success text-success' : 'bg-danger text-danger' }}">
+                                    {{ $product->status_produk }}
+                                </p>
                             </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <a href="{{ route('admin.products.edit', $product->id_produk) }}" class="text-blue-600 hover:text-blue-900" title="Edit">
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
+                                <div class="flex items-center space-x-3.5">
+                                    <a href="{{ route('admin.products.edit', $product->id_produk) }}"
+                                        class="hover:text-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.products.destroy', $product->id_produk) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');" class="inline">
+                                    <form action="{{ route('admin.products.destroy', $product->id_produk) }}" method="POST"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');"
+                                        class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                        <button type="submit" class="hover:text-danger">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -89,7 +114,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                            <td colspan="6" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
                                 Tidak ada produk ditemukan.
                             </td>
                         </tr>
@@ -98,9 +123,8 @@
             </table>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 p-4">
             {{ $products->links() }}
         </div>
     </div>
-</div>
 @endsection

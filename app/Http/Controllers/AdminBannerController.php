@@ -23,17 +23,24 @@ class AdminBannerController extends Controller
     {
         $request->validate([
             'gambar_banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'type' => 'required|in:main,promo_large,promo_small',
+            'position' => 'integer|min:0',
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'link' => 'nullable|url',
         ]);
+
+        $data = $request->except('gambar_banner');
+        $data['active'] = $request->has('active');
 
         if ($request->hasFile('gambar_banner')) {
             $image = $request->file('gambar_banner');
             $imageName = time() . '_banner.' . $image->getClientOriginalExtension();
             Storage::disk('public')->putFileAs('images', $image, $imageName);
-
-            Banner::create([
-                'gambar_banner' => $imageName
-            ]);
+            $data['gambar_banner'] = $imageName;
         }
+
+        Banner::create($data);
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil ditambahkan!');
     }
@@ -49,23 +56,30 @@ class AdminBannerController extends Controller
         $banner = Banner::findOrFail($id);
 
         $request->validate([
-            'gambar_banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'gambar_banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'type' => 'required|in:main,promo_large,promo_small',
+            'position' => 'integer|min:0',
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'link' => 'nullable|url',
         ]);
+
+        $data = $request->except('gambar_banner');
+        $data['active'] = $request->has('active');
 
         if ($request->hasFile('gambar_banner')) {
             // Delete old image
-            if ($banner->gambar_banner) {
+            if ($banner->gambar_banner && Storage::disk('public')->exists('images/' . $banner->gambar_banner)) {
                 Storage::disk('public')->delete('images/' . $banner->gambar_banner);
             }
 
             $image = $request->file('gambar_banner');
             $imageName = time() . '_banner.' . $image->getClientOriginalExtension();
             Storage::disk('public')->putFileAs('images', $image, $imageName);
-
-            $banner->update([
-                'gambar_banner' => $imageName
-            ]);
+            $data['gambar_banner'] = $imageName;
         }
+
+        $banner->update($data);
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil diperbarui!');
     }

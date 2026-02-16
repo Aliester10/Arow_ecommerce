@@ -40,11 +40,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Public Products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
-    Route::post('/products/{id}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+    Route::post('/products/{slug}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
 
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -68,14 +68,36 @@ Route::middleware('auth')->group(function () {
 });
 
 // Simple Admin Product Upload & Management
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('/', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    Route::get('/dashboard', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Global Settings
+    Route::get('/settings', [App\Http\Controllers\AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [App\Http\Controllers\AdminSettingsController::class, 'update'])->name('settings.update');
+
+    // Footer Links
+    Route::resource('footer_links', App\Http\Controllers\AdminFooterLinkController::class)->names('footer_links');
+
     Route::get('/products', [App\Http\Controllers\AdminProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [App\Http\Controllers\AdminProductController::class, 'create'])->name('products.create');
     Route::post('/products', [App\Http\Controllers\AdminProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [App\Http\Controllers\AdminProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'destroy'])->name('products.destroy');
+
+    // Appearance Management
+    Route::prefix('appearance')->name('appearance.')->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('admin.appearance.header');
+        })->name('index');
+        Route::get('/header', [App\Http\Controllers\AdminAppearanceController::class, 'header'])->name('header');
+        Route::put('/header', [App\Http\Controllers\AdminAppearanceController::class, 'updateHeader'])->name('header.update');
+        Route::get('/footer', [App\Http\Controllers\AdminAppearanceController::class, 'footer'])->name('footer');
+        Route::put('/footer', [App\Http\Controllers\AdminAppearanceController::class, 'updateFooter'])->name('footer.update');
+    });
 
     // Admin Brand Management
     Route::get('/brands', [App\Http\Controllers\AdminBrandController::class, 'index'])->name('brands.index');

@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class UlasanController extends Controller
 {
-    public function store(Request $request, $id)
+    public function store(Request $request, $slug)
     {
         $request->validate([
             'rating_ulasan' => ['required', 'integer', 'min:1', 'max:5'],
             'komentar_ulasan' => ['nullable', 'string'],
         ]);
 
-        $product = Produk::findOrFail($id);
+        $product = Produk::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
         Ulasan::create([

@@ -37,12 +37,15 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories', 'brands'));
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user'])->findOrFail($id);
+        $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
         $relatedProducts = Produk::with('ulasan')
             ->where('id_sub_subkategori', $product->id_sub_subkategori)
-            ->where('id_produk', '!=', $id)
+            ->where('id_produk', '!=', $product->id_produk)
             ->take(4)
             ->get();
 

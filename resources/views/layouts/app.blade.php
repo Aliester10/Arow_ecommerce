@@ -12,7 +12,7 @@
 
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Topbar -->
-    <div class="text-white text-xs sm:text-sm py-2 hidden sm:block" style="background-color:#F7931E">
+    <div id="app-topbar" class="text-white text-xs sm:text-sm py-2 hidden sm:block" style="background-color:#F7931E">
         <div class="container mx-auto px-2 sm:px-4 flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center flex-wrap gap-2 sm:gap-4">
                 @if($perusahaan)
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header id="app-header" class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
             <div class="flex justify-between items-center gap-2 sm:gap-4">
                 <!-- Logo & Mobile Toggle -->
@@ -74,6 +74,7 @@
                             <input type="text" name="search" placeholder="Cari sekarang hanya di aro baskara era"
                                 class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full">
                             <button type="submit"
+                                class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm"
                                 class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm"
                                 style="background-color:#F7931E">
                                 <i class="fas fa-search"></i>
@@ -169,7 +170,7 @@
     </header>
 
     <!-- Content -->
-    <main class="min-h-screen py-6">
+    <main id="app-main" class="min-h-screen py-6">
         @yield('content')
     </main>
 
@@ -177,102 +178,147 @@
 
     <!-- Footer -->
     <!-- Footer -->
-    <footer class="bg-gray-50 border-t border-gray-200 pt-16 pb-12 text-gray-600 text-sm">
+    <footer id="app-footer" class="bg-gray-50 border-t border-gray-200 pt-16 pb-12 text-gray-600 text-sm">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row gap-12 lg:gap-20 mb-16">
                 <!-- Left Side: Brand & Info (Width ~30% on LG) -->
                 <div class="w-full lg:w-4/12 space-y-8">
                     <!-- Logo -->
                     <div class="mb-6">
-                        <img src="{{ asset('storage/images/logo/logo.png') }}" alt="Ayobelanja.co.id"
-                            class="h-12 md:h-16 object-contain">
+                        @if($perusahaan && $perusahaan->logo_perusahaan)
+                            <img src="{{ asset('storage/images/' . $perusahaan->logo_perusahaan) }}"
+                                alt="{{ $perusahaan->nama_perusahaan }}" class="h-12 md:h-16 object-contain">
+                        @else
+                            <h2 class="text-2xl font-bold">{{ $perusahaan->nama_perusahaan ?? 'Arow Ecommerce' }}</h2>
+                        @endif
                     </div>
 
                     <!-- Address & Contact Grid -->
                     <div class="space-y-4 text-sm text-gray-500 leading-relaxed">
-                        <p>
-                            Jl. TM. Slamet Riyadi Raya No. 9 RT.1 RW.4 Kb. Manggis.
-                            Kec. Matraman, Daerah Khusus Ibukota Jakarta 13150
-                        </p>
+                        @if($perusahaan->alamat_perusahaan)
+                            <p>{{ $perusahaan->alamat_perusahaan }}</p>
+                        @endif
+
+                        @if($perusahaan->footer_description)
+                            <p>{{ $perusahaan->footer_description }}</p>
+                        @endif
 
                         <div class="space-y-3">
                             <div class="flex items-start gap-4">
                                 <div class="w-6 flex justify-center"><i
                                         class="fas fa-phone-alt mt-1 text-orange-500"></i></div>
-                                <span>(021) 38835187 / +62 822-8888-6009</span>
+                                <span>
+                                    {{ $perusahaan->notelp_perusahaan ?? '-' }}
+                                    @if($perusahaan->phone_alt) / {{ $perusahaan->phone_alt }} @endif
+                                </span>
                             </div>
                             <div class="flex items-center gap-4">
                                 <div class="w-6 flex justify-center"><i class="fas fa-envelope text-orange-500"></i>
                                 </div>
-                                <span>sales@ayobelanja.co.id</span>
+                                <span>
+                                    {{ $perusahaan->email_perusahaan ?? '-' }}
+                                    @if($perusahaan->email_sales) / {{ $perusahaan->email_sales }} @endif
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Member of -->
-                    <div class="pt-4 border-t border-gray-200">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Member of</p>
-                        <img src="{{ asset('storage/images/logoaro.png') }}" alt="ARO Baskara Esa"
-                            class="h-10 object-contain grayscale hover:grayscale-0 transition duration-300">
-                    </div>
+                    @if($perusahaan->member_of_image)
+                        <div class="pt-4 border-t border-gray-200">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Member of</p>
+                            <img src="{{ asset('storage/images/' . $perusahaan->member_of_image) }}" alt="Member Of"
+                                class="h-10 object-contain grayscale hover:grayscale-0 transition duration-300">
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Right Side: Links Grid (Width ~70% on LG) -->
                 <div class="w-full lg:w-8/12">
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-                        <!-- Col 1: Layanan Pelanggan -->
-                        <div class="space-y-6">
-                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Layanan Pelanggan</h4>
-                            <ul class="space-y-4 text-sm text-gray-500">
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Bantuan</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Metode Pembayaran</a>
-                                </li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Lacak Pesanan</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Kebijakan Privasi</a>
-                                </li>
-                            </ul>
-                        </div>
 
-                        <!-- Col 2: Pengiriman -->
-                        <div class="space-y-6">
-                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Pengiriman</h4>
-                            <div class="flex items-center gap-4 flex-wrap">
-                                <img src="{{ asset('storage/images/tiki.png') }}" alt="TIKI"
-                                    class="h-8 object-contain grayscale hover:grayscale-0 transition">
-                                <img src="{{ asset('storage/images/JNE.png') }}" alt="JNE"
-                                    class="h-8 object-contain grayscale hover:grayscale-0 transition">
-                            </div>
-                        </div>
+                        <!-- Dynamic Footer Links -->
+                        @if($layoutFooterLinks->isNotEmpty())
+                            @foreach($layoutFooterLinks as $title => $links)
+                                <div class="space-y-6">
+                                    <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">{{ $title }}</h4>
+                                    @if(strtoupper($title) === 'PENGIRIMAN')
+                                        <div class="flex flex-col gap-4">
+                                            @foreach($links as $link)
+                                                <a href="{{ $link->url }}" class="hover:opacity-80 transition-opacity"
+                                                    title="{{ $link->label }}">
+                                                    @if($link->type === 'image' && $link->image_path)
+                                                        <img src="{{ asset('storage/footer_images/' . $link->image_path) }}"
+                                                            alt="{{ $link->label }}" class="h-8 w-auto object-contain">
+                                                    @else
+                                                        {{ $link->label }}
+                                                    @endif
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <ul class="space-y-4 text-sm text-gray-500">
+                                            @foreach($links as $link)
+                                                <li>
+                                                    <a href="{{ $link->url }}" class="hover:text-orange-600 transition-colors block">
+                                                        @if($link->type === 'image' && $link->image_path)
+                                                            <img src="{{ asset('storage/footer_images/' . $link->image_path) }}"
+                                                                alt="{{ $link->label }}" class="h-8 object-contain">
+                                                        @else
+                                                            {{ $link->label }}
+                                                        @endif
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
 
-                        <!-- Col 3: Jelajahi -->
-                        <div class="space-y-6">
-                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Jelajahi</h4>
-                            <ul class="space-y-4 text-sm text-gray-500">
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Tentang Kami</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Karir</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Blog</a></li>
-                                <li><a href="#" class="hover:text-orange-600 transition-colors">Mitra</a></li>
-                            </ul>
-                        </div>
-
-                        <!-- Col 4: Ikuti Kami -->
+                        <!-- Social Media (Fixed Column or Appended) -->
                         <div class="space-y-6">
                             <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Ikuti Kami</h4>
                             <div class="flex space-x-3">
-                                <a href="#"
-                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                    <i class="fab fa-facebook-f text-sm"></i>
-                                </a>
-                                <a href="#"
-                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                    <i class="fab fa-instagram text-sm"></i>
-                                </a>
-                                <a href="#"
-                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                    <i class="fab fa-twitter text-sm"></i>
-                                </a>
+                                @if($perusahaan->facebook)
+                                    <a href="{{ $perusahaan->facebook }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-facebook-f text-sm"></i>
+                                    </a>
+                                @endif
+                                @if($perusahaan->instagram)
+                                    <a href="{{ $perusahaan->instagram }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-instagram text-sm"></i>
+                                    </a>
+                                @endif
+                                @if($perusahaan->twitter)
+                                    <a href="{{ $perusahaan->twitter }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-twitter text-sm"></i>
+                                    </a>
+                                @endif
+                                @if($perusahaan->linkedin)
+                                    <a href="{{ $perusahaan->linkedin }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-linkedin-in text-sm"></i>
+                                    </a>
+                                @endif
+                                @if($perusahaan->tiktok)
+                                    <a href="{{ $perusahaan->tiktok }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-tiktok text-sm"></i>
+                                    </a>
+                                @endif
+                                @if($perusahaan->youtube)
+                                    <a href="{{ $perusahaan->youtube }}" target="_blank"
+                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                        <i class="fab fa-youtube text-sm"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -280,7 +326,8 @@
             <!-- Bottom Copyright -->
             <div class="text-center pt-8 border-t border-gray-200 mt-8">
                 <p class="text-gray-500 text-xs">
-                    &copy; {{ date('Y') }} <strong>Ayobelanja.co.id</strong> | Member of PT. Aro Baskara Esa. All rights
+                    &copy; {{ date('Y') }} <strong>{{ $perusahaan->nama_perusahaan ?? 'Arow Ecommerce' }}</strong> |
+                    Member of PT. Aro Baskara Esa. All rights
                     reserved.
                 </p>
             </div>

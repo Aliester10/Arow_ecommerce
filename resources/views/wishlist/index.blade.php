@@ -22,7 +22,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($wishlists as $item)
                             <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition">
-                                <a href="{{ route('products.show', $item->produk->id_produk) }}" class="block">
+                                <a href="{{ route('products.show', $item->produk->slug) }}" class="block">
                                     <div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
                                         @if($item->produk->gambar_produk && file_exists(public_path('storage/images/produk/' . $item->produk->gambar_produk)))
                                             <img src="{{ asset('storage/images/produk/' . $item->produk->gambar_produk) }}"
@@ -38,13 +38,13 @@
                                     <div class="text-xs text-gray-500 mb-1 line-clamp-1">
                                         {{ $item->produk->brand->nama_brand ?? 'Brand' }}
                                     </div>
-                                    <a href="{{ route('products.show', $item->produk->id_produk) }}"
+                                    <a href="{{ route('products.show', $item->produk->slug) }}"
                                         class="block text-sm font-medium text-gray-800 hover:text-orange-600 line-clamp-2 min-h-[2.5rem]">
                                         {{ $item->produk->nama_produk }}
                                     </a>
 
                                     <div class="mt-4 flex gap-2">
-                                        <a href="{{ route('products.show', $item->produk->id_produk) }}"
+                                        <a href="{{ route('products.show', $item->produk->slug) }}"
                                             class="flex-1 text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
                                             Lihat
                                         </a>

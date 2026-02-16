@@ -12,7 +12,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $banners = Banner::all();
+        $mainBanners = Banner::where('type', 'main')->where('active', true)->orderBy('position')->get();
+        $promoLarge = Banner::where('type', 'promo_large')->where('active', true)->orderBy('position')->first();
+        $promoSmall = Banner::where('type', 'promo_small')->where('active', true)->orderBy('position')->take(2)->get();
         $kategoris = Kategori::all();
         $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan'])->inRandomOrder()->take(6)->get();
         $brands = Brand::all();
@@ -27,6 +29,6 @@ class HomeController extends Controller
                 ->get();
         }
 
-        return view('home', compact('banners', 'kategoris', 'products', 'brands', 'productsByBrand'));
+        return view('home', compact('mainBanners', 'promoLarge', 'promoSmall', 'kategoris', 'products', 'brands', 'productsByBrand'));
     }
 }

@@ -27,27 +27,27 @@
                 <!-- Slider Container -->
                 <div id="bannerSlider" class="h-full flex transition-transform duration-500 ease-in-out">
                     
-                    @forelse($banners as $banner)
+                    @forelse($mainBanners as $banner)
                         <div class="w-full h-full flex-shrink-0 relative">
+                            <a href="{{ $banner->link ?? '#' }}" class="block w-full h-full">
+                                @if(Str::startsWith($banner->gambar_banner, 'http'))
+                                    <img src="{{ $banner->gambar_banner }}" 
+                                        alt="{{ $banner->title ?? 'Banner' }}"
+                                        class="w-full h-full object-cover">
 
-                            @if(Str::startsWith($banner->gambar_banner, 'http'))
-                                <img src="{{ $banner->gambar_banner }}" 
-                                     alt="Banner"
-                                     class="w-full h-full object-cover">
-
-                            @elseif(file_exists(public_path('storage/images/' . $banner->gambar_banner)))
-                                <img src="{{ asset('storage/images/' . $banner->gambar_banner) }}" 
-                                     alt="Banner"
-                                     class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
-                                    <div class="text-center px-4">
-                                        <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
-                                        <p class="font-bold text-sm sm:text-xl">{{ __('messages.banner_image') }}</p>
+                                @elseif(file_exists(public_path('storage/images/' . $banner->gambar_banner)))
+                                    <img src="{{ asset('storage/images/' . $banner->gambar_banner) }}" 
+                                        alt="{{ $banner->title ?? 'Banner' }}"
+                                        class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
+                                        <div class="text-center px-4">
+                                            <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
+                                            <p class="font-bold text-sm sm:text-xl">{{ __('messages.banner_image') }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
-
+                                @endif
+                            </a>
                         </div>
                     @empty
                         <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
@@ -61,7 +61,7 @@
                 </div>
 
                 <!-- Controls -->
-                @if($banners->count() > 1)
+                @if($mainBanners->count() > 1)
                 <button id="prevBtn"
                         class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-1 sm:p-2 rounded-full shadow-md transition text-xs sm:text-base">
                     <i class="fas fa-chevron-left"></i>
@@ -102,7 +102,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
             @forelse($products as $product)
                 <div class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-md group hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skeleton-container>
-                    <a href="{{ route('products.show', $product->id_produk) }}" class="flex flex-col h-full">
+                    <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full">
                         <!-- Product Image -->
                         <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
                             <!-- Skeleton Loading -->
@@ -198,26 +198,64 @@
     <!-- ================= ROW 2.5 : PROMO BANNERS ================= -->
     <div class="mb-8 md:mb-12">
         <div class="flex flex-col md:flex-row gap-3 md:gap-4" style="min-height: 200px;">
-            <!-- Left: Large Banner (gambar1) -->
-            <a href="#" class="block md:w-3/5 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                <img src="{{ asset('gambar1.png') }}" 
-                     alt="Waspada Penipuan Online" 
-                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                     style="min-height: 200px;">
-            </a>
+            <!-- Left: Large Banner (promo_large) -->
+            @if($promoLarge)
+                <a href="{{ $promoLarge->link ?? '#' }}" class="block md:w-3/5 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                     @if(file_exists(public_path('storage/images/' . $promoLarge->gambar_banner)))
+                        <img src="{{ asset('storage/images/' . $promoLarge->gambar_banner) }}" 
+                             alt="{{ $promoLarge->title ?? 'Promo' }}" 
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                             style="min-height: 200px;">
+                     @else
+                        <div class="w-full h-full bg-gray-200 flex items-center justify-center min-h-[200px]">
+                            <span class="text-gray-400">Image Not Found</span>
+                        </div>
+                     @endif
+                </a>
+            @else
+                 <!-- Placeholder if no promo large -->
+                 <div class="md:w-3/5 rounded-xl bg-gray-100 flex items-center justify-center min-h-[200px]">
+                    <span class="text-gray-400">Promo Banner Large</span>
+                 </div>
+            @endif
 
-            <!-- Right: Two Stacked Banners (gambar2 + gambar3) -->
+            <!-- Right: Two Stacked Banners (promo_small) -->
             <div class="md:w-2/5 flex flex-row stack-md gap-3 md:gap-4">
-                <a href="#" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                    <img src="{{ asset('gambar2.png') }}" 
-                         alt="Jangan Lewatkan Penawaran Terbaik" 
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
-                </a>
-                <a href="#" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                    <img src="{{ asset('gambar3.png') }}" 
-                         alt="Pahami Cara Berbelanja dengan Mudah" 
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
-                </a>
+                @if(isset($promoSmall[0]))
+                    <a href="{{ $promoSmall[0]->link ?? '#' }}" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                         @if(file_exists(public_path('storage/images/' . $promoSmall[0]->gambar_banner)))
+                            <img src="{{ asset('storage/images/' . $promoSmall[0]->gambar_banner) }}" 
+                                 alt="{{ $promoSmall[0]->title ?? 'Promo' }}" 
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                         @else
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-400">Image Not Found</span>
+                            </div>
+                         @endif
+                    </a>
+                @else
+                    <div class="flex-1 rounded-xl bg-gray-100 flex items-center justify-center">
+                         <span class="text-gray-400">Promo Small 1</span>
+                    </div>
+                @endif
+
+                @if(isset($promoSmall[1]))
+                    <a href="{{ $promoSmall[1]->link ?? '#' }}" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                         @if(file_exists(public_path('storage/images/' . $promoSmall[1]->gambar_banner)))
+                            <img src="{{ asset('storage/images/' . $promoSmall[1]->gambar_banner) }}" 
+                                 alt="{{ $promoSmall[1]->title ?? 'Promo' }}" 
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                         @else
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-400">Image Not Found</span>
+                            </div>
+                         @endif
+                    </a>
+                @else
+                    <div class="flex-1 rounded-xl bg-gray-100 flex items-center justify-center">
+                         <span class="text-gray-400">Promo Small 2</span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -390,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextBtn = document.getElementById('nextBtn');
 
     let index = 0;
-    const total = {{ $banners->count() }};
+    const total = {{ $mainBanners->count() }};
 
     if (total > 1) {
 
