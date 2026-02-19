@@ -21,4 +21,9 @@ class Quotation extends Model
     {
         return $this->belongsTo(Order::class, 'id_order');
     }
+
+    public function items()
+    {
+        return $this->hasMany(QuotationItem::class, 'id_quotation', 'id_quotation')->orderBy('sort_order');
+    }
 }

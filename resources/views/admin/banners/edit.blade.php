@@ -63,8 +63,8 @@
                                     <div class="relative z-20 bg-transparent dark:bg-form-input">
                                         <select name="type" required
                                             class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
-                                            <option value="main" {{ old('type', $banner->type) == 'main' ? 'selected' : '' }}>
-                                                Main Banner (Slider Utama)</option>
+                                            <option value="slider" {{ old('type', $banner->type) == 'slider' ? 'selected' : '' }}>
+                                                Slider Banner (Slider Utama)</option>
                                             <option value="promo_large" {{ old('type', $banner->type) == 'promo_large' ? 'selected' : '' }}>Promo Large (Kiri)</option>
                                             <option value="promo_small" {{ old('type', $banner->type) == 'promo_small' ? 'selected' : '' }}>Promo Small (Kanan)</option>
                                         </select>

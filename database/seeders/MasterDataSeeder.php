@@ -7,7 +7,8 @@ use App\Models\Kategori;
 use App\Models\Subkategori;
 use App\Models\Brand;
 use App\Models\Perusahaan;
-use App\Models\Banner;
+use App\Models\SliderBanner;
+use App\Models\PromoBanner;
 
 class MasterDataSeeder extends Seeder
 {
@@ -29,9 +30,22 @@ class MasterDataSeeder extends Seeder
         ]);
 
         // Banners
-        Banner::create(['gambar_banner' => 'banner1.jpg']);
-        Banner::create(['gambar_banner' => 'banner2.jpg']);
-        Banner::create(['gambar_banner' => 'banner3.jpg']);
+        SliderBanner::create([
+            'gambar_slider_banner' => 'banner1.jpg',
+            'position' => 1,
+            'active' => true
+        ]);
+        SliderBanner::create([
+            'gambar_slider_banner' => 'banner2.jpg',
+            'position' => 2,
+            'active' => true
+        ]);
+        PromoBanner::create([
+            'gambar_promo_banner' => 'banner3.jpg',
+            'position' => 1,
+            'link' => 'https://example.com/promo',
+            'active' => true
+        ]);
 
         // Brand
         $samsung = Brand::create([

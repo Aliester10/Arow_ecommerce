@@ -20,4 +20,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Order::class, 'id_order');
     }
+
+    public function paymentAccount()
+    {
+        return $this->belongsTo(PaymentAccount::class, 'payment_account_id', 'id');
+    }
 }

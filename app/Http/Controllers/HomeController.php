@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Produk;
-use App\Models\Banner;
+use App\Models\SliderBanner;
+use App\Models\PromoBanner;
 use App\Models\Kategori;
 use App\Models\Brand;
 
@@ -12,9 +13,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $mainBanners = Banner::where('type', 'main')->where('active', true)->orderBy('position')->get();
-        $promoLarge = Banner::where('type', 'promo_large')->where('active', true)->orderBy('position')->first();
-        $promoSmall = Banner::where('type', 'promo_small')->where('active', true)->orderBy('position')->take(2)->get();
+        $mainBanners = SliderBanner::where('active', true)->orderBy('position')->get();
+        $promoBanners = PromoBanner::with(['activePromoDetail'])->where('active', true)->get();
         $kategoris = Kategori::all();
         $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan'])->inRandomOrder()->take(6)->get();
         $brands = Brand::all();
@@ -29,6 +29,6 @@ class HomeController extends Controller
                 ->get();
         }
 
-        return view('home', compact('mainBanners', 'promoLarge', 'promoSmall', 'kategoris', 'products', 'brands', 'productsByBrand'));
+        return view('home', compact('mainBanners', 'promoBanners', 'kategoris', 'products', 'brands', 'productsByBrand'));
     }
 }

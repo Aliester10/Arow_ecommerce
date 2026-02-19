@@ -62,15 +62,31 @@
                         Produk Pesanan
                     </div>
                     <div class="divide-y divide-gray-100">
-                        @foreach($order->items as $item)
+                        @php
+                            $quotationItems = $order->quotation->items ?? collect();
+                            $rows = $quotationItems->count() > 0 ? $quotationItems : $order->items;
+                        @endphp
+
+                        @foreach($rows as $item)
+                            @php
+                                $name = isset($item->id_quotation)
+                                    ? ($item->product_name ?? ($item->product->nama_produk ?? '-'))
+                                    : ($item->produk->nama_produk ?? '-');
+                                $qty = (int) ($item->qty ?? 0);
+                                $price = (float) ($item->price ?? 0);
+                                $desc = isset($item->id_quotation) ? ($item->description ?? null) : null;
+                            @endphp
                             <div class="p-6 flex items-center justify-between">
                                 <div>
-                                    <div class="font-medium text-gray-800">{{ $item->produk->nama_produk }}</div>
-                                    <div class="text-sm text-gray-500">{{ $item->qty }} x Rp
-                                        {{ number_format($item->price, 0, ',', '.') }}</div>
+                                    <div class="font-medium text-gray-800">{{ $name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $qty }} x Rp
+                                        {{ number_format($price, 0, ',', '.') }}</div>
+                                    @if(!empty($desc))
+                                        <div class="text-xs text-gray-500 mt-1">{{ $desc }}</div>
+                                    @endif
                                 </div>
                                 <div class="font-bold text-gray-800">Rp
-                                    {{ number_format($item->qty * $item->price, 0, ',', '.') }}</div>
+                                    {{ number_format($qty * $price, 0, ',', '.') }}</div>
                             </div>
                         @endforeach
                     </div>

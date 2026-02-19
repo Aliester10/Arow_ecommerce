@@ -29,25 +29,23 @@
                     
                     @forelse($mainBanners as $banner)
                         <div class="w-full h-full flex-shrink-0 relative">
-                            <a href="{{ $banner->link ?? '#' }}" class="block w-full h-full">
-                                @if(Str::startsWith($banner->gambar_banner, 'http'))
-                                    <img src="{{ $banner->gambar_banner }}" 
-                                        alt="{{ $banner->title ?? 'Banner' }}"
-                                        class="w-full h-full object-cover">
+                            @if(Str::startsWith($banner->gambar_slider_banner, 'http'))
+                                <img src="{{ $banner->gambar_slider_banner }}" 
+                                    alt="{{ $banner->title ?? 'Banner' }}"
+                                    class="w-full h-full object-cover">
 
-                                @elseif(file_exists(public_path('storage/images/' . $banner->gambar_banner)))
-                                    <img src="{{ asset('storage/images/' . $banner->gambar_banner) }}" 
-                                        alt="{{ $banner->title ?? 'Banner' }}"
-                                        class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
-                                        <div class="text-center px-4">
-                                            <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
-                                            <p class="font-bold text-sm sm:text-xl">{{ __('messages.banner_image') }}</p>
-                                        </div>
+                            @elseif(file_exists(public_path('storage/images/' . $banner->gambar_slider_banner)))
+                                <img src="{{ asset('storage/images/' . $banner->gambar_slider_banner) }}" 
+                                    alt="{{ $banner->title ?? 'Banner' }}"
+                                    class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
+                                    <div class="text-center px-4">
+                                        <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
+                                        <p class="font-bold text-sm sm:text-xl">{{ __('messages.banner_image') }}</p>
                                     </div>
-                                @endif
-                            </a>
+                                </div>
+                            @endif
                         </div>
                     @empty
                         <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
@@ -189,76 +187,143 @@
     </div>
     <!-- ================= END ROW 2 ================= -->
 
-    <!-- Custom Style for Banner Stacking -->
-    <style>
-        @media (min-width: 768px) {
-            .stack-md { flex-direction: column !important; }
-        }
-    </style>
-    <!-- ================= ROW 2.5 : PROMO BANNERS ================= -->
-    <div class="mb-8 md:mb-12">
-        <div class="flex flex-col md:flex-row gap-3 md:gap-4" style="min-height: 200px;">
-            <!-- Left: Large Banner (promo_large) -->
-            @if($promoLarge)
-                <a href="{{ $promoLarge->link ?? '#' }}" class="block md:w-3/5 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                     @if(file_exists(public_path('storage/images/' . $promoLarge->gambar_banner)))
-                        <img src="{{ asset('storage/images/' . $promoLarge->gambar_banner) }}" 
-                             alt="{{ $promoLarge->title ?? 'Promo' }}" 
-                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                             style="min-height: 200px;">
-                     @else
-                        <div class="w-full h-full bg-gray-200 flex items-center justify-center min-h-[200px]">
-                            <span class="text-gray-400">Image Not Found</span>
+    <!-- ================= ROW 2.5 : DYNAMIC PROMO BANNERS ================= -->
+    @if($promoBanners->count() > 0)
+        <div class="mb-8 md:mb-12">
+            @php
+                $bannerCount = $promoBanners->count();
+            @endphp
+            
+            @if($bannerCount == 1)
+                <!-- 1 Banner: Full Width -->
+                <div class="w-full" style="height: 400px;">
+                    @foreach($promoBanners as $banner)
+                        <a href="{{ $banner->activePromoDetail ? route('informasi.show', $banner->activePromoDetail->id_promo_detail) : ($banner->link ?? '#') }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            @if(file_exists(public_path('storage/images/' . $banner->gambar_promo_banner)))
+                                <img src="{{ asset('storage/images/' . $banner->gambar_promo_banner) }}" 
+                                     alt="{{ $banner->title ?? 'Informasi' }}" 
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                     style="height: 400px;">
+                            @else
+                                <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 400px;">
+                                    <span class="text-gray-400">Image Not Found</span>
+                                </div>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
+            
+            @elseif($bannerCount == 2)
+                <!-- 2 Banners: Side by Side -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4" style="min-height: 400px;">
+                    @foreach($promoBanners as $banner)
+                        <div class="h-full">
+                            <a href="{{ $banner->activePromoDetail ? route('informasi.show', $banner->activePromoDetail->id_promo_detail) : ($banner->link ?? '#') }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                                @if(file_exists(public_path('storage/images/' . $banner->gambar_promo_banner)))
+                                    <img src="{{ asset('storage/images/' . $banner->gambar_promo_banner) }}" 
+                                         alt="{{ $banner->title ?? 'Informasi' }}" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                         style="height: 400px;">
+                                @else
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 400px;">
+                                        <span class="text-gray-400">Image Not Found</span>
+                                    </div>
+                                @endif
+                            </a>
                         </div>
-                     @endif
-                </a>
+                    @endforeach
+                </div>
+            
+            @elseif($bannerCount == 3)
+                <!-- 3 Banners: 1 Large + 2 Small -->
+                <div class="flex flex-col md:flex-row gap-3 md:gap-4" style="min-height: 400px;">
+                    <!-- First Banner (Large) -->
+                    @php
+                        $firstBanner = $promoBanners->first();
+                    @endphp
+                    <div class="md:w-3/5 h-full">
+                        <a href="{{ $firstBanner->link ?? '#' }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            @if(file_exists(public_path('storage/images/' . $firstBanner->gambar_promo_banner)))
+                                <img src="{{ asset('storage/images/' . $firstBanner->gambar_promo_banner) }}" 
+                                     alt="{{ $firstBanner->title ?? 'Promo' }}" 
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                     style="height: 400px;">
+                            @else
+                                <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 400px;">
+                                    <span class="text-gray-400">Image Not Found</span>
+                                </div>
+                            @endif
+                        </a>
+                    </div>
+                    
+                    <!-- Last 2 Banners (Small) -->
+                    <div class="md:w-2/5 h-full flex flex-col gap-3 md:gap-4">
+                        @php
+                            $smallBanners = $promoBanners->slice(1);
+                        @endphp
+                        @foreach($smallBanners as $banner)
+                            <div class="flex-1 h-full">
+                                <a href="{{ $banner->activePromoDetail ? route('informasi.show', $banner->activePromoDetail->id_promo_detail) : ($banner->link ?? '#') }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                                    @if(file_exists(public_path('storage/images/' . $banner->gambar_promo_banner)))
+                                        <img src="{{ asset('storage/images/' . $banner->gambar_promo_banner) }}" 
+                                             alt="{{ $banner->title ?? 'Informasi' }}" 
+                                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                             style="height: 193.5px;">
+                                    @else
+                                        <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 193.5px;">
+                                            <span class="text-gray-400">Image Not Found</span>
+                                        </div>
+                                    @endif
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            
+            @elseif($bannerCount == 4)
+                <!-- 4 Banners: 2x2 Grid -->
+                <div class="grid grid-cols-2 gap-3 md:gap-4" style="min-height: 400px;">
+                    @foreach($promoBanners as $banner)
+                        <div class="h-full">
+                            <a href="{{ $banner->activePromoDetail ? route('informasi.show', $banner->activePromoDetail->id_promo_detail) : ($banner->link ?? '#') }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                                @if(file_exists(public_path('storage/images/' . $banner->gambar_promo_banner)))
+                                    <img src="{{ asset('storage/images/' . $banner->gambar_promo_banner) }}" 
+                                         alt="{{ $banner->title ?? 'Informasi' }}" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                         style="height: 193.5px;">
+                                @else
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 193.5px;">
+                                        <span class="text-gray-400">Image Not Found</span>
+                                    </div>
+                                @endif
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            
             @else
-                 <!-- Placeholder if no promo large -->
-                 <div class="md:w-3/5 rounded-xl bg-gray-100 flex items-center justify-center min-h-[200px]">
-                    <span class="text-gray-400">Promo Banner Large</span>
-                 </div>
+                <!-- More than 4 Banners: Grid Layout -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                    @foreach($promoBanners as $banner)
+                        <div class="h-full">
+                            <a href="{{ $banner->activePromoDetail ? route('informasi.show', $banner->activePromoDetail->id_promo_detail) : ($banner->link ?? '#') }}" class="block h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                                @if(file_exists(public_path('storage/images/' . $banner->gambar_promo_banner)))
+                                    <img src="{{ asset('storage/images/' . $banner->gambar_promo_banner) }}" 
+                                         alt="{{ $banner->title ?? 'Informasi' }}" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                                         style="height: 300px;">
+                                @else
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="height: 300px;">
+                                        <span class="text-gray-400">Image Not Found</span>
+                                    </div>
+                                @endif
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
             @endif
-
-            <!-- Right: Two Stacked Banners (promo_small) -->
-            <div class="md:w-2/5 flex flex-row stack-md gap-3 md:gap-4">
-                @if(isset($promoSmall[0]))
-                    <a href="{{ $promoSmall[0]->link ?? '#' }}" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                         @if(file_exists(public_path('storage/images/' . $promoSmall[0]->gambar_banner)))
-                            <img src="{{ asset('storage/images/' . $promoSmall[0]->gambar_banner) }}" 
-                                 alt="{{ $promoSmall[0]->title ?? 'Promo' }}" 
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
-                         @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <span class="text-gray-400">Image Not Found</span>
-                            </div>
-                         @endif
-                    </a>
-                @else
-                    <div class="flex-1 rounded-xl bg-gray-100 flex items-center justify-center">
-                         <span class="text-gray-400">Promo Small 1</span>
-                    </div>
-                @endif
-
-                @if(isset($promoSmall[1]))
-                    <a href="{{ $promoSmall[1]->link ?? '#' }}" class="block flex-1 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                         @if(file_exists(public_path('storage/images/' . $promoSmall[1]->gambar_banner)))
-                            <img src="{{ asset('storage/images/' . $promoSmall[1]->gambar_banner) }}" 
-                                 alt="{{ $promoSmall[1]->title ?? 'Promo' }}" 
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
-                         @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <span class="text-gray-400">Image Not Found</span>
-                            </div>
-                         @endif
-                    </a>
-                @else
-                    <div class="flex-1 rounded-xl bg-gray-100 flex items-center justify-center">
-                         <span class="text-gray-400">Promo Small 2</span>
-                    </div>
-                @endif
-            </div>
         </div>
-    </div>
+    @endif
     <!-- ================= END ROW 2.5 ================= -->
 
    <!-- ================= ROW 3 : OFFICIAL STORE ================= -->

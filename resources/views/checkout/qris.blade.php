@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold">Pembayaran QRIS</h1>
+            <h1 class="text-2xl font-bold">Pembayaran via WhatsApp</h1>
             <a href="{{ route('orders.show', $order->id_order) }}"
                 class="text-sm text-gray-600 hover:text-orange-600 flex items-center">
                 <i class="fas fa-receipt mr-2"></i> Lihat Detail Pesanan
@@ -19,7 +19,7 @@
                             <div class="text-lg font-bold text-gray-800">#{{ $order->id_order }}</div>
                             <div class="mt-4 text-sm text-gray-600">
                                 <div class="font-semibold text-gray-800 mb-1">Instruksi</div>
-                                <div>Scan QRIS di bawah ini menggunakan aplikasi pembayaran (e-wallet / m-banking).</div>
+                                <div>Silakan lakukan pembayaran dengan menghubungi admin melalui WhatsApp.</div>
                             </div>
                         </div>
 
@@ -34,16 +34,30 @@
 
                     <div class="mt-6 flex justify-center">
                         <div class="w-full max-w-sm border border-gray-200 rounded-xl p-6 bg-gray-50">
-                            <div
-                                class="aspect-square bg-white border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                <div class="text-center px-6">
-                                    <i class="fas fa-qrcode text-6xl text-gray-300"></i>
-                                    <div class="mt-3 text-sm text-gray-600">QRIS akan tampil di sini</div>
-                                    <div class="text-xs text-gray-400 mt-1">(placeholder)</div>
+                            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                                <div class="text-center">
+                                    <i class="fab fa-whatsapp text-6xl text-green-500"></i>
+                                    <div class="mt-3 text-sm text-gray-700 font-semibold">Lakukan pembayaran via WhatsApp</div>
+                                    <div class="text-xs text-gray-500 mt-1">Klik tombol di bawah untuk mengirim pesan otomatis.</div>
+                                </div>
+
+                                <div class="mt-5">
+                                    @if(!empty($waUrl))
+                                        <a href="{{ $waUrl }}" target="_blank" rel="noopener"
+                                            class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">
+                                            <i class="fab fa-whatsapp mr-2"></i> Hubungi via WhatsApp
+                                        </a>
+                                    @else
+                                        <button type="button" disabled
+                                            class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-gray-300 text-gray-600 font-semibold cursor-not-allowed">
+                                            <i class="fab fa-whatsapp mr-2"></i> Nomor WhatsApp belum diatur
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
+
                             <div class="mt-4 text-xs text-gray-500 text-center">
-                                Setelah pembayaran berhasil, status pesanan akan diperbarui.
+                                Setelah kamu mengirim pesan dan pembayaran dikonfirmasi, status pesanan akan diperbarui.
                             </div>
                         </div>
                     </div>

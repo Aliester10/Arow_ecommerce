@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\UlasanController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,15 +37,22 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Public Products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
+// Public Informasi Details
+Route::get('/informasi/{promoDetailId}', [App\Http\Controllers\PromoDetailController::class, 'show'])->name('informasi.show');
+
 // Protected Routes
 Route::middleware('auth')->group(function () {
     Route::post('/products/{slug}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -65,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/quotation/{id}/download', [OrderController::class, 'downloadQuotationExcel'])->name('checkout.quotation.download');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/upload-transfer-proof', [OrderController::class, 'uploadTransferProof'])->name('orders.uploadTransferProof');
 });
 
 // Simple Admin Product Upload & Management
@@ -73,6 +82,40 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
         return redirect()->route('admin.dashboard');
     });
     Route::get('/dashboard', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Payment Accounts
+    Route::get('/payment-accounts', [App\Http\Controllers\AdminPaymentAccountController::class, 'index'])->name('payment_accounts.index');
+    Route::get('/payment-accounts/create', [App\Http\Controllers\AdminPaymentAccountController::class, 'create'])->name('payment_accounts.create');
+    Route::post('/payment-accounts', [App\Http\Controllers\AdminPaymentAccountController::class, 'store'])->name('payment_accounts.store');
+    Route::get('/payment-accounts/{id}/edit', [App\Http\Controllers\AdminPaymentAccountController::class, 'edit'])->name('payment_accounts.edit');
+    Route::put('/payment-accounts/{id}', [App\Http\Controllers\AdminPaymentAccountController::class, 'update'])->name('payment_accounts.update');
+    Route::delete('/payment-accounts/{id}', [App\Http\Controllers\AdminPaymentAccountController::class, 'destroy'])->name('payment_accounts.destroy');
+
+    // Orders & Payment Confirmation
+    Route::get('/orders/transfer', [App\Http\Controllers\AdminOrderPaymentController::class, 'transferIndex'])->name('orders.transfer');
+    Route::get('/orders/quotation', [App\Http\Controllers\AdminOrderPaymentController::class, 'quotationIndex'])->name('orders.quotation');
+    Route::get('/orders/{id}', [App\Http\Controllers\AdminOrderPaymentController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/approve', [App\Http\Controllers\AdminOrderPaymentController::class, 'approvePayment'])->name('orders.approve');
+    Route::post('/orders/{id}/reject', [App\Http\Controllers\AdminOrderPaymentController::class, 'rejectPayment'])->name('orders.reject');
+
+    // Quotation Editor (Admin)
+    Route::get('/quotations/{orderId}/edit', [App\Http\Controllers\AdminQuotationController::class, 'edit'])->name('quotations.edit');
+    Route::put('/quotations/{orderId}', [App\Http\Controllers\AdminQuotationController::class, 'update'])->name('quotations.update');
+    Route::get('/quotations/{orderId}/download', [App\Http\Controllers\AdminQuotationController::class, 'downloadExcel'])->name('quotations.download');
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('admin.users.admins.index');
+        })->name('index');
+
+        Route::get('/admins', [App\Http\Controllers\AdminUserController::class, 'adminsIndex'])->name('admins.index');
+        Route::get('/admins/create', [App\Http\Controllers\AdminUserController::class, 'adminsCreate'])->name('admins.create');
+        Route::post('/admins', [App\Http\Controllers\AdminUserController::class, 'adminsStore'])->name('admins.store');
+
+        Route::get('/members', [App\Http\Controllers\AdminUserController::class, 'membersIndex'])->name('members.index');
+        Route::get('/members/create', [App\Http\Controllers\AdminUserController::class, 'membersCreate'])->name('members.create');
+        Route::post('/members', [App\Http\Controllers\AdminUserController::class, 'membersStore'])->name('members.store');
+    });
 
     // Global Settings
     Route::get('/settings', [App\Http\Controllers\AdminSettingsController::class, 'index'])->name('settings.index');
@@ -108,6 +151,33 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::delete('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'destroy'])->name('brands.destroy');
 
     // Admin Banner Management
+    // Slider Banner Routes (Display Only)
+    Route::get('/slider-banners', [App\Http\Controllers\AdminBannerController::class, 'sliderIndex'])->name('slider-banners.index');
+    Route::get('/slider-banners/create', [App\Http\Controllers\AdminBannerController::class, 'sliderCreate'])->name('slider-banners.create');
+    Route::post('/slider-banners', [App\Http\Controllers\AdminBannerController::class, 'sliderStore'])->name('slider-banners.store');
+    Route::get('/slider-banners/{id}/edit', [App\Http\Controllers\AdminBannerController::class, 'sliderEdit'])->name('slider-banners.edit');
+    Route::put('/slider-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'sliderUpdate'])->name('slider-banners.update');
+    Route::delete('/slider-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'sliderDestroy'])->name('slider-banners.destroy');
+
+    // Promo Banner Routes (Clickable with Links)
+    Route::get('/promo-banners', [App\Http\Controllers\AdminBannerController::class, 'promoIndex'])->name('promo-banners.index');
+    Route::get('/promo-banners/create', [App\Http\Controllers\AdminBannerController::class, 'promoCreate'])->name('promo-banners.create');
+    Route::post('/promo-banners', [App\Http\Controllers\AdminBannerController::class, 'promoStore'])->name('promo-banners.store');
+    Route::get('/promo-banners/{id}/edit', [App\Http\Controllers\AdminBannerController::class, 'promoEdit'])->name('promo-banners.edit');
+    Route::put('/promo-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'promoUpdate'])->name('promo-banners.update');
+    Route::delete('/promo-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'promoDestroy'])->name('promo-banners.destroy');
+
+    // Promo Details Routes
+    Route::get('/promo-details', [App\Http\Controllers\AdminPromoDetailController::class, 'index'])->name('promo-details.index');
+    Route::get('/promo-details/banner/{promoBannerId}', [App\Http\Controllers\AdminPromoDetailController::class, 'bannerIndex'])->name('promo-details.banner-index');
+    Route::get('/promo-details/{promoBannerId}/create', [App\Http\Controllers\AdminPromoDetailController::class, 'create'])->name('promo-details.create');
+    Route::post('/promo-details/{promoBannerId}', [App\Http\Controllers\AdminPromoDetailController::class, 'store'])->name('promo-details.store');
+    Route::get('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'show'])->name('promo-details.show');
+    Route::get('/promo-details/{promoBannerId}/{promoDetailId}/edit', [App\Http\Controllers\AdminPromoDetailController::class, 'edit'])->name('promo-details.edit');
+    Route::put('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'update'])->name('promo-details.update');
+    Route::delete('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'destroy'])->name('promo-details.destroy');
+
+    // Legacy Banner Routes (for backward compatibility)
     Route::get('/banners', [App\Http\Controllers\AdminBannerController::class, 'index'])->name('banners.index');
     Route::get('/banners/create', [App\Http\Controllers\AdminBannerController::class, 'create'])->name('banners.create');
     Route::post('/banners', [App\Http\Controllers\AdminBannerController::class, 'store'])->name('banners.store');

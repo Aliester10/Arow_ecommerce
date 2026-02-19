@@ -13,6 +13,25 @@ class MenuHelper
                 'path' => '/admin/dashboard',
             ],
             [
+                'icon' => 'tables',
+                'name' => 'Rekening Pembayaran',
+                'path' => '/admin/payment-accounts',
+            ],
+            [
+                'icon' => 'task',
+                'name' => 'Orders',
+                'subItems' => [
+                    [
+                        'name' => 'Order Langsung',
+                        'path' => '/admin/orders/transfer',
+                    ],
+                    [
+                        'name' => 'Order Quotation',
+                        'path' => '/admin/orders/quotation',
+                    ],
+                ],
+            ],
+            [
                 'icon' => 'ecommerce',
                 'name' => 'Kelola Produk',
                 'path' => '/admin/products',
@@ -24,8 +43,33 @@ class MenuHelper
             ],
             [
                 'icon' => 'images',
-                'name' => 'Kelola Banner',
-                'path' => '/admin/banners',
+                'name' => 'Slider Banner',
+                'path' => '/admin/slider-banners',
+            ],
+            [
+                'icon' => 'charts',
+                'name' => 'Informasi Banner',
+                'path' => '/admin/promo-banners',
+            ],
+            [
+                'icon' => 'user-profile',
+                'name' => 'Semua User',
+                'path' => '/admin/users',
+                'subItems' => [
+                    [
+                        'name' => 'Semua Admin',
+                        'path' => '/admin/users/admins',
+                    ],
+                    [
+                        'name' => 'Semua Member',
+                        'path' => '/admin/users/members',
+                    ],
+                ],
+            ],
+            [
+                'icon' => 'task',
+                'name' => 'Detail Informasi',
+                'path' => '/admin/promo-details',
             ],
             [
                 'icon' => 'pages',

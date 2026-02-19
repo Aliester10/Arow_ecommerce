@@ -131,7 +131,7 @@
                                         <a href="{{ route('orders.index') }}"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Pesanan
                                             Saya</a>
-                                        <a href="#"
+                                        <a href="{{ route('profile.show') }}"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Profil</a>
                                         <div class="border-t border-gray-100 my-1"></div>
                                         <form method="POST" action="{{ route('logout') }}">

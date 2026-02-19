@@ -117,9 +117,9 @@
                             <div class="text-sm text-gray-500 mt-1">Silakan pilih metode yang kamu inginkan.</div>
                         </div>
                         <div class="p-5 space-y-3">
-                            <a href="{{ route('checkout.index', ['method' => 'qris']) }}"
+                            <a href="{{ route('checkout.index', ['method' => 'transfer']) }}"
                                 class="block w-full px-4 py-3 rounded-lg border border-orange-600 text-orange-600 font-bold hover:bg-orange-50 transition text-center">
-                                Langsung Bayar (QRIS)
+                                Langsung Bayar (Transfer Bank)
                             </a>
                             <a href="{{ route('checkout.index', ['method' => 'quotation']) }}"
                                 class="block w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition text-center">

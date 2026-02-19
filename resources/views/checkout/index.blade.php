@@ -84,19 +84,8 @@
                         <div class="space-y-3">
                             @php
                                 $selected = $selectedMethod ?? null;
-                                $defaultMethod = in_array($selected, ['qris', 'quotation'], true) ? $selected : 'qris';
+                                $defaultMethod = in_array($selected, ['quotation', 'transfer'], true) ? $selected : 'transfer';
                              @endphp
-
-                            <label
-                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="payment_method" value="qris"
-                                    class="form-radio text-orange-600 focus:ring-orange-500" {{ $defaultMethod === 'qris' ? 'checked' : '' }}>
-                                <div class="flex-1">
-                                    <span class="block font-medium text-gray-800">QRIS</span>
-                                    <span class="block text-xs text-gray-500">Langsung bayar menggunakan QRIS</span>
-                                </div>
-                                <i class="fas fa-qrcode text-gray-400"></i>
-                            </label>
 
                             <label
                                 class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -108,6 +97,32 @@
                                         bayar</span>
                                 </div>
                                 <i class="fas fa-file-invoice text-gray-400"></i>
+                            </label>
+
+                            <label
+                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="payment_method" value="transfer"
+                                    class="form-radio text-orange-600 focus:ring-orange-500" {{ $defaultMethod === 'transfer' ? 'checked' : '' }}>
+                                <div class="flex-1">
+                                    <span class="block font-medium text-gray-800">Transfer Bank</span>
+                                    <span class="block text-xs text-gray-500">Transfer ke rekening bank tujuan</span>
+
+                                    <div class="mt-3">
+                                        <select name="payment_account_id"
+                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500">
+                                            <option value="">Pilih rekening tujuan</option>
+                                            @foreach(($paymentAccounts ?? collect()) as $account)
+                                                <option value="{{ $account->id }}" {{ (string) old('payment_account_id') === (string) $account->id ? 'selected' : '' }}>
+                                                    {{ $account->bank_name }} - {{ $account->account_number }} ({{ $account->account_holder }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('payment_account_id')
+                                            <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <i class="fas fa-university text-gray-400"></i>
                             </label>
                         </div>
                     </form>

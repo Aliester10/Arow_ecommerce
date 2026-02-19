@@ -19,7 +19,7 @@
                 @csrf
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Alamat Email</label>
-                    <input type="email" name="email" id="email"
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
                         required autofocus>
                 </div>

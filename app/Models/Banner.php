@@ -13,7 +13,7 @@ class Banner extends Model
 
     protected $fillable = [
         'gambar_banner',
-        'type', // main, promo_large, promo_small
+        'type', // slider, promo_large, promo_small
         'position',
         'title',
         'subtitle',
@@ -21,7 +21,7 @@ class Banner extends Model
         'active'
     ];
 
-    const TYPE_MAIN = 'main';
-    const TYPE_PROMO_LARGE = 'promo_large';
-    const TYPE_PROMO_SMALL = 'promo_small';
+    const TYPE_SLIDER = 'slider'; // Main Banner (Slider Utama) - display only
+    const TYPE_PROMO_LARGE = 'promo_large'; // Promo Large (Kiri) - clickable
+    const TYPE_PROMO_SMALL = 'promo_small'; // Promo Small (Kanan) - clickable
 }
