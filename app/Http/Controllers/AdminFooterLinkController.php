@@ -91,6 +91,6 @@ class AdminFooterLinkController extends Controller
 
         $footerLink->delete();
 
-        return redirect()->route('admin.footer_links.index')->with('success', 'Link footer berhasil dihapus!');
+        return redirect()->back()->with('success', 'Link footer berhasil dihapus!');
     }
 }

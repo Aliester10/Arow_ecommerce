@@ -242,7 +242,7 @@
                             @foreach($layoutFooterLinks as $title => $links)
                                 <div class="space-y-6">
                                     <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">{{ $title }}</h4>
-                                    @if(strtoupper($title) === 'PENGIRIMAN')
+                                    @if(strtoupper($title) === 'PENGIRIMAN' || strtoupper($title) === 'PEMBAYARAN')
                                         <div class="flex flex-col gap-4">
                                             @foreach($links as $link)
                                                 <a href="{{ $link->url }}" class="hover:opacity-80 transition-opacity"
@@ -256,6 +256,51 @@
                                                 </a>
                                             @endforeach
                                         </div>
+
+                                        {{-- Ikuti Kami section below Pengiriman --}}
+                                        @if(strtoupper($title) === 'PENGIRIMAN')
+                                            <div class="mt-2">
+                                                <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide mb-4">Ikuti Kami</h4>
+                                                <div class="flex space-x-3">
+                                                    @if($perusahaan->facebook)
+                                                        <a href="{{ $perusahaan->facebook }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-facebook-f text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if($perusahaan->instagram)
+                                                        <a href="{{ $perusahaan->instagram }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-instagram text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if($perusahaan->twitter)
+                                                        <a href="{{ $perusahaan->twitter }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-twitter text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if($perusahaan->linkedin)
+                                                        <a href="{{ $perusahaan->linkedin }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-linkedin-in text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if($perusahaan->tiktok)
+                                                        <a href="{{ $perusahaan->tiktok }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-tiktok text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if($perusahaan->youtube)
+                                                        <a href="{{ $perusahaan->youtube }}" target="_blank"
+                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            <i class="fab fa-youtube text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
                                     @else
                                         <ul class="space-y-4 text-sm text-gray-500">
                                             @foreach($links as $link)
@@ -276,49 +321,6 @@
                             @endforeach
                         @endif
 
-                        <!-- Social Media (Fixed Column or Appended) -->
-                        <div class="space-y-6">
-                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Ikuti Kami</h4>
-                            <div class="flex space-x-3">
-                                @if($perusahaan->facebook)
-                                    <a href="{{ $perusahaan->facebook }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-facebook-f text-sm"></i>
-                                    </a>
-                                @endif
-                                @if($perusahaan->instagram)
-                                    <a href="{{ $perusahaan->instagram }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-instagram text-sm"></i>
-                                    </a>
-                                @endif
-                                @if($perusahaan->twitter)
-                                    <a href="{{ $perusahaan->twitter }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-twitter text-sm"></i>
-                                    </a>
-                                @endif
-                                @if($perusahaan->linkedin)
-                                    <a href="{{ $perusahaan->linkedin }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-linkedin-in text-sm"></i>
-                                    </a>
-                                @endif
-                                @if($perusahaan->tiktok)
-                                    <a href="{{ $perusahaan->tiktok }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-tiktok text-sm"></i>
-                                    </a>
-                                @endif
-                                @if($perusahaan->youtube)
-                                    <a href="{{ $perusahaan->youtube }}" target="_blank"
-                                        class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
-                                        <i class="fab fa-youtube text-sm"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -336,6 +338,64 @@
 
     {{-- Google Translate hidden container (required — must NOT use display:none) --}}
     <div id="google_translate_element" style="height:0;overflow:hidden;position:absolute;left:-9999px;"></div>
+
+    {{-- Floating WhatsApp Button --}}
+    <a href="https://wa.me/6282288886009" target="_blank" class="floating-whatsapp" aria-label="Chat WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <style>
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25D366;
+            color: #FFF;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse-wa 2s infinite;
+        }
+
+        .floating-whatsapp:hover {
+            background-color: #128C7E;
+            color: #FFF;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse-wa {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .floating-whatsapp {
+                width: 50px;
+                height: 50px;
+                font-size: 30px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
 
     {{-- Flag Dropdown + Google Translate Override Styles --}}
     <style>

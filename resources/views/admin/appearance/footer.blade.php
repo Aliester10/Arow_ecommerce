@@ -24,12 +24,13 @@
                     *Preview updates as you type
                 </span>
             </div>
-            <div class="w-full bg-gray-100 dark:bg-boxdark-2 p-4 relative" style="height: 400px;">
+            <div class="w-full bg-gray-100 dark:bg-boxdark-2 p-4 relative overflow-hidden rounded-b-sm"
+                style="height: 280px;">
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                     <span class="text-gray-400">Loading Preview...</span>
                 </div>
                 <iframe id="livePreviewFrameFooter" src="{{ route('home') }}" frameborder="0"
-                    class="w-full h-full bg-white relative z-10 shadow-sm" style="width: 100%;"></iframe>
+                    class="w-full h-full bg-white relative z-10 shadow-sm rounded" style="width: 100%;"></iframe>
             </div>
         </div>
 
@@ -95,98 +96,220 @@
                     </div>
 
 
-                </div>
+                    <hr class="my-6 border-stroke dark:border-strokedark">
 
+                    <h4 class="mb-4 text-lg font-bold text-black dark:text-white">Logistik Partners / Pengiriman</h4>
+                    <p class="mb-4 text-sm text-gray-500">
+                        Kelola link dan logo ekspedisi pengiriman (Contoh: JNE, TIKI).
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4.5 bg-gray-50 dark:bg-gray-700 p-4 rounded">
+                        @foreach($shippingLinks as $link)
+                            <div class="border-b last:border-b-0 pb-4 last:pb-0 md:border-b-0 relative">
+                                <label class="mb-2 block text-sm font-bold text-black dark:text-white">
+                                    {{ $link->label }}
+                                </label>
+                                <input type="hidden" name="shipping_links[{{ $link->id_footer_link }}][id]"
+                                    value="{{ $link->id_footer_link }}">
 
-                <h4 class="mb-4 text-lg font-bold text-black dark:text-white mt-8">Logistick Partners / Pengiriman</h4>
-                <p class="mb-4 text-sm text-gray-500">
-                    Kelola link dan logo ekspedisi pengiriman (Contoh: JNE, TIKI).
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4.5 bg-gray-50 dark:bg-gray-700 p-4 rounded">
-                    @foreach($shippingLinks as $link)
-                        <div class="border-b last:border-b-0 pb-4 last:pb-0 md:border-b-0">
-                            <label class="mb-2 block text-sm font-bold text-black dark:text-white">
-                                {{ $link->label }}
-                            </label>
-                            <input type="hidden" name="shipping_links[{{ $link->id_footer_link }}][id]"
-                                value="{{ $link->id_footer_link }}">
+                                <div class="mb-3">
+                                    <label class="mb-1 block text-xs">URL</label>
+                                    <input type="text" name="shipping_links[{{ $link->id_footer_link }}][url]"
+                                        value="{{ old("shipping_links.{$link->id_footer_link}.url", $link->url) }}"
+                                        class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-sm" />
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="mb-1 block text-xs">URL</label>
-                                <input type="text" name="shipping_links[{{ $link->id_footer_link }}][url]"
-                                    value="{{ old("shipping_links.{$link->id_footer_link}.url", $link->url) }}"
-                                    class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-sm" />
+                                <div>
+                                    <label class="mb-1 block text-xs">Logo (Upload Baru untuk Mengganti)</label>
+                                    <input type="file" name="shipping_links[{{ $link->id_footer_link }}][image]"
+                                        accept="image/*"
+                                        class="w-full rounded-md border border-stroke p-2 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2 file:text-xs file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white text-sm" />
+                                    @if($link->image_path)
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/footer_images/' . $link->image_path) }}"
+                                                alt="{{ $link->label }}"
+                                                class="h-8 object-contain bg-white dark:bg-white/90 p-1 rounded border dark:border-strokedark">
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <a href="{{ route('admin.footer_links.destroy', $link->id_footer_link) }}"
+                                    onclick="event.preventDefault(); if(confirm('Hapus {{ $link->label }}?')) document.getElementById('delete-shipping-{{ $link->id_footer_link }}').submit();"
+                                    class="text-red-500 hover:text-red-700 text-xs mt-2 inline-block">
+                                    <i class="fas fa-trash mr-1"></i> Hapus
+                                </a>
                             </div>
+                        @endforeach
 
+                        @if($shippingLinks->isEmpty())
+                            <div class="col-span-2 text-center text-sm text-gray-500 py-4">
+                                Belum ada data pengiriman.
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Tambah Ekspedisi Baru -->
+                    <div
+                        class="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded border border-blue-200 dark:border-blue-800">
+                        <h5 class="font-bold text-sm mb-3 text-blue-700 dark:text-blue-300"><i
+                                class="fas fa-plus-circle mr-1"></i> Tambah Ekspedisi Baru</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div>
-                                <label class="mb-1 block text-xs">Logo (Upload Baru untuk Mengganti)</label>
-                                <input type="file" name="shipping_links[{{ $link->id_footer_link }}][image]" accept="image/*"
-                                    class="w-full rounded-md border border-stroke p-2 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2 file:text-xs file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white text-sm" />
-                                @if($link->image_path)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/footer_images/' . $link->image_path) }}"
-                                            alt="{{ $link->label }}"
-                                            class="h-8 object-contain bg-white dark:bg-white/90 p-1 rounded border dark:border-strokedark">
-                                    </div>
-                                @endif
+                                <label class="mb-1 block text-xs">Nama Ekspedisi</label>
+                                <input type="text" name="new_shipping_label" placeholder="Contoh: SiCepat"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary text-sm" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs">URL</label>
+                                <input type="text" name="new_shipping_url" value="#" placeholder="#"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary text-sm" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs">Logo</label>
+                                <input type="file" name="new_shipping_image" accept="image/*"
+                                    class="w-full rounded-md border border-stroke p-2 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2 file:text-xs file:font-medium text-sm" />
                             </div>
                         </div>
-                    @endforeach
+                    </div>
 
-                    @if($shippingLinks->isEmpty())
-                        <div class="col-span-2 text-center text-sm text-gray-500 py-4">
-                            Belum ada data pengiriman. Silakan tambahkan 'PENGIRIMAN' di menu "Kelola Link Footer" jika ingin
-                            menambah ekspedisi baru.
+                    <!-- Metode Pembayaran -->
+                    <hr class="my-6 border-stroke dark:border-strokedark">
+
+                    <h4 class="mb-4 text-lg font-bold text-black dark:text-white">Metode Pembayaran</h4>
+                    <p class="mb-4 text-sm text-gray-500">
+                        Kelola logo metode pembayaran yang ditampilkan di footer (Contoh: QRIS, Bank Transfer, dll).
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4.5 bg-gray-50 dark:bg-gray-700 p-4 rounded">
+                        @foreach($paymentLinks as $link)
+                            <div class="border-b last:border-b-0 pb-4 last:pb-0 md:border-b-0 relative">
+                                <label class="mb-2 block text-sm font-bold text-black dark:text-white">
+                                    {{ $link->label }}
+                                </label>
+                                <input type="hidden" name="payment_links[{{ $link->id_footer_link }}][id]"
+                                    value="{{ $link->id_footer_link }}">
+
+                                <div class="mb-3">
+                                    <label class="mb-1 block text-xs">URL</label>
+                                    <input type="text" name="payment_links[{{ $link->id_footer_link }}][url]"
+                                        value="{{ old("payment_links.{$link->id_footer_link}.url", $link->url) }}"
+                                        class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-sm" />
+                                </div>
+
+                                <div>
+                                    <label class="mb-1 block text-xs">Logo (Upload Baru untuk Mengganti)</label>
+                                    <input type="file" name="payment_links[{{ $link->id_footer_link }}][image]" accept="image/*"
+                                        class="w-full rounded-md border border-stroke p-2 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2 file:text-xs file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white text-sm" />
+                                    @if($link->image_path)
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/footer_images/' . $link->image_path) }}"
+                                                alt="{{ $link->label }}"
+                                                class="h-8 object-contain bg-white dark:bg-white/90 p-1 rounded border dark:border-strokedark">
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <a href="{{ route('admin.footer_links.destroy', $link->id_footer_link) }}"
+                                    onclick="event.preventDefault(); if(confirm('Hapus {{ $link->label }}?')) document.getElementById('delete-payment-{{ $link->id_footer_link }}').submit();"
+                                    class="text-red-500 hover:text-red-700 text-xs mt-2 inline-block">
+                                    <i class="fas fa-trash mr-1"></i> Hapus
+                                </a>
+                            </div>
+                        @endforeach
+
+                        @if($paymentLinks->isEmpty())
+                            <div class="col-span-2 text-center text-sm text-gray-500 py-4">
+                                Belum ada metode pembayaran. Tambahkan di bawah ini.
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Tambah Metode Pembayaran Baru -->
+                    <div
+                        class="mb-6 bg-green-50 dark:bg-green-900/20 p-4 rounded border border-green-200 dark:border-green-800">
+                        <h5 class="font-bold text-sm mb-3 text-green-700 dark:text-green-300"><i
+                                class="fas fa-plus-circle mr-1"></i> Tambah Metode Pembayaran Baru</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="mb-1 block text-xs">Nama Metode</label>
+                                <input type="text" name="new_payment_label" placeholder="Contoh: QRIS"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary text-sm" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs">URL</label>
+                                <input type="text" name="new_payment_url" value="#" placeholder="#"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-white py-2 px-3 font-medium outline-none transition focus:border-primary text-sm" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs">Logo</label>
+                                <input type="file" name="new_payment_image" accept="image/*"
+                                    class="w-full rounded-md border border-stroke p-2 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2 file:text-xs file:font-medium text-sm" />
+                            </div>
                         </div>
-                    @endif
+                    </div>
+
+                    <h4 class="mb-4 text-lg font-bold text-black dark:text-white mt-8">Social Media</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4.5">
+                        <div>
+                            <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-facebook mr-2"></i>
+                                FB</label>
+                            <input type="text" name="facebook" value="{{ old('facebook', $perusahaan->facebook ?? '') }}"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                        </div>
+                        <div>
+                            <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-instagram mr-2"></i>
+                                IG</label>
+                            <input type="text" name="instagram" value="{{ old('instagram', $perusahaan->instagram ?? '') }}"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                        </div>
+                        <div>
+                            <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-twitter mr-2"></i>
+                                X</label>
+                            <input type="text" name="twitter" value="{{ old('twitter', $perusahaan->twitter ?? '') }}"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                        </div>
+                        <div>
+                            <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-tiktok mr-2"></i>
+                                TT</label>
+                            <input type="text" name="tiktok" value="{{ old('tiktok', $perusahaan->tiktok ?? '') }}"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                        </div>
+                        <div>
+                            <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-youtube mr-2"></i>
+                                YT</label>
+                            <input type="text" name="youtube" value="{{ old('youtube', $perusahaan->youtube ?? '') }}"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                        Simpan Footer
+                    </button>
+
+                    <a href="{{ route('admin.footer_links.index') }}"
+                        class="flex w-full justify-center rounded bg-secondary p-3 mt-3 font-medium text-white hover:bg-opacity-90">
+                        Kelola Links Footer
+                    </a>
                 </div>
+            </form>
 
-                <h4 class="mb-4 text-lg font-bold text-black dark:text-white mt-8">Social Media</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4.5">
-                    <div>
-                        <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-facebook mr-2"></i>
-                            FB</label>
-                        <input type="text" name="facebook" value="{{ old('facebook', $perusahaan->facebook ?? '') }}"
-                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
-                    </div>
-                    <div>
-                        <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-instagram mr-2"></i>
-                            IG</label>
-                        <input type="text" name="instagram" value="{{ old('instagram', $perusahaan->instagram ?? '') }}"
-                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
-                    </div>
-                    <div>
-                        <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-twitter mr-2"></i>
-                            X</label>
-                        <input type="text" name="twitter" value="{{ old('twitter', $perusahaan->twitter ?? '') }}"
-                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
-                    </div>
-                    <div>
-                        <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-tiktok mr-2"></i>
-                            TT</label>
-                        <input type="text" name="tiktok" value="{{ old('tiktok', $perusahaan->tiktok ?? '') }}"
-                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
-                    </div>
-                    <div>
-                        <label class="mb-2.5 block text-black dark:text-white"><i class="fab fa-youtube mr-2"></i>
-                            YT</label>
-                        <input type="text" name="youtube" value="{{ old('youtube', $perusahaan->youtube ?? '') }}"
-                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
-                    </div>
-                </div>
+            <!-- Hidden delete forms for shipping links -->
+            @foreach($shippingLinks as $link)
+                <form id="delete-shipping-{{ $link->id_footer_link }}"
+                    action="{{ route('admin.footer_links.destroy', $link->id_footer_link) }}" method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            @endforeach
 
-                <button type="submit"
-                    class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                    Simpan Footer
-                </button>
-
-                <a href="{{ route('admin.footer_links.index') }}"
-                    class="flex w-full justify-center rounded bg-secondary p-3 mt-3 font-medium text-white hover:bg-opacity-90">
-                    Kelola Links Footer
-                </a>
+            <!-- Hidden delete forms for payment links -->
+            @foreach($paymentLinks as $link)
+                <form id="delete-payment-{{ $link->id_footer_link }}"
+                    action="{{ route('admin.footer_links.destroy', $link->id_footer_link) }}" method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            @endforeach
         </div>
-        </form>
-    </div>
     </div>
 
     <script>
@@ -201,9 +324,9 @@
                 // Inject CSS to hide non-footer elements
                 const style = doc.createElement('style');
                 style.textContent = `
-                                            #app-topbar, #app-header, #app-main { display: none !important; }
-                                            body { background-color: #f3f4f6; }
-                                        `;
+                                                        #app-topbar, #app-header, #app-main { display: none !important; }
+                                                        body { background-color: #f3f4f6; }
+                                                    `;
                 doc.head.appendChild(style);
 
                 // Scroll to top since everything else is hidden, footer should be at top

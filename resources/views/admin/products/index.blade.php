@@ -64,15 +64,14 @@
                     @forelse($products as $product)
                         <tr>
                             <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
-                                <div class="h-12.5 w-15 rounded-md">
+                                <div style="width: 80px; height: 80px;"
+                                    class="rounded-md overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-700 border border-stroke dark:border-gray-600 flex-shrink-0">
                                     @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
-                                        <img class="h-full w-full object-cover rounded-md"
+                                        <img style="width: 80px; height: 80px; object-fit: cover;"
                                             src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
                                             alt="{{ $product->nama_produk }}" />
                                     @else
-                                        <div class="h-full w-full bg-gray-200 flex items-center justify-center rounded-md">
-                                            <i class="fas fa-image text-gray-400"></i>
-                                        </div>
+                                        <i class="fas fa-image text-gray-400 text-xl"></i>
                                     @endif
                                 </div>
                             </td>
@@ -82,7 +81,7 @@
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
                                 <p class="text-black dark:text-white">
-                                    {{ $product->subSubkategori->nama_sub_subkategori ?? '-' }}
+                                    {{ $product->subSubkategori->nama_sub_subkategori ?? ($product->subkategori->nama_subkategori ?? ($product->kategori->nama_kategori ?? '-')) }}
                                 </p>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">

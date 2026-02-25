@@ -12,7 +12,17 @@ class Produk extends Model
 
     protected $table = 'produk';
     protected $primaryKey = 'id_produk';
-    protected $fillable = ['id_brand', 'id_sub_subkategori', 'nama_produk', 'slug', 'sku_produk', 'tipe_produk', 'asal_produk', 'dimensi_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
+    protected $fillable = ['id_kategori', 'id_subkategori', 'id_brand', 'id_sub_subkategori', 'nama_produk', 'slug', 'sku_produk', 'tipe_produk', 'asal_produk', 'dimensi_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'id_kategori');
+    }
+
+    public function subkategori()
+    {
+        return $this->belongsTo(Subkategori::class, 'id_subkategori');
+    }
 
     /**
      * Auto-generate slug from nama_produk on create/update.
@@ -81,8 +91,8 @@ class Produk extends Model
     public function specialDeals()
     {
         return $this->belongsToMany(SpecialDeal::class, 'special_deal_products', 'id_produk', 'special_deal_id')
-                    ->withPivot('discount_percentage', 'is_active')
-                    ->wherePivot('is_active', true);
+            ->withPivot('discount_percentage', 'is_active')
+            ->wherePivot('is_active', true);
     }
 
     public function getSpecialDealPriceAttribute()

@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             $perusahaan = \App\Models\Perusahaan::first();
             $categories = \App\Models\Kategori::with('subkategori.subSubkategori')->get();
-            $layoutFooterLinks = \App\Models\FooterLink::orderBy('column_title')->orderBy('order')->get()->groupBy('column_title');
+            $layoutFooterLinks = \App\Models\FooterLink::orderByRaw("FIELD(column_title, 'LAYANAN PELANGGAN', 'PENGIRIMAN', 'INFORMASI', 'PEMBAYARAN')")->orderBy('order')->get()->groupBy('column_title');
 
             $view->with('perusahaan', $perusahaan);
             $view->with('categories', $categories);

@@ -13,10 +13,21 @@ class AdminProductController extends Controller
     public function create()
     {
         $brands = Brand::all();
-        // Load sub-subkategories with their parent subkategori and kategori for better display
-        $subSubkategoris = SubSubkategori::with('subkategori.kategori')->get();
+        $kategoris = \App\Models\Kategori::all();
 
-        return view('admin.products.create', compact('brands', 'subSubkategoris'));
+        return view('admin.products.create', compact('brands', 'kategoris'));
+    }
+
+    public function getSubcategories($kategoriId)
+    {
+        $subcategories = \App\Models\Subkategori::where('id_kategori', $kategoriId)->get();
+        return response()->json($subcategories);
+    }
+
+    public function getSubSubcategories($subkategoriId)
+    {
+        $subSubcategories = SubSubkategori::where('id_subkategori', $subkategoriId)->get();
+        return response()->json($subSubcategories);
     }
 
     public function store(Request $request)
@@ -24,7 +35,9 @@ class AdminProductController extends Controller
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'id_brand' => 'required|exists:brand,id_brand',
-            'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
+            'id_kategori' => 'required|exists:kategori,id_kategori',
+            'id_subkategori' => 'nullable|exists:subkategori,id_subkategori',
+            'id_sub_subkategori' => 'nullable|exists:sub_subkategori,id_sub_subkategori',
             'sku_produk' => 'nullable|string|max:255',
             'tipe_produk' => 'nullable|string|max:255',
             'asal_produk' => 'nullable|string|max:255',
@@ -39,6 +52,12 @@ class AdminProductController extends Controller
 
         $data = $request->all();
         // $data['harga_produk'] = $request->harga_produk; // No need to force 0, let it be null if empty
+
+        // nullify if empty strings
+        if (empty($data['id_subkategori']))
+            $data['id_subkategori'] = null;
+        if (empty($data['id_sub_subkategori']))
+            $data['id_sub_subkategori'] = null;
 
         if ($request->hasFile('gambar_produk')) {
             $image = $request->file('gambar_produk');
@@ -55,7 +74,7 @@ class AdminProductController extends Controller
 
     public function index()
     {
-        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori'])->latest()->paginate(10);
+        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])->latest()->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
@@ -63,9 +82,9 @@ class AdminProductController extends Controller
     {
         $product = Produk::findOrFail($id);
         $brands = Brand::all();
-        $subSubkategoris = SubSubkategori::with('subkategori.kategori')->get();
+        $kategoris = \App\Models\Kategori::all();
 
-        return view('admin.products.edit', compact('product', 'brands', 'subSubkategoris'));
+        return view('admin.products.edit', compact('product', 'brands', 'kategoris'));
     }
 
     public function update(Request $request, $id)
@@ -75,7 +94,9 @@ class AdminProductController extends Controller
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'id_brand' => 'required|exists:brand,id_brand',
-            'id_sub_subkategori' => 'required|exists:sub_subkategori,id_sub_subkategori',
+            'id_kategori' => 'required|exists:kategori,id_kategori',
+            'id_subkategori' => 'nullable|exists:subkategori,id_subkategori',
+            'id_sub_subkategori' => 'nullable|exists:sub_subkategori,id_sub_subkategori',
             'sku_produk' => 'nullable|string|max:255',
             'tipe_produk' => 'nullable|string|max:255',
             'asal_produk' => 'nullable|string|max:255',
@@ -88,8 +109,14 @@ class AdminProductController extends Controller
             'status_produk' => 'required|in:aktif,nonaktif',
         ]);
 
-        $data = $request->except(['gambar_produk']);
+        $data = $request->all();
         // $data['harga_produk'] = $request->harga_produk; // Allow null update
+
+        // nullify if empty strings
+        if (empty($data['id_subkategori']))
+            $data['id_subkategori'] = null;
+        if (empty($data['id_sub_subkategori']))
+            $data['id_sub_subkategori'] = null;
 
         if ($request->hasFile('gambar_produk')) {
             // Delete old image using Storage

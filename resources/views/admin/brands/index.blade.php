@@ -58,28 +58,28 @@
                     @forelse($brands as $brand)
                         <tr>
                             <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
-                                <div class="h-12.5 w-15 rounded-md">
+                                <div
+                                    class="h-16 w-20 rounded-md overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-700 border border-stroke dark:border-gray-600">
                                     @if($brand->logo_brand && file_exists(public_path('storage/images/' . $brand->logo_brand)))
-                                        <img class="h-full w-full object-contain rounded-md border"
+                                        <img class="max-h-14 max-w-[4.5rem] object-contain"
                                             src="{{ asset('storage/images/' . $brand->logo_brand) }}"
                                             alt="{{ $brand->nama_brand }}" />
                                     @else
-                                        <div class="h-full w-full bg-gray-200 flex items-center justify-center rounded-md">
+                                        <div class="flex items-center justify-center">
                                             <i class="fas fa-image text-gray-400"></i>
                                         </div>
                                     @endif
                                 </div>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
-                                <div class="h-16 w-32 rounded-md">
+                                <div
+                                    class="h-16 w-28 rounded-md overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-700 border border-stroke dark:border-gray-600">
                                     @if($brand->gambar_background && file_exists(public_path('storage/images/' . $brand->gambar_background)))
-                                        <img class="h-full w-full object-cover rounded-md border"
+                                        <img class="h-full w-full object-cover"
                                             src="{{ asset('storage/images/' . $brand->gambar_background) }}"
                                             alt="{{ $brand->nama_brand }} BG" />
                                     @else
-                                        <div class="h-full w-full bg-gray-200 flex items-center justify-center rounded-md">
-                                            <span class="text-xs text-gray-400">No BG</span>
-                                        </div>
+                                        <span class="text-xs text-gray-400">No BG</span>
                                     @endif
                                 </div>
                             </td>

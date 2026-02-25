@@ -24,12 +24,13 @@
                     *Preview updates as you type
                 </span>
             </div>
-            <div class="w-full bg-gray-100 dark:bg-boxdark-2 p-4 relative" style="height: 300px;">
+            <div class="w-full bg-gray-100 dark:bg-boxdark-2 p-4 relative overflow-hidden rounded-b-sm"
+                style="height: 220px;">
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                     <span class="text-gray-400">Loading Preview...</span>
                 </div>
                 <iframe id="livePreviewFrame" src="{{ route('home') }}" frameborder="0"
-                    class="w-full h-full bg-white relative z-10 shadow-sm" style="width: 100%;"></iframe>
+                    class="w-full h-full bg-white relative z-10 shadow-sm rounded" style="width: 100%;"></iframe>
             </div>
         </div>
 
@@ -108,10 +109,10 @@
                 // Inject CSS to hide non-header elements
                 const style = doc.createElement('style');
                 style.textContent = `
-                                #app-main, #app-footer { display: none !important; }
-                                body { background-color: #f3f4f6; /* overflow: hidden; */ }
-                                /* Force desktop-like width if needed, though surrounding container handles it */
-                            `;
+                                    #app-main, #app-footer { display: none !important; }
+                                    body { background-color: #f3f4f6; /* overflow: hidden; */ }
+                                    /* Force desktop-like width if needed, though surrounding container handles it */
+                                `;
                 doc.head.appendChild(style);
 
                 // Elements to update in iframe

@@ -44,7 +44,8 @@ class AdminAppearanceController extends Controller
         $perusahaan = \App\Models\Perusahaan::find(1);
         $footerLinks = \App\Models\FooterLink::all()->groupBy('column_title');
         $shippingLinks = \App\Models\FooterLink::where('column_title', 'PENGIRIMAN')->orderBy('order')->get();
-        return view('admin.appearance.footer', compact('perusahaan', 'footerLinks', 'shippingLinks'));
+        $paymentLinks = \App\Models\FooterLink::where('column_title', 'PEMBAYARAN')->orderBy('order')->get();
+        return view('admin.appearance.footer', compact('perusahaan', 'footerLinks', 'shippingLinks', 'paymentLinks'));
     }
 
     public function updateFooter(Request $request)
@@ -92,12 +93,76 @@ class AdminAppearanceController extends Controller
                         $filename = time() . '_' . $link->label . '_' . $file->getClientOriginalName();
                         $file->storeAs('footer_images', $filename, 'public');
                         $link->image_path = $filename;
-                        $link->type = 'image'; // Ensure type is set to image
+                        $link->type = 'image';
                     }
 
                     $link->save();
                 }
             }
+        }
+
+        // Handle Payment Links Updates
+        if ($request->has('payment_links')) {
+            foreach ($request->payment_links as $id => $linkData) {
+                $link = \App\Models\FooterLink::find($id);
+                if ($link) {
+                    $link->url = $linkData['url'];
+
+                    if ($request->hasFile("payment_links.{$id}.image")) {
+                        if ($link->image_path && \Storage::exists('public/footer_images/' . $link->image_path)) {
+                            \Storage::delete('public/footer_images/' . $link->image_path);
+                        }
+
+                        $file = $request->file("payment_links.{$id}.image");
+                        $filename = time() . '_' . $link->label . '_' . $file->getClientOriginalName();
+                        $file->storeAs('footer_images', $filename, 'public');
+                        $link->image_path = $filename;
+                        $link->type = 'image';
+                    }
+
+                    $link->save();
+                }
+            }
+        }
+
+        // Handle new payment method
+        if ($request->has('new_payment_label') && $request->new_payment_label) {
+            $newData = [
+                'column_title' => 'PEMBAYARAN',
+                'type' => 'image',
+                'label' => $request->new_payment_label,
+                'url' => $request->new_payment_url ?? '#',
+                'order' => \App\Models\FooterLink::where('column_title', 'PEMBAYARAN')->count() + 1,
+            ];
+
+            if ($request->hasFile('new_payment_image')) {
+                $file = $request->file('new_payment_image');
+                $filename = time() . '_' . $request->new_payment_label . '_' . $file->getClientOriginalName();
+                $file->storeAs('footer_images', $filename, 'public');
+                $newData['image_path'] = $filename;
+            }
+
+            \App\Models\FooterLink::create($newData);
+        }
+
+        // Handle new shipping method
+        if ($request->has('new_shipping_label') && $request->new_shipping_label) {
+            $newData = [
+                'column_title' => 'PENGIRIMAN',
+                'type' => 'image',
+                'label' => $request->new_shipping_label,
+                'url' => $request->new_shipping_url ?? '#',
+                'order' => \App\Models\FooterLink::where('column_title', 'PENGIRIMAN')->count() + 1,
+            ];
+
+            if ($request->hasFile('new_shipping_image')) {
+                $file = $request->file('new_shipping_image');
+                $filename = time() . '_' . $request->new_shipping_label . '_' . $file->getClientOriginalName();
+                $file->storeAs('footer_images', $filename, 'public');
+                $newData['image_path'] = $filename;
+            }
+
+            \App\Models\FooterLink::create($newData);
         }
 
         $perusahaan->update($data);
@@ -110,13 +175,13 @@ class AdminAppearanceController extends Controller
         $integratedSolution = \App\Models\IntegratedSolution::first();
         $categories = \App\Models\Kategori::all();
         $integratedCategories = $integratedSolution ? $integratedSolution->activeCategories : collect();
-        
+
         // Convert to indexed array for easier access in view
         $indexedCategories = [];
         foreach ($integratedCategories as $index => $category) {
             $indexedCategories[$index] = $category;
         }
-        
+
         // Debug: Log the data
         \Log::info('Integrated Solutions Data', [
             'solution' => $integratedSolution,
@@ -124,7 +189,7 @@ class AdminAppearanceController extends Controller
             'integrated_categories_count' => $integratedCategories->count(),
             'indexed_categories' => $indexedCategories
         ]);
-        
+
         return view('admin.appearance.integrated-solutions', compact('integratedSolution', 'categories', 'integratedCategories'))->with('indexedCategories', $indexedCategories);
     }
 
@@ -161,8 +226,9 @@ class AdminAppearanceController extends Controller
         if ($request->has('categories')) {
             foreach ($request->categories as $index => $categoryId) {
                 // Skip empty category selections
-                if (empty($categoryId)) continue;
-                
+                if (empty($categoryId))
+                    continue;
+
                 $categoryData = [
                     'integrated_solution_id' => $integratedSolution->id,
                     'kategori_id' => $categoryId,

@@ -74,21 +74,23 @@
                                     </label>
                                     <input type="text" name="nama_produk"
                                         value="{{ old('nama_produk', $product->nama_produk) }}" required
-                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                 </div>
 
+                                <!-- Row 1: Brand + Kategori -->
                                 <div class="mb-4.5 flex flex-col gap-6 xl:flex-row">
                                     <div class="w-full xl:w-1/2">
                                         <label class="mb-2.5 block text-black dark:text-white">
                                             Brand <span class="text-meta-1">*</span>
                                         </label>
-                                        <div class="relative z-20 bg-transparent dark:bg-form-input">
+                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
                                             <select name="id_brand" required
-                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
+                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
                                                 <option value="">Pilih Brand</option>
                                                 @foreach($brands as $brand)
                                                     <option value="{{ $brand->id_brand }}" {{ old('id_brand', $product->id_brand) == $brand->id_brand ? 'selected' : '' }}>
-                                                        {{ $brand->nama_brand }}</option>
+                                                        {{ $brand->nama_brand }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
@@ -106,19 +108,74 @@
 
                                     <div class="w-full xl:w-1/2">
                                         <label class="mb-2.5 block text-black dark:text-white">
-                                            Kategori (Sub-Sub) <span class="text-meta-1">*</span>
+                                            Kategori <span class="text-meta-1">*</span>
                                         </label>
-                                        <div class="relative z-20 bg-transparent dark:bg-form-input">
-                                            <select name="id_sub_subkategori" required
-                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
+                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
+                                            <select id="id_kategori" name="id_kategori" required
+                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
                                                 <option value="">Pilih Kategori</option>
-                                                @foreach($subSubkategoris as $sub)
-                                                    <option value="{{ $sub->id_sub_subkategori }}" {{ old('id_sub_subkategori', $product->id_sub_subkategori) == $sub->id_sub_subkategori ? 'selected' : '' }}>
-                                                        {{ $sub->subkategori->kategori->nama_kategori ?? 'Unknown' }} >
-                                                        {{ $sub->subkategori->nama_subkategori ?? 'Unknown' }} >
-                                                        {{ $sub->nama_sub_subkategori }}
+                                                @foreach($kategoris as $kat)
+                                                    <option value="{{ $kat->id_kategori }}" {{ old('id_kategori', $product->id_kategori) == $kat->id_kategori ? 'selected' : '' }}>
+                                                        {{ $kat->nama_kategori }}
                                                     </option>
                                                 @endforeach
+                                            </select>
+                                            <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
+                                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g opacity="0.8">
+                                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                                                            fill=""></path>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Sub Kategori + Sub-Sub Kategori -->
+                                <div class="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                                    <div class="w-full xl:w-1/2">
+                                        <label class="mb-2.5 block text-black dark:text-white">
+                                            Sub Kategori
+                                        </label>
+                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
+                                            <select id="id_subkategori" name="id_subkategori"
+                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
+                                                <option value="">Pilih Sub Kategori</option>
+                                                @if($product->subkategori)
+                                                    <option value="{{ $product->id_subkategori }}" selected>
+                                                        {{ $product->subkategori->nama_subkategori }}
+                                                    </option>
+                                                @endif
+                                            </select>
+                                            <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
+                                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g opacity="0.8">
+                                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                                                            fill=""></path>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full xl:w-1/2">
+                                        <label class="mb-2.5 block text-black dark:text-white">
+                                            Kategori (Sub-Sub)
+                                        </label>
+                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
+                                            <select id="id_sub_subkategori" name="id_sub_subkategori"
+                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
+                                                <option value="">Pilih Sub-Sub Kategori</option>
+                                                @if($product->subSubkategori)
+                                                    <option value="{{ $product->id_sub_subkategori }}" selected>
+                                                        {{ $product->subSubkategori->nama_sub_subkategori }}
+                                                    </option>
+                                                @endif
                                             </select>
                                             <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
                                                 <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
@@ -141,7 +198,7 @@
                                         </label>
                                         <input type="text" name="sku_produk"
                                             value="{{ old('sku_produk', $product->sku_produk) }}"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                     <div class="w-full xl:w-1/2">
                                         <label class="mb-2.5 block text-black dark:text-white">
@@ -149,7 +206,7 @@
                                         </label>
                                         <input type="text" name="tipe_produk"
                                             value="{{ old('tipe_produk', $product->tipe_produk) }}"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                 </div>
 
@@ -160,7 +217,7 @@
                                         </label>
                                         <input type="text" name="asal_produk"
                                             value="{{ old('asal_produk', $product->asal_produk) }}"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                     <div class="w-full xl:w-1/2">
                                         <label class="mb-2.5 block text-black dark:text-white">
@@ -168,7 +225,7 @@
                                         </label>
                                         <input type="text" name="dimensi_produk"
                                             value="{{ old('dimensi_produk', $product->dimensi_produk) }}"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                 </div>
 
@@ -180,7 +237,7 @@
                                         <input type="number" name="harga_produk"
                                             value="{{ old('harga_produk', $product->harga_produk) }}" min="0" step="100"
                                             placeholder="0"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                     <div class="w-full xl:w-1/3">
                                         <label class="mb-2.5 block text-black dark:text-white">
@@ -188,7 +245,7 @@
                                         </label>
                                         <input type="number" name="stok_produk"
                                             value="{{ old('stok_produk', $product->stok_produk) }}" required min="0"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                     <div class="w-full xl:w-1/3">
                                         <label class="mb-2.5 block text-black dark:text-white">
@@ -197,7 +254,7 @@
                                         <input type="number" name="berat_produk"
                                             value="{{ old('berat_produk', $product->berat_produk) }}" required min="0"
                                             step="0.01"
-                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" />
+                                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary" />
                                     </div>
                                 </div>
 
@@ -206,7 +263,7 @@
                                         Deskripsi Produk <span class="text-meta-1">*</span>
                                     </label>
                                     <textarea name="deskripsi_produk" rows="6" required
-                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">{{ old('deskripsi_produk', $product->deskripsi_produk) }}</textarea>
+                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">{{ old('deskripsi_produk', $product->deskripsi_produk) }}</textarea>
                                 </div>
 
                                 <div class="mb-4.5 flex flex-col gap-6 xl:flex-row">
@@ -222,15 +279,15 @@
                                             </div>
                                         @endif
                                         <input type="file" name="gambar_produk" accept="image/*"
-                                            class="w-full rounded-md border border-stroke p-3 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2.5 file:text-sm file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white" />
+                                            class="w-full rounded-md border border-stroke p-3 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2.5 file:text-sm file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white" />
                                     </div>
                                     <div class="w-full xl:w-1/2">
                                         <label class="mb-2.5 block text-black dark:text-white">
                                             Status <span class="text-meta-1">*</span>
                                         </label>
-                                        <div class="relative z-20 bg-transparent dark:bg-form-input">
+                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
                                             <select name="status_produk" required
-                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
+                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
                                                 <option value="aktif" {{ old('status_produk', $product->status_produk) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                                                 <option value="nonaktif" {{ old('status_produk', $product->status_produk) == 'nonaktif' ? 'selected' : '' }}>Nonaktif
                                                 </option>
@@ -261,3 +318,74 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kategoriSelect = document.getElementById('id_kategori');
+            const subkategoriSelect = document.getElementById('id_subkategori');
+            const subSubkategoriSelect = document.getElementById('id_sub_subkategori');
+
+            // Initial loaded values
+            const currentKategoriId = "{{ $product->id_kategori ?? '' }}";
+            const currentSubkategoriId = "{{ $product->id_subkategori ?? '' }}";
+            const currentSubSubkategoriId = "{{ $product->id_sub_subkategori ?? '' }}";
+
+            function loadSubcategories(kategoriId, selectedSubkategoriId = null) {
+                subkategoriSelect.innerHTML = '<option value="">Pilih Sub Kategori</option>';
+                subSubkategoriSelect.innerHTML = '<option value="">Pilih Sub-Sub Kategori</option>';
+
+                if (kategoriId) {
+                    fetch(`/admin/products/get-subcategories/${kategoriId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                data.forEach(sub => {
+                                    const isSelected = selectedSubkategoriId == sub.id_subkategori ? 'selected' : '';
+                                    subkategoriSelect.innerHTML += `<option value="${sub.id_subkategori}" ${isSelected}>${sub.nama_subkategori}</option>`;
+                                });
+
+                                // If we have a selected subkategori, load its sub-subcategories too
+                                if (selectedSubkategoriId) {
+                                    loadSubSubcategories(selectedSubkategoriId, currentSubSubkategoriId);
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error fetching subcategories:', error));
+                }
+            }
+
+            function loadSubSubcategories(subkategoriId, selectedSubSubkategoriId = null) {
+                subSubkategoriSelect.innerHTML = '<option value="">Pilih Sub-Sub Kategori</option>';
+
+                if (subkategoriId) {
+                    fetch(`/admin/products/get-sub-subcategories/${subkategoriId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                data.forEach(subSub => {
+                                    const isSelected = selectedSubSubkategoriId == subSub.id_sub_subkategori ? 'selected' : '';
+                                    subSubkategoriSelect.innerHTML += `<option value="${subSub.id_sub_subkategori}" ${isSelected}>${subSub.nama_sub_subkategori}</option>`;
+                                });
+                            }
+                        })
+                        .catch(error => console.error('Error fetching sub-subcategories:', error));
+                }
+            }
+
+            // On change events
+            kategoriSelect.addEventListener('change', function () {
+                loadSubcategories(this.value);
+            });
+
+            subkategoriSelect.addEventListener('change', function () {
+                loadSubSubcategories(this.value);
+            });
+
+            // Trigger initial load if editing
+            if (kategoriSelect.value) {
+                loadSubcategories(kategoriSelect.value, currentSubkategoriId);
+            }
+        });
+    </script>
+@endpush

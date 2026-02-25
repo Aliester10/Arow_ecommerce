@@ -20,7 +20,7 @@ class HomeController extends Controller
             ->inRandomOrder()
             ->take(4)
             ->get();
-            
+
         return response()->json([
             'products' => $products,
             'brand' => Brand::find($brandId)
@@ -37,12 +37,12 @@ class HomeController extends Controller
         // Get integrated solutions data
         $integratedSolution = IntegratedSolution::where('is_active', true)->first();
         $integratedCategories = [];
-        
+
         if ($integratedSolution) {
             $solutionCategories = IntegratedSolutionCategory::where('is_active', true)
                 ->orderBy('sort_order')
                 ->get();
-            
+
             $integratedCategories = $solutionCategories->filter(function ($category) {
                 return $category->kategori_id;
             })->map(function ($category) {
@@ -50,7 +50,7 @@ class HomeController extends Controller
                 if (!$kategori) {
                     return null;
                 }
-                
+
                 return [
                     'category' => $kategori,
                     'image' => $category->category_image,
@@ -69,18 +69,18 @@ class HomeController extends Controller
         // Get in-house brands data
         $inHouseBrandIds = [1, 14]; // aro baskara esa living and aro baskara esa education
         $inHouseBrands = Brand::whereIn('id_brand', $inHouseBrandIds)->get();
-        
+
         $inHouseBrandsWithProducts = [];
         foreach ($inHouseBrands as $brand) {
-            $products = Produk::where('id_brand', $brand->id_brand)
+            $brandProducts = Produk::where('id_brand', $brand->id_brand)
                 ->with(['brand', 'ulasan'])
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
-            
+
             $inHouseBrandsWithProducts[] = [
                 'brand' => $brand,
-                'products' => $products
+                'products' => $brandProducts
             ];
         }
 
@@ -94,7 +94,7 @@ class HomeController extends Controller
         // Get first brand's products as default
         $topBrandProducts = [];
         $selectedTopBrand = null;
-        
+
         if ($topBrands->count() > 0) {
             $selectedTopBrand = $topBrands->first();
             $topBrandProducts = Produk::where('id_brand', $selectedTopBrand->id_brand)
