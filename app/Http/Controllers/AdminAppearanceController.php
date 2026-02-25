@@ -104,4 +104,84 @@ class AdminAppearanceController extends Controller
 
         return redirect()->back()->with('success', 'Footer updated successfully');
     }
+
+    public function integratedSolutions()
+    {
+        $integratedSolution = \App\Models\IntegratedSolution::first();
+        $categories = \App\Models\Kategori::all();
+        $integratedCategories = $integratedSolution ? $integratedSolution->activeCategories : collect();
+        
+        // Convert to indexed array for easier access in view
+        $indexedCategories = [];
+        foreach ($integratedCategories as $index => $category) {
+            $indexedCategories[$index] = $category;
+        }
+        
+        // Debug: Log the data
+        \Log::info('Integrated Solutions Data', [
+            'solution' => $integratedSolution,
+            'categories_count' => $categories->count(),
+            'integrated_categories_count' => $integratedCategories->count(),
+            'indexed_categories' => $indexedCategories
+        ]);
+        
+        return view('admin.appearance.integrated-solutions', compact('integratedSolution', 'categories', 'integratedCategories'))->with('indexedCategories', $indexedCategories);
+    }
+
+    public function updateIntegratedSolutions(Request $request)
+    {
+        $integratedSolution = \App\Models\IntegratedSolution::firstOrCreate([]);
+
+        // Validate background image
+        $request->validate([
+            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'required|array|min:1|max:3',
+            'categories.*' => 'exists:kategori,id_kategori',
+            'category_images' => 'nullable|array',
+            'category_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Handle background image upload
+        if ($request->hasFile('background_image')) {
+            if ($integratedSolution->background_image && \Storage::disk('public')->exists('images/' . $integratedSolution->background_image)) {
+                \Storage::disk('public')->delete('images/' . $integratedSolution->background_image);
+            }
+            $image = $request->file('background_image');
+            $imageName = time() . '_integrated_bg.' . $image->getClientOriginalExtension();
+            \Storage::disk('public')->putFileAs('images', $image, $imageName);
+            $integratedSolution->background_image = $imageName;
+        }
+
+        $integratedSolution->save();
+
+        // Clear existing categories
+        \App\Models\IntegratedSolutionCategory::where('integrated_solution_id', $integratedSolution->id)->delete();
+
+        // Add new categories with images
+        if ($request->has('categories')) {
+            foreach ($request->categories as $index => $categoryId) {
+                // Skip empty category selections
+                if (empty($categoryId)) continue;
+                
+                $categoryData = [
+                    'integrated_solution_id' => $integratedSolution->id,
+                    'kategori_id' => $categoryId,
+                    'is_active' => true,
+                    'sort_order' => $index,
+                ];
+
+                // Handle category image upload
+                if ($request->hasFile("category_images.{$index}")) {
+                    $image = $request->file("category_images.{$index}");
+                    $categoryImageName = time() . "_cat_{$index}." . $image->getClientOriginalExtension();
+                    \Storage::disk('public')->putFileAs('images', $image, $categoryImageName);
+                    $categoryData['category_image'] = $categoryImageName;
+                }
+
+                \App\Models\IntegratedSolutionCategory::create($categoryData);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Integrated Solutions updated successfully');
+    }
 }

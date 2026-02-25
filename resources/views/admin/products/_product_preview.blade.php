@@ -33,10 +33,7 @@
                                 </div>
                             @endif
                         </div>
-                        {{-- Frame (z-20) --}}
-                        <img src="{{ asset('frame.png') }}" alt="Frame"
-                            class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
-                    </div>
+                                            </div>
                 </div>
 
                 {{-- Right: Product Info Preview --}}

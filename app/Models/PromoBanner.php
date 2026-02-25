@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PromoBanner extends Model
 {
+    use HasFactory;
+
     protected $table = 'promo_banners';
     protected $primaryKey = 'id_promo_banner';
     protected $guarded = [];
@@ -17,17 +19,8 @@ class PromoBanner extends Model
         'active'
     ];
 
-    protected $casts = [
-        'active' => 'boolean',
-    ];
-
-    public function promoDetails()
+    public function promoDetail()
     {
-        return $this->hasMany(PromoDetail::class, 'id_promo_banner', 'id_promo_banner');
-    }
-
-    public function activePromoDetail()
-    {
-        return $this->belongsTo(PromoDetail::class, 'id_promo_detail', 'id_promo_detail');
+        return $this->belongsTo(PromoDetail::class, 'id_promo_detail');
     }
 }

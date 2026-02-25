@@ -11,10 +11,12 @@ class Kategori extends Model
 
     protected $table = 'kategori';
     protected $primaryKey = 'id_kategori';
+    protected $keyType = 'int';
+    public $incrementing = true;
     protected $guarded = [];
 
     public function subkategori()
     {
-        return $this->hasMany(Subkategori::class, 'id_kategori');
+        return $this->hasMany(Subkategori::class, 'id_kategori', 'id_kategori');
     }
 }

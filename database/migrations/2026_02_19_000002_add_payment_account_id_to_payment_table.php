@@ -9,12 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payment', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_account_id')->nullable()->after('id_order');
-            $table->index('payment_account_id');
-            $table->foreign('payment_account_id')
-                ->references('id')
-                ->on('payment_accounts')
-                ->nullOnDelete();
+            if (!Schema::hasColumn('payment', 'payment_account_id')) {
+                $table->unsignedBigInteger('payment_account_id')->nullable()->after('id_order');
+                $table->index('payment_account_id');
+                $table->foreign('payment_account_id')
+                    ->references('id')
+                    ->on('payment_accounts')
+                    ->nullOnDelete();
+            }
         });
     }
 

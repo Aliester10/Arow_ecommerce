@@ -66,11 +66,12 @@ return new class extends Migration
         }
 
         // 5) Enforce schema changes on produk (using raw SQL to avoid doctrine/dbal)
-        DB::statement("ALTER TABLE `produk` MODIFY `deskripsi_produk` TEXT NOT NULL");
-        DB::statement("ALTER TABLE `produk` MODIFY `berat_produk` DECIMAL(10,2) NOT NULL DEFAULT 0");
-        DB::statement("ALTER TABLE `produk` MODIFY `status_produk` ENUM('aktif','nonaktif') NOT NULL DEFAULT 'aktif'");
-        DB::statement("ALTER TABLE `produk` MODIFY `harga_produk` DECIMAL(15,2) NOT NULL");
-        DB::statement("ALTER TABLE `produk` MODIFY `stok_produk` INT NOT NULL");
+        // Skip MODIFY statements for SQLite compatibility
+        // DB::statement("ALTER TABLE `produk` MODIFY `deskripsi_produk` TEXT NOT NULL");
+        // DB::statement("ALTER TABLE `produk` MODIFY `berat_produk` DECIMAL(10,2) NOT NULL DEFAULT 0");
+        // DB::statement("ALTER TABLE `produk` MODIFY `status_produk` ENUM('aktif','nonaktif') NOT NULL DEFAULT 'aktif'");
+        // DB::statement("ALTER TABLE `produk` MODIFY `harga_produk` DECIMAL(15,2) NOT NULL");
+        // DB::statement("ALTER TABLE `produk` MODIFY `stok_produk` INT NOT NULL");
 
         if (!Schema::hasColumn('produk', 'gambar_produk')) {
             Schema::table('produk', function (Blueprint $table) {
@@ -97,7 +98,8 @@ return new class extends Migration
         DB::table('produk')->whereNull('id_sub_subkategori')->update([
             'id_sub_subkategori' => DB::table('sub_subkategori')->min('id_sub_subkategori'),
         ]);
-        DB::statement("ALTER TABLE `produk` MODIFY `id_sub_subkategori` BIGINT UNSIGNED NOT NULL");
+        // Skip MODIFY statement for SQLite compatibility
+        // DB::statement("ALTER TABLE `produk` MODIFY `id_sub_subkategori` BIGINT UNSIGNED NOT NULL");
 
         // 8) Drop old FK + column id_subkategori
         if (Schema::hasColumn('produk', 'id_subkategori')) {

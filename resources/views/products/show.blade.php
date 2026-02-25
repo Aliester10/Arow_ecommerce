@@ -25,9 +25,6 @@
                                 <i class="fas fa-box text-6xl text-gray-300"></i>
                             </div>
                         @endif
-                        <!-- Frame (z-20) -->
-                        <img src="{{ asset('frame.png') }}" alt="Frame"
-                            class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
                     </div>
                     @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                         <div class="flex gap-2">
@@ -354,10 +351,7 @@
                                         </div>
                                     @endif
 
-                                    <!-- Frame (z-20) -->
-                                    <img src="{{ asset('frame.png') }}" alt="Frame"
-                                        class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
-
+                                    
                                     <!-- Badges (z-30) -->
                                     @if($related->stok_produk <= 0)
                                         <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm"

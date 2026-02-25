@@ -89,10 +89,7 @@
                                         </div>
                                     @endif
 
-                                    <!-- Frame (z-20) -->
-                                    <img src="{{ asset('frame.png') }}" alt="Frame"
-                                        class="absolute inset-0 w-full h-full object-fill pointer-events-none" style="z-index: 20;">
-
+                                    
                                     <!-- Overlay Actions (z-40) -->
                                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2"
                                         style="z-index: 40;">

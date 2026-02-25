@@ -11,6 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Create promo_banners table if not exists
+        if (!Schema::hasTable('promo_banners')) {
+            Schema::create('promo_banners', function (Blueprint $table) {
+                $table->id('id_promo_banner');
+                $table->string('gambar_promo_banner');
+                $table->integer('position')->default(0);
+                $table->string('title')->nullable();
+                $table->string('subtitle')->nullable();
+                $table->string('link')->nullable();
+                $table->boolean('active')->default(true);
+                $table->timestamps();
+            });
+        }
+
         // Clear tables first
         \DB::table('slider_banners')->truncate();
         \DB::table('promo_banners')->truncate();
@@ -116,5 +130,8 @@ return new class extends Migration
         // Clear the new tables
         \DB::table('slider_banners')->truncate();
         \DB::table('promo_banners')->truncate();
+        
+        // Drop promo_banners table
+        Schema::dropIfExists('promo_banners');
     }
 };

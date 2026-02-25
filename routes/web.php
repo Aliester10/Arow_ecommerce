@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfileController;
 
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home/top-brand-products/{brandId}', [HomeController::class, 'getTopBrandProducts'])->name('home.top-brand-products');
 
 Route::get('/language/{locale}', function (string $locale) {
     if (!in_array($locale, ['id', 'en'], true)) {
@@ -44,8 +45,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
-// Public Informasi Details
-Route::get('/informasi/{promoDetailId}', [App\Http\Controllers\PromoDetailController::class, 'show'])->name('informasi.show');
+// Special Deals Public Routes
+Route::get('/special-deals', [App\Http\Controllers\SpecialDealController::class, 'index'])->name('special-deals.public.index');
+
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
@@ -140,6 +142,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
         Route::put('/header', [App\Http\Controllers\AdminAppearanceController::class, 'updateHeader'])->name('header.update');
         Route::get('/footer', [App\Http\Controllers\AdminAppearanceController::class, 'footer'])->name('footer');
         Route::put('/footer', [App\Http\Controllers\AdminAppearanceController::class, 'updateFooter'])->name('footer.update');
+        Route::get('/integrated-solutions', [App\Http\Controllers\AdminAppearanceController::class, 'integratedSolutions'])->name('integrated-solutions');
+        Route::put('/integrated-solutions', [App\Http\Controllers\AdminAppearanceController::class, 'updateIntegratedSolutions'])->name('integrated-solutions.update');
     });
 
     // Admin Brand Management
@@ -150,6 +154,36 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'update'])->name('brands.update');
     Route::delete('/brands/{id}', [App\Http\Controllers\AdminBrandController::class, 'destroy'])->name('brands.destroy');
 
+    // Category Management
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [App\Http\Controllers\AdminCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\AdminCategoryController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\AdminCategoryController::class, 'store'])->name('store');
+        Route::get('/{category}/edit', [App\Http\Controllers\AdminCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [App\Http\Controllers\AdminCategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [App\Http\Controllers\AdminCategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    // Sub Category Management
+    Route::prefix('sub-categories')->name('sub-categories.')->group(function () {
+        Route::get('/', [App\Http\Controllers\AdminSubCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\AdminSubCategoryController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\AdminSubCategoryController::class, 'store'])->name('store');
+        Route::get('/{subCategory}/edit', [App\Http\Controllers\AdminSubCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{subCategory}', [App\Http\Controllers\AdminSubCategoryController::class, 'update'])->name('update');
+        Route::delete('/{subCategory}', [App\Http\Controllers\AdminSubCategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    // Sub Sub Category Management
+    Route::prefix('sub-sub-categories')->name('sub-sub-categories.')->group(function () {
+        Route::get('/', [App\Http\Controllers\AdminSubSubCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\AdminSubSubCategoryController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\AdminSubSubCategoryController::class, 'store'])->name('store');
+        Route::get('/{subSubCategory}/edit', [App\Http\Controllers\AdminSubSubCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{subSubCategory}', [App\Http\Controllers\AdminSubSubCategoryController::class, 'update'])->name('update');
+        Route::delete('/{subSubCategory}', [App\Http\Controllers\AdminSubSubCategoryController::class, 'destroy'])->name('destroy');
+    });
+
     // Admin Banner Management
     // Slider Banner Routes (Display Only)
     Route::get('/slider-banners', [App\Http\Controllers\AdminBannerController::class, 'sliderIndex'])->name('slider-banners.index');
@@ -159,24 +193,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('/slider-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'sliderUpdate'])->name('slider-banners.update');
     Route::delete('/slider-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'sliderDestroy'])->name('slider-banners.destroy');
 
-    // Promo Banner Routes (Clickable with Links)
-    Route::get('/promo-banners', [App\Http\Controllers\AdminBannerController::class, 'promoIndex'])->name('promo-banners.index');
-    Route::get('/promo-banners/create', [App\Http\Controllers\AdminBannerController::class, 'promoCreate'])->name('promo-banners.create');
-    Route::post('/promo-banners', [App\Http\Controllers\AdminBannerController::class, 'promoStore'])->name('promo-banners.store');
-    Route::get('/promo-banners/{id}/edit', [App\Http\Controllers\AdminBannerController::class, 'promoEdit'])->name('promo-banners.edit');
-    Route::put('/promo-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'promoUpdate'])->name('promo-banners.update');
-    Route::delete('/promo-banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'promoDestroy'])->name('promo-banners.destroy');
-
-    // Promo Details Routes
-    Route::get('/promo-details', [App\Http\Controllers\AdminPromoDetailController::class, 'index'])->name('promo-details.index');
-    Route::get('/promo-details/banner/{promoBannerId}', [App\Http\Controllers\AdminPromoDetailController::class, 'bannerIndex'])->name('promo-details.banner-index');
-    Route::get('/promo-details/{promoBannerId}/create', [App\Http\Controllers\AdminPromoDetailController::class, 'create'])->name('promo-details.create');
-    Route::post('/promo-details/{promoBannerId}', [App\Http\Controllers\AdminPromoDetailController::class, 'store'])->name('promo-details.store');
-    Route::get('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'show'])->name('promo-details.show');
-    Route::get('/promo-details/{promoBannerId}/{promoDetailId}/edit', [App\Http\Controllers\AdminPromoDetailController::class, 'edit'])->name('promo-details.edit');
-    Route::put('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'update'])->name('promo-details.update');
-    Route::delete('/promo-details/{promoBannerId}/{promoDetailId}', [App\Http\Controllers\AdminPromoDetailController::class, 'destroy'])->name('promo-details.destroy');
-
     // Legacy Banner Routes (for backward compatibility)
     Route::get('/banners', [App\Http\Controllers\AdminBannerController::class, 'index'])->name('banners.index');
     Route::get('/banners/create', [App\Http\Controllers\AdminBannerController::class, 'create'])->name('banners.create');
@@ -184,4 +200,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/banners/{id}/edit', [App\Http\Controllers\AdminBannerController::class, 'edit'])->name('banners.edit');
     Route::put('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'update'])->name('banners.update');
     Route::delete('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'destroy'])->name('banners.destroy');
+
+    // Special Deals Management
+    Route::get('/special-deals', [App\Http\Controllers\AdminSpecialDealController::class, 'index'])->name('special-deals.index');
+    Route::get('/special-deals/create', [App\Http\Controllers\AdminSpecialDealController::class, 'create'])->name('special-deals.create');
+    Route::post('/special-deals', [App\Http\Controllers\AdminSpecialDealController::class, 'store'])->name('special-deals.store');
+    Route::get('/special-deals/{specialDeal}/edit', [App\Http\Controllers\AdminSpecialDealController::class, 'edit'])->name('special-deals.edit');
+    Route::put('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'update'])->name('special-deals.update');
+    Route::delete('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'destroy'])->name('special-deals.destroy');
 });

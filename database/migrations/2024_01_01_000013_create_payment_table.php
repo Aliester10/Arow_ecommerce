@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_order')->references('id_order')->on('order')->onDelete('cascade');
+            $table->foreign('id_order')->references('id_order')->on("order")->onDelete('cascade');
         });
     }
 

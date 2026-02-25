@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Banner;
 use App\Models\SliderBanner;
-use App\Models\PromoBanner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -96,92 +95,6 @@ class AdminBannerController extends Controller
         return redirect()->route('admin.slider-banners.index')->with('success', 'Slider Banner berhasil dihapus!');
     }
 
-    // Promo Banner Methods (Clickable with Links)
-    public function promoIndex()
-    {
-        $banners = PromoBanner::latest()->paginate(10);
-        return view('admin.banners.promo.index', compact('banners'));
-    }
-
-    public function promoCreate()
-    {
-        return view('admin.banners.promo.create');
-    }
-
-    public function promoStore(Request $request)
-    {
-        $request->validate([
-            'gambar_promo_banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
-            'id_promo_detail' => 'nullable|exists:promo_details,id_promo_detail',
-        ]);
-
-        $data = [
-            'gambar_promo_banner' => '',
-            'id_promo_detail' => $request->id_promo_detail,
-            'active' => $request->has('active'),
-        ];
-
-        if ($request->hasFile('gambar_promo_banner')) {
-            $image = $request->file('gambar_promo_banner');
-            $imageName = time() . '_promo_banner.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('images', $image, $imageName);
-            $data['gambar_promo_banner'] = $imageName;
-        }
-
-        PromoBanner::create($data);
-
-        return redirect()->route('admin.promo-banners.index')->with('success', 'Promo Banner berhasil ditambahkan!');
-    }
-
-    public function promoEdit($id)
-    {
-        $banner = PromoBanner::findOrFail($id);
-        return view('admin.banners.promo.edit', compact('banner'));
-    }
-
-    public function promoUpdate(Request $request, $id)
-    {
-        $banner = PromoBanner::findOrFail($id);
-
-        $request->validate([
-            'gambar_promo_banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
-            'id_promo_detail' => 'nullable|exists:promo_details,id_promo_detail',
-        ]);
-
-        $data = [
-            'id_promo_detail' => $request->id_promo_detail,
-            'active' => $request->has('active'),
-        ];
-
-        if ($request->hasFile('gambar_promo_banner')) {
-            // Delete old image
-            if ($banner->gambar_promo_banner && Storage::disk('public')->exists('images/' . $banner->gambar_promo_banner)) {
-                Storage::disk('public')->delete('images/' . $banner->gambar_promo_banner);
-            }
-
-            $image = $request->file('gambar_promo_banner');
-            $imageName = time() . '_promo_banner.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('images', $image, $imageName);
-            $data['gambar_promo_banner'] = $imageName;
-        }
-
-        $banner->update($data);
-
-        return redirect()->route('admin.promo-banners.index')->with('success', 'Promo Banner berhasil diperbarui!');
-    }
-
-    public function promoDestroy($id)
-    {
-        $banner = PromoBanner::findOrFail($id);
-
-        if ($banner->gambar_promo_banner) {
-            Storage::disk('public')->delete('images/' . $banner->gambar_promo_banner);
-        }
-
-        $banner->delete();
-
-        return redirect()->route('admin.promo-banners.index')->with('success', 'Promo Banner berhasil dihapus!');
-    }
 
     // Legacy methods for backward compatibility
     public function index()

@@ -77,4 +77,27 @@ class Produk extends Model
     {
         return $this->hasMany(Wishlist::class, 'id_produk');
     }
+
+    public function specialDeals()
+    {
+        return $this->belongsToMany(SpecialDeal::class, 'special_deal_products', 'id_produk', 'special_deal_id')
+                    ->withPivot('discount_percentage', 'is_active')
+                    ->wherePivot('is_active', true);
+    }
+
+    public function getSpecialDealPriceAttribute()
+    {
+        $specialDeal = $this->specialDeals()->first();
+        if ($specialDeal) {
+            $discountPercentage = $specialDeal->pivot->discount_percentage;
+            return $this->harga_produk * (1 - $discountPercentage / 100);
+        }
+        return null;
+    }
+
+    public function getSpecialDealDiscountAttribute()
+    {
+        $specialDeal = $this->specialDeals()->first();
+        return $specialDeal ? $specialDeal->pivot->discount_percentage : null;
+    }
 }
