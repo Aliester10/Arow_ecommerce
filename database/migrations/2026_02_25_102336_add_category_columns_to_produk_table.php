@@ -12,22 +12,31 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('produk', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_kategori')->nullable()->after('id_brand');
-            $table->unsignedBigInteger('id_subkategori')->nullable()->after('id_kategori');
+            if (!Schema::hasColumn('produk', 'id_kategori')) {
+                $table->unsignedBigInteger('id_kategori')->nullable()->after('id_brand');
+            }
+            if (!Schema::hasColumn('produk', 'id_subkategori')) {
+                $table->unsignedBigInteger('id_subkategori')->nullable()->after('id_kategori');
+            }
 
             // Ensure id_sub_subkategori allows nulls
             $table->unsignedBigInteger('id_sub_subkategori')->nullable()->change();
         });
 
-        // Add foreign keys
-        Schema::table('produk', function (Blueprint $table) {
-            $table->foreign('id_kategori')->references('id_kategori')->on('kategori')->onUpdate('cascade')->nullOnDelete();
-            $table->foreign('id_subkategori')->references('id_subkategori')->on('subkategori')->onUpdate('cascade')->nullOnDelete();
+        // Add foreign keys only if they don't exist yet
+        $foreignKeys = collect(DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produk' AND CONSTRAINT_TYPE = 'FOREIGN KEY'"))->pluck('CONSTRAINT_NAME')->toArray();
+
+        Schema::table('produk', function (Blueprint $table) use ($foreignKeys) {
+            if (!in_array('produk_id_kategori_foreign', $foreignKeys)) {
+                $table->foreign('id_kategori')->references('id_kategori')->on('kategori')->onUpdate('cascade')->nullOnDelete();
+            }
+            if (!in_array('produk_id_subkategori_foreign', $foreignKeys)) {
+                $table->foreign('id_subkategori')->references('id_subkategori')->on('subkategori')->onUpdate('cascade')->nullOnDelete();
+            }
         });
 
         // Backfill existing data
-        // For each product with an id_sub_subkategori, find the parent subkategori and kategori and update
-        $products = DB::table('produk')->whereNotNull('id_sub_subkategori')->get();
+        $products = DB::table('produk')->whereNotNull('id_sub_subkategori')->whereNull('id_kategori')->get();
         foreach ($products as $product) {
             $subSub = DB::table('sub_subkategori')->where('id_sub_subkategori', $product->id_sub_subkategori)->first();
             if ($subSub) {
