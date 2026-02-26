@@ -71,7 +71,7 @@
     <div class="home-row-layout flex flex-col md:flex-row gap-4 md:gap-6 mb-8 md:mb-10 relative" style="--sidebar-width: 30%; --sidebar-gap: 1.5rem; --mega-height: 30rem;">
 
         <!-- Sidebar Categories -->
-        <aside class="home-sidebar w-full hidden md:block z-40">
+        <aside class="home-sidebar w-full hidden md:block z-20">
             @include('partials.sidebar')
         </aside>
 
