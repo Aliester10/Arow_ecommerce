@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShippingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/upload-transfer-proof', [OrderController::class, 'uploadTransferProof'])->name('orders.uploadTransferProof');
+
+    // Shipping (RajaOngkir)
+    Route::get('/shipping/provinces', [ShippingController::class, 'getProvinces'])->name('shipping.provinces');
+    Route::get('/shipping/cities/{province_id}', [ShippingController::class, 'getCities'])->name('shipping.cities');
+    Route::post('/shipping/cost', [ShippingController::class, 'getCost'])->name('shipping.cost');
 });
 
 // Simple Admin Product Upload & Management

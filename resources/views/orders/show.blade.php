@@ -54,9 +54,24 @@
                         </div>
                     @endforeach
                 </div>
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center text-lg font-bold">
-                    <span>Total Pesanan</span>
-                    <span class="text-orange-600">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 space-y-2 text-sm">
+                    @php
+                        $itemsTotal = $order->total_harga - ($order->shipping_cost ?? 0);
+                    @endphp
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal Produk</span>
+                        <span>Rp {{ number_format($itemsTotal, 0, ',', '.') }}</span>
+                    </div>
+                    @if($order->shipping_courier)
+                        <div class="flex justify-between text-gray-600">
+                            <span>Ongkir ({{ strtoupper($order->shipping_courier) }} {{ $order->shipping_service ?? '' }}{{ $order->shipping_etd ? ' - est. ' . $order->shipping_etd . ' hari' : '' }})</span>
+                            <span>Rp {{ number_format($order->shipping_cost ?? 0, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+                    <div class="flex justify-between items-center text-lg font-bold pt-2 border-t border-gray-200">
+                        <span>Total Pesanan</span>
+                        <span class="text-orange-600">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+                    </div>
                 </div>
             </div>
 

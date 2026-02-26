@@ -12,7 +12,8 @@
 
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Topbar -->
-    <div id="app-topbar" class="text-white text-xs sm:text-sm py-2 hidden sm:block" style="background-color:#F7931E">
+    <div id="app-topbar" class="text-white text-xs sm:text-sm py-2 hidden sm:block sticky top-0 z-50"
+        style="background-color:#F7931E">
         <div class="container mx-auto px-2 sm:px-4 flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center flex-wrap gap-2 sm:gap-4">
                 @if($perusahaan)
@@ -35,7 +36,7 @@
     </div>
 
     <!-- Header -->
-    <header id="app-header" class="bg-white shadow-md sticky top-0 z-50">
+    <header id="app-header" class="bg-white shadow-md sticky z-40">
         <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
             <div class="flex justify-between items-center gap-2 sm:gap-4">
                 <!-- Logo & Mobile Toggle -->
@@ -492,6 +493,22 @@
             color: #fb923c;
         }
     </style>
+
+    {{-- Sticky Header offset below Topbar --}}
+    <script>
+        (function () {
+            function updateHeaderTop() {
+                var topbar = document.getElementById('app-topbar');
+                var header = document.getElementById('app-header');
+                if (topbar && header) {
+                    var h = topbar.offsetHeight;
+                    header.style.top = (window.getComputedStyle(topbar).display === 'none' ? 0 : h) + 'px';
+                }
+            }
+            updateHeaderTop();
+            window.addEventListener('resize', updateHeaderTop);
+        })();
+    </script>
 
     {{-- Google Translate Script --}}
     <script src="{{ asset('js/google-translate.js') }}"></script>

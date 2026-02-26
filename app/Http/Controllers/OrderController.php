@@ -21,14 +21,21 @@ class OrderController extends Controller
     public function checkout(Request $request)
     {
         $cart = Cart::with(['details.produk'])->where('id_user', Auth::user()->id_user)->where('status', 'active')->first();
-        
+
         if (!$cart || $cart->details->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Cart is empty!');
         }
 
-        $total = $cart->details->sum(function($detail) {
+        $total = $cart->details->sum(function ($detail) {
             return $detail->harga * $detail->qty_cart;
         });
+
+        // Calculate total weight (in grams), ensure integer
+        $totalWeight = (int) $cart->details->sum(function ($detail) {
+            return ($detail->produk->berat_produk ?? 1000) * $detail->qty_cart;
+        });
+        if ($totalWeight < 1)
+            $totalWeight = 1000; // minimum 1kg
 
         $paymentAccounts = PaymentAccount::query()
             ->where('is_active', true)
@@ -36,8 +43,10 @@ class OrderController extends Controller
             ->orderBy('account_holder')
             ->get();
 
+        $couriers = config('rajaongkir.couriers', ['jne', 'pos', 'tiki']);
+
         $selectedMethod = $request->query('method');
-        return view('checkout.index', compact('cart', 'total', 'selectedMethod', 'paymentAccounts'));
+        return view('checkout.index', compact('cart', 'total', 'totalWeight', 'selectedMethod', 'paymentAccounts', 'couriers'));
     }
 
     public function placeOrder(Request $request)
@@ -51,6 +60,11 @@ class OrderController extends Controller
             'shipping_city' => 'required|string|max:255',
             'shipping_province' => 'required|string|max:255',
             'shipping_postcode' => 'required|string|max:20',
+            'shipping_cost' => 'required|integer|min:0',
+            'shipping_courier' => 'nullable|string|max:50',
+            'shipping_service' => 'nullable|string|max:100',
+            'shipping_etd' => 'nullable|string|max:50',
+            'destination_city_id' => 'nullable|integer',
         ]);
 
         if ($request->payment_method === 'transfer' && empty($request->payment_account_id)) {
@@ -65,15 +79,18 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->with('error', 'Cart is empty!');
         }
 
-        $total = $cart->details->sum(function($detail) {
-            return $detail->harga * $detail->qty_cart; 
+        $subtotal = $cart->details->sum(function ($detail) {
+            return $detail->harga * $detail->qty_cart;
         });
+
+        $shippingCost = (int) $request->shipping_cost;
+        $total = $subtotal + $shippingCost;
 
         $orderId = null;
         $paymentMethod = $request->payment_method;
         $paymentAccountId = $paymentMethod === 'transfer' ? $request->payment_account_id : null;
 
-        DB::transaction(function () use ($cart, $total, $request, &$orderId, $paymentMethod, $paymentAccountId) {
+        DB::transaction(function () use ($cart, $total, $shippingCost, $request, &$orderId, $paymentMethod, $paymentAccountId) {
             // Create Order
             $order = Order::create([
                 'id_user' => Auth::user()->id_user,
@@ -83,6 +100,11 @@ class OrderController extends Controller
                 'shipping_city' => $request->shipping_city,
                 'shipping_province' => $request->shipping_province,
                 'shipping_postcode' => $request->shipping_postcode,
+                'shipping_cost' => $shippingCost,
+                'shipping_courier' => $request->shipping_courier,
+                'shipping_service' => $request->shipping_service,
+                'shipping_etd' => $request->shipping_etd,
+                'destination_city_id' => $request->destination_city_id,
                 'tanggal_order' => now(),
                 'total_harga' => $total,
                 'status_order' => $paymentMethod === 'quotation' ? 'pending_quotation' : 'pending',
@@ -104,7 +126,7 @@ class OrderController extends Controller
             Payment::create([
                 'id_order' => $order->id_order,
                 'payment_account_id' => $paymentAccountId,
-                'metode' => $paymentMethod, // e.g., 'transfer'
+                'metode' => $paymentMethod,
                 'amount' => $total,
                 'status' => 'pending',
             ]);
@@ -116,12 +138,9 @@ class OrderController extends Controller
                 );
             }
 
-            // Clear Cart (or mark as ordered)
-            $cart->status = 'ordered'; 
+            // Clear Cart (mark as ordered)
+            $cart->status = 'ordered';
             $cart->save();
-            
-            // Optionally create a new active cart for future use or delete details?
-            // Usually we mark cart as 'ordered'
         });
 
         if ($paymentMethod === 'quotation') {
@@ -245,7 +264,7 @@ class OrderController extends Controller
         $orders = Order::where('id_user', Auth::user()->id_user)->with('items.produk')->orderBy('created_at', 'desc')->get();
         return view('orders.index', compact('orders'));
     }
-    
+
     public function show($id)
     {
         $order = Order::with(['items.produk', 'payment.paymentAccount', 'quotation.items'])
