@@ -67,8 +67,8 @@ class HomeController extends Controller
         }
 
         // Get in-house brands data
-        $inHouseBrandIds = [1, 14]; // aro baskara esa living and aro baskara esa education
-        $inHouseBrands = Brand::whereIn('id_brand', $inHouseBrandIds)->get();
+        $inHouseBrandNames = ['aro baskara esa living', 'aro baskara esa education'];
+        $inHouseBrands = Brand::whereIn('nama_brand', $inHouseBrandNames)->get();
 
         $inHouseBrandsWithProducts = [];
         foreach ($inHouseBrands as $brand) {
@@ -86,7 +86,7 @@ class HomeController extends Controller
 
         // Get top brands data (excluding in-house brands)
         // Show all brands with logos, even without products
-        $topBrands = Brand::whereNotIn('id_brand', $inHouseBrandIds)
+        $topBrands = Brand::whereNotIn('nama_brand', $inHouseBrandNames)
             ->inRandomOrder()
             ->take(8)
             ->get();
