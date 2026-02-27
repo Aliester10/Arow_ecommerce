@@ -18,7 +18,7 @@
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                 <img id="mainProductImage" src="{{ $primaryImage->url }}" alt="{{ $product->nama_produk }}"
                                     class="object-contain w-full h-full cursor-pointer"
-                                    style="transform: scale(0.75); transform-origin: center;" onclick="openZoomModal()">
+                                    onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -31,7 +31,7 @@
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                 <img id="mainProductImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
                                     alt="{{ $product->nama_produk }}" class="object-contain w-full h-full cursor-pointer"
-                                    style="transform: scale(0.75); transform-origin: center;" onclick="openZoomModal()">
+                                    onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
