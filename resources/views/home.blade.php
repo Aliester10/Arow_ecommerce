@@ -226,32 +226,21 @@
     <div class="mb-8 md:mb-12">
 
         <!-- Section Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 md:mb-6">
-            <div class="flex items-center gap-2 sm:gap-3">
-                <i class="fas fa-star text-orange-500 text-lg sm:text-3xl mt-0 sm:-mt-1"></i>
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">
-                        Produk Unggulan
-                    </h2>
-                    <p class="text-xs sm:text-sm text-gray-500 font-normal mt-0.5 sm:mt-1">
-                        Item yang paling direkomendasikan
-                    </p>
-                </div>
-            </div>
-
-            <a href="{{ route('products.index') }}" class="text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1 text-sm sm:text-base">
-                {{ __('messages.view_all') }}
-                <i class="fas fa-arrow-right text-sm"></i>
-            </a>
+        <div class="mb-4 md:mb-6 flex justify-between items-center">
+            <h2 class="text-xl md:text-2xl font-bold" style="color: #0f172a;">
+                Produk Terbaru di Mbizmarket
+            </h2>
         </div>
 
         <!-- Product Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
-            @forelse($products as $product)
-                <div class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-md group hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skeleton-container>
-                    <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            @forelse($products as $index => $product)
+                <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container>
+                    <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
+                        <!-- No top badge per user request -->
+
                         <!-- Product Image -->
-                        <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
+                        <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @php
                                 $imagePath = null;
                                 if ($product->gambar_produk) {
@@ -266,60 +255,57 @@
                             @endphp
 
                             @if($imagePath)
-                                <!-- Skeleton Loading -->
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
-
-                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                <div class="absolute inset-0 flex items-center justify-center p-3" style="z-index: 10;">
                                     <img src="{{ asset($imagePath) }}" 
                                          alt="{{ $product->nama_produk }}" 
-                                         class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                                         class="max-w-full max-h-full object-contain"
                                          data-skeleton-image
                                          loading="lazy">
                                 </div>
                             @else
-                                <div class="absolute inset-0 flex items-center justify-center bg-gray-100" style="z-index: 10;">
-                                    <i class="fas fa-image text-gray-300 text-2xl sm:text-3xl"></i>
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
+                                    <i class="fas fa-image text-gray-300 text-3xl"></i>
                                 </div>
                             @endif
                         </div>
 
                         <!-- Product Info -->
-                        <div class="flex flex-col flex-grow p-2 sm:p-3 bg-white">
+                        <div class="flex flex-col flex-grow p-3 bg-white">
                             <!-- Product Name -->
-                            <h3 class="text-xs sm:text-sm font-semibold text-gray-800 mb-1 sm:mb-2 line-clamp-2 leading-tight">
+                            <h3 class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
                                 {{ $product->nama_produk }}
                             </h3>
 
                             <!-- Price Section -->
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col">
-                                    @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
-                                        <div class="flex items-center gap-1 sm:gap-2">
-                                            <span class="text-xs sm:text-sm font-bold text-red-600">
-                                                Rp. {{ number_format($product->harga_diskon, 0, ',', '.') }}
-                                            </span>
-                                            <span class="text-xs text-gray-400 line-through">
-                                                {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span class="text-xs sm:text-sm font-bold text-gray-800">
-                                            Rp. {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                        </span>
-                                    @endif
-                                </div>
+                            <div class="mt-auto">
+                                <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                                    <span class="text-[15px] font-bold text-[#eab308]">
+                                        Rp {{ number_format($product->harga_diskon, 0, ',', '.') }},00
+                                    </span>
+                                @else
+                                    <span class="text-[15px] font-bold text-[#eab308]">
+                                        Rp {{ number_format($product->harga_produk, 0, ',', '.') }},00
+                                    </span>
+                                @endif
+                            </div>
 
-                                <!-- Cart Button -->
-                                <button onclick="addToCart({{ $product->id_produk }}, 1)" 
-                                        class="bg-orange-500 hover:bg-orange-600 text-white p-1.5 sm:p-2 rounded-lg transition-colors">
-                                    <i class="fas fa-shopping-cart text-xs sm:text-sm"></i>
-                                </button>
+                            <!-- Seller Info mapping to actual product data -->
+                            <div class="mt-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                    <span class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">{{ $product->asal_produk ?: 'Indonesia' }}</span>
+                                </div>
+                                <div class="text-[11px] text-gray-400">
+                                    Tipe: {{ $product->tipe_produk ?: '-' }}
+                                </div>
                             </div>
                         </div>
                     </a>
                 </div>
             @empty
-                <div class="col-span-2 sm:col-span-3 lg:col-span-6 w-full text-center py-8 sm:py-12 bg-white rounded-lg sm:rounded-xl border border-dashed border-gray-300">
+                <div class="col-span-2 sm:col-span-3 lg:col-span-6 w-full text-center py-8 sm:py-12 bg-white border border-dashed border-gray-300">
                     <i class="fas fa-box-open text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
                     <p class="text-gray-500 font-medium text-sm sm:text-base">Belum ada produk baru.</p>
                 </div>

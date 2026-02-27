@@ -6,7 +6,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
                 <!-- Image Gallery -->
                 <div class="space-y-4">
-                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative group">
+                    <div class="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200 relative group">
                         <!-- Product Images (z-10) -->
                         @if($product->images->count() > 0)
                             @php
@@ -16,13 +16,14 @@
                                 }
                             @endphp
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                <img id="mainProductImage" src="{{ $primaryImage->url }}"
-                                    alt="{{ $product->nama_produk }}" class="object-contain w-full h-full cursor-pointer"
+                                <img id="mainProductImage" src="{{ $primaryImage->url }}" alt="{{ $product->nama_produk }}"
+                                    class="object-contain w-full h-full cursor-pointer"
                                     style="transform: scale(0.75); transform-origin: center;" onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer" onclick="openZoomModal()">
+                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer"
+                                    onclick="openZoomModal()">
                                     <i class="fas fa-search-plus"></i>
                                 </div>
                             </div>
@@ -34,7 +35,8 @@
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer" onclick="openZoomModal()">
+                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer"
+                                    onclick="openZoomModal()">
                                     <i class="fas fa-search-plus"></i>
                                 </div>
                             </div>
@@ -44,16 +46,15 @@
                             </div>
                         @endif
                     </div>
-                    
+
                     <!-- Thumbnail Gallery -->
                     @if($product->images->count() > 0)
                         <div class="flex gap-2 overflow-x-auto pb-2">
                             @foreach($product->images->sortBy('sort_order') as $image)
-                                <div
-                                    class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-orange-500' : '' }}"
+                                <div class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-orange-500' : '' }}"
                                     onclick="changeMainImage('{{ $image->url }}')">
-                                    <img src="{{ $image->url }}"
-                                        alt="{{ $product->nama_produk }}" class="w-full h-full object-contain p-2">
+                                    <img src="{{ $image->url }}" alt="{{ $product->nama_produk }}"
+                                        class="w-full h-full object-contain p-2">
                                     @if($image->is_primary)
                                         <div class="absolute top-1 right-1 bg-orange-500 text-white text-xs rounded px-1">
                                             Utama
@@ -387,7 +388,7 @@
                                         </div>
                                     @endif
 
-                                    
+
                                     <!-- Badges (z-30) -->
                                     @if($related->stok_produk <= 0)
                                         <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm"
@@ -502,15 +503,24 @@
         <div class="relative w-full h-full flex flex-col pointer-events-none">
 
             <!-- Header (Close only) -->
-            <div class="absolute top-0 right-0 p-6 z-50 pointer-events-auto">
+            <div class="absolute top-0 right-0 p-6 z-50 pointer-events-auto flex items-center gap-4">
+                <span id="zoomImageCounter" class="text-white/70 font-mono text-sm tracking-wider mr-2 font-medium">1 / 1</span>
                 <button onclick="closeZoomModal()"
                     class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-md border border-white/10 group">
                     <i class="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-300"></i>
                 </button>
             </div>
 
+            <!-- Navigation Buttons (Prev/Next) -->
+            <button id="zoomPrevBtn" onclick="zoomPrevImage(event)" class="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
+                <i class="fas fa-chevron-left text-xl sm:text-2xl"></i>
+            </button>
+            <button id="zoomNextBtn" onclick="zoomNextImage(event)" class="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
+                <i class="fas fa-chevron-right text-xl sm:text-2xl"></i>
+            </button>
+
             <!-- Image Container -->
-            <div class="flex-1 flex items-center justify-center overflow-hidden relative pointer-events-auto w-full h-full"
+            <div class="flex-1 flex items-center justify-center overflow-hidden relative pointer-events-auto w-full h-full group"
                 id="zoomContainer" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="endDrag()"
                 onmouseleave="endDrag()" onwheel="handleWheel(event)" ondblclick="toggleZoom(event)">
 
@@ -546,13 +556,26 @@
                     </button>
                 </div>
                 <p class="text-white/30 text-[10px] text-center mt-3 font-light tracking-wider uppercase">
-                    Scroll • Double Click • Drag
+                    Scroll • Double Click • Drag • Left/Right Arrow
                 </p>
             </div>
         </div>
     </div>
 
     <script>
+        // Gallery Array from PHP
+        const productGallery = [
+            @if($product->images->count() > 0)
+                @foreach($product->images->sortBy('sort_order') as $image)
+                    '{{ $image->url }}',
+                @endforeach
+            @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
+            @endif
+        ];
+        
+        let currentGalleryIndex = 0;
+
         // Zoom functionality variables
         let scale = 1;
         let pannedX = 0;
@@ -568,26 +591,79 @@
         const zoomImage = document.getElementById('zoomImage');
         const zoomDisplay = document.getElementById('zoomLevelDisplay');
         const mainImage = document.getElementById('mainProductImage');
+        
+        const zoomPrevBtn = document.getElementById('zoomPrevBtn');
+        const zoomNextBtn = document.getElementById('zoomNextBtn');
+        const zoomImageCounter = document.getElementById('zoomImageCounter');
+
+        function updateGalleryUI() {
+            if (productGallery.length <= 1) {
+                if(zoomPrevBtn) zoomPrevBtn.style.display = 'none';
+                if(zoomNextBtn) zoomNextBtn.style.display = 'none';
+                if(zoomImageCounter) zoomImageCounter.style.display = 'none';
+                return;
+            }
+            
+            if(zoomPrevBtn) zoomPrevBtn.style.display = 'flex';
+            if(zoomNextBtn) zoomNextBtn.style.display = 'flex';
+            if(zoomImageCounter) {
+                zoomImageCounter.style.display = 'inline-block';
+                zoomImageCounter.innerText = `${currentGalleryIndex + 1} / ${productGallery.length}`;
+            }
+        }
+
+        function zoomPrevImage(e) {
+            if(e) e.stopPropagation();
+            if (productGallery.length <= 1) return;
+            
+            currentGalleryIndex = (currentGalleryIndex - 1 + productGallery.length) % productGallery.length;
+            zoomImage.src = productGallery[currentGalleryIndex];
+            mainImage.src = productGallery[currentGalleryIndex]; // sync background thumb
+            resetZoom();
+            updateGalleryUI();
+        }
+
+        function zoomNextImage(e) {
+            if(e) e.stopPropagation();
+            if (productGallery.length <= 1) return;
+            
+            currentGalleryIndex = (currentGalleryIndex + 1) % productGallery.length;
+            zoomImage.src = productGallery[currentGalleryIndex];
+            mainImage.src = productGallery[currentGalleryIndex]; // sync background thumb
+            resetZoom();
+            updateGalleryUI();
+        }
 
         function openZoomModal() {
             if (!mainImage) return;
 
+            // Find current image in gallery array
+            if(productGallery.length > 0) {
+                const currentSrc = mainImage.src;
+                // find index by matching ending of URL to handle domain differences if any
+                const idx = productGallery.findIndex(url => currentSrc.includes(url) || url.includes(currentSrc));
+                if (idx !== -1) currentGalleryIndex = idx;
+            }
+
             zoomImage.src = mainImage.src;
             resetZoom();
+            updateGalleryUI();
 
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            document.addEventListener('keydown', handleEscKey);
+            document.addEventListener('keydown', handleGlobalKeydown);
         }
 
         function closeZoomModal() {
             modal.classList.add('hidden');
             document.body.style.overflow = '';
-            document.removeEventListener('keydown', handleEscKey);
+            document.removeEventListener('keydown', handleGlobalKeydown);
         }
 
-        function handleEscKey(e) {
+        function handleGlobalKeydown(e) {
             if (e.key === 'Escape') closeZoomModal();
+            else if (e.key === 'ArrowLeft') zoomPrevImage();
+            else if (e.key === 'ArrowRight') zoomNextImage();
         }
 
         function updateTransform() {
