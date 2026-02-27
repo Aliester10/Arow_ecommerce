@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Produk;
+use App\Models\ProductImage;
 use App\Models\SubSubkategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -46,7 +47,8 @@ class AdminProductController extends Controller
             'stok_produk' => 'required|integer|min:0',
             'berat_produk' => 'required|numeric|min:0',
             'deskripsi_produk' => 'required|string',
-            'gambar_produk' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar_produk' => 'required|array|min:1',
+            'gambar_produk.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_produk' => 'required|in:aktif,nonaktif',
         ]);
 
@@ -59,15 +61,24 @@ class AdminProductController extends Controller
         if (empty($data['id_sub_subkategori']))
             $data['id_sub_subkategori'] = null;
 
+        // Handle multiple image uploads
         if ($request->hasFile('gambar_produk')) {
-            $image = $request->file('gambar_produk');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            // Use Storage facade for better production compatibility
-            Storage::disk('public')->putFileAs('images/produk', $image, $imageName);
-            $data['gambar_produk'] = $imageName;
+            $product = Produk::create($data);
+            
+            foreach ($request->file('gambar_produk') as $index => $image) {
+                $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('images/produk', $imageName, 'public');
+                
+                ProductImage::create([
+                    'id_produk' => $product->id_produk,
+                    'image_path' => $path,
+                    'sort_order' => $index,
+                    'is_primary' => $index === 0 // First image is primary
+                ]);
+            }
+        } else {
+            Produk::create($data);
         }
-
-        Produk::create($data);
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
@@ -80,7 +91,7 @@ class AdminProductController extends Controller
 
     public function edit($id)
     {
-        $product = Produk::findOrFail($id);
+        $product = Produk::with('images')->findOrFail($id);
         $brands = Brand::all();
         $kategoris = \App\Models\Kategori::all();
 
@@ -105,7 +116,8 @@ class AdminProductController extends Controller
             'stok_produk' => 'required|integer|min:0',
             'berat_produk' => 'required|numeric|min:0',
             'deskripsi_produk' => 'required|string',
-            'gambar_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar_produk' => 'nullable|array',
+            'gambar_produk.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_produk' => 'required|in:aktif,nonaktif',
         ]);
 
@@ -118,16 +130,26 @@ class AdminProductController extends Controller
         if (empty($data['id_sub_subkategori']))
             $data['id_sub_subkategori'] = null;
 
+        // Handle multiple image uploads
         if ($request->hasFile('gambar_produk')) {
-            // Delete old image using Storage
-            if ($product->gambar_produk) {
-                Storage::disk('public')->delete('images/produk/' . $product->gambar_produk);
+            // Delete existing images
+            foreach ($product->images as $existingImage) {
+                Storage::disk('public')->delete($existingImage->image_path);
+                $existingImage->delete();
             }
-
-            $image = $request->file('gambar_produk');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('images/produk', $image, $imageName);
-            $data['gambar_produk'] = $imageName;
+            
+            // Upload new images
+            foreach ($request->file('gambar_produk') as $index => $image) {
+                $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('images/produk', $imageName, 'public');
+                
+                ProductImage::create([
+                    'id_produk' => $product->id_produk,
+                    'image_path' => $path,
+                    'sort_order' => $index,
+                    'is_primary' => $index === 0 // First image is primary
+                ]);
+            }
         }
 
         $product->update($data);
@@ -139,6 +161,13 @@ class AdminProductController extends Controller
     {
         $product = Produk::findOrFail($id);
 
+        // Delete product images
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+            $image->delete();
+        }
+
+        // Delete legacy single image if exists
         if ($product->gambar_produk) {
             Storage::disk('public')->delete('images/produk/' . $product->gambar_produk);
         }
@@ -146,5 +175,44 @@ class AdminProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus!');
+    }
+
+    /**
+     * Delete a specific product image
+     */
+    public function deleteImage($productId, $imageId)
+    {
+        $product = Produk::findOrFail($productId);
+        $image = ProductImage::where('id_produk', $productId)->findOrFail($imageId);
+        
+        Storage::disk('public')->delete($image->image_path);
+        $image->delete();
+        
+        // If this was primary image, set next image as primary
+        if ($image->is_primary) {
+            $nextImage = $product->images()->orderBy('sort_order')->first();
+            if ($nextImage) {
+                $nextImage->update(['is_primary' => true]);
+            }
+        }
+        
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Set primary image for product
+     */
+    public function setPrimaryImage($productId, $imageId)
+    {
+        $product = Produk::findOrFail($productId);
+        
+        // Remove primary status from all images
+        $product->images()->update(['is_primary' => false]);
+        
+        // Set new primary image
+        $image = ProductImage::where('id_produk', $productId)->findOrFail($imageId);
+        $image->update(['is_primary' => true]);
+        
+        return response()->json(['success' => true]);
     }
 }

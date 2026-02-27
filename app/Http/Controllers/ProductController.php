@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan']);
+        $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan', 'images']);
 
         if ($request->has('search')) {
             $query->where('nama_produk', 'like', '%' . $request->search . '%');
@@ -39,11 +39,11 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user'])
+        $product = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan.user', 'images'])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $relatedProducts = Produk::with('ulasan')
+        $relatedProducts = Produk::with(['ulasan', 'images'])
             ->where('id_sub_subkategori', $product->id_sub_subkategori)
             ->where('id_produk', '!=', $product->id_produk)
             ->take(4)

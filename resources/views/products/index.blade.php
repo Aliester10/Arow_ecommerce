@@ -61,23 +61,31 @@
                                     <!-- Product Image (z-10) -->
                                     @php
                                         $imagePath = null;
-                                        if ($product->gambar_produk) {
+                                        // Try new image system first
+                                        if ($product->images->count() > 0) {
+                                            $primaryImage = $product->images->where('is_primary', true)->first();
+                                            if (!$primaryImage) {
+                                                $primaryImage = $product->images->sortBy('sort_order')->first();
+                                            }
+                                            $imagePath = $primaryImage->url;
+                                        } elseif ($product->gambar_produk) {
+                                            // Fallback to legacy system
                                             $path1 = 'storage/images/produk/' . $product->gambar_produk;
                                             $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
                                             $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
 
                                             if (file_exists(public_path($path1)))
-                                                $imagePath = $path1;
+                                                $imagePath = asset($path1);
                                             elseif (file_exists(public_path($path2)))
-                                                $imagePath = $path2;
+                                                $imagePath = asset($path2);
                                             elseif (file_exists(public_path($path3)))
-                                                $imagePath = $path3;
+                                                $imagePath = asset($path3);
                                         }
                                     @endphp
 
                                     @if($imagePath)
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <img src="{{ asset($imagePath) }}" alt="{{ $product->nama_produk }}" data-skeleton-image
+                                            <img src="{{ $imagePath }}" alt="{{ $product->nama_produk }}" data-skeleton-image
                                                 class="object-contain w-full h-full"
                                                 style="transform: scale(0.75); transform-origin: center;">
                                         </div>

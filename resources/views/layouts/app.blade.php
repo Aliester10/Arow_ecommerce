@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $perusahaan?->nama_perusahaan ?? 'Arow Ecommerce' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -28,7 +29,7 @@
                 @endif
             </div>
             <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
-                <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
+                <a href="{{ route('help.index') }}" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
                 <div id="gtranslate-dropdown" style="position:relative;"></div>
                 <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
             </div>
@@ -72,7 +73,7 @@
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
                             </div>
-                            <input type="text" name="search" placeholder="Cari sekarang hanya di aro baskara era"
+                            <input type="text" name="search" placeholder="cari sekarang hanya di ayobelanja.co.id"
                                 class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full">
                             <button type="submit"
                                 class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm"
@@ -197,11 +198,14 @@
                     <!-- Address & Contact Grid -->
                     <div class="space-y-4 text-sm text-gray-500 leading-relaxed">
                         @if($perusahaan->alamat_perusahaan)
-                            <p>{{ $perusahaan->alamat_perusahaan }}</p>
+                            <div class="flex items-start gap-4">
+                                <div class="w-6 flex justify-center"><i class="fas fa-map-marker-alt mt-1 text-orange-500"></i></div>
+                                <p>{{ $perusahaan->alamat_perusahaan }}</p>
+                            </div>
                         @endif
 
                         @if($perusahaan->footer_description)
-                            <p>{{ $perusahaan->footer_description }}</p>
+                            <p class="mt-4">{{ $perusahaan->footer_description }}</p>
                         @endif
 
                         <div class="space-y-3">
@@ -265,13 +269,13 @@
                                                 <div class="flex space-x-3">
                                                     @if($perusahaan->facebook)
                                                         <a href="{{ $perusahaan->facebook }}" target="_blank"
-                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            class="w-10 h-10 rounded-full bg-blue-600 border border-blue-600 flex items-center justify-center text-white hover:bg-blue-700 hover:border-blue-700 transition-all shadow-sm">
                                                             <i class="fab fa-facebook-f text-sm"></i>
                                                         </a>
                                                     @endif
                                                     @if($perusahaan->instagram)
                                                         <a href="{{ $perusahaan->instagram }}" target="_blank"
-                                                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm">
+                                                            class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 border border-transparent flex items-center justify-center text-white hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 transition-all shadow-sm">
                                                             <i class="fab fa-instagram text-sm"></i>
                                                         </a>
                                                     @endif
@@ -329,7 +333,7 @@
             <!-- Bottom Copyright -->
             <div class="text-center pt-8 border-t border-gray-200 mt-8">
                 <p class="text-gray-500 text-xs">
-                    &copy; {{ date('Y') }} <strong>{{ $perusahaan->nama_perusahaan ?? 'Arow Ecommerce' }}</strong> |
+                    &copy; {{ date('Y') }} <strong>ayobelanja.co.id</strong> |
                     Member of PT. Aro Baskara Esa. All rights
                     reserved.
                 </p>

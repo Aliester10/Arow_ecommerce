@@ -244,37 +244,42 @@
                                         class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">{{ old('deskripsi_produk') }}</textarea>
                                 </div>
 
-                                <div class="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                                    <div class="w-full xl:w-1/2">
-                                        <label class="mb-2.5 block text-black dark:text-white">
-                                            Gambar Produk <span class="text-meta-1">*</span>
-                                        </label>
-                                        <input type="file" name="gambar_produk" required accept="image/*"
+                                <div class="mb-4.5">
+                                    <label class="mb-2.5 block text-black dark:text-white">
+                                        Gambar Produk <span class="text-meta-1">*</span>
+                                    </label>
+                                    <div class="space-y-4">
+                                        <div id="image-preview-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                                            <!-- Image previews will be shown here -->
+                                        </div>
+                                        <input type="file" name="gambar_produk[]" required multiple accept="image/*"
                                             class="w-full rounded-md border border-stroke p-3 outline-none transition file:mr-4 file:rounded file:border-[0.5px] file:border-stroke file:bg-[#EEEEEE] file:py-1 file:px-2.5 file:text-sm file:font-medium focus:border-primary file:focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:file:border-strokedark dark:file:bg-white/30 dark:file:text-white" />
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Pilih beberapa gambar. Gambar pertama akan menjadi gambar utama.</p>
                                     </div>
-                                    <div class="w-full xl:w-1/2">
-                                        <label class="mb-2.5 block text-black dark:text-white">
-                                            Status <span class="text-meta-1">*</span>
-                                        </label>
-                                        <div class="relative z-20 bg-transparent dark:bg-gray-700">
-                                            <select name="status_produk" required
-                                                class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
-                                                <option value="aktif" {{ old('status_produk') == 'aktif' ? 'selected' : '' }}>
-                                                    Aktif</option>
-                                                <option value="nonaktif" {{ old('status_produk') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                                            </select>
-                                            <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <g opacity="0.8">
-                                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                                                            fill=""></path>
+                                </div>
+
+                                <div class="mb-4.5">
+                                    <label class="mb-2.5 block text-black dark:text-white">
+                                        Status <span class="text-meta-1">*</span>
+                                    </label>
+                                    <div class="relative z-20 bg-transparent dark:bg-gray-700">
+                                        <select name="status_produk" required
+                                            class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">
+                                            <option value="aktif" {{ old('status_produk') == 'aktif' ? 'selected' : '' }}>
+                                                Aktif</option>
+                                            <option value="nonaktif" {{ old('status_produk') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                        </select>
+                                        <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2">
+                                            <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g opacity="0.8">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                                                        fill=""></path>
                                                     </g>
                                                 </svg>
                                             </span>
                                         </div>
-                                    </div>
                                 </div>
 
                                 <button
@@ -296,6 +301,30 @@
             const kategoriSelect = document.getElementById('id_kategori');
             const subkategoriSelect = document.getElementById('id_subkategori');
             const subSubkategoriSelect = document.getElementById('id_sub_subkategori');
+            const imageInput = document.querySelector('input[name="gambar_produk[]"]');
+            const previewContainer = document.getElementById('image-preview-container');
+
+            // Image preview functionality
+            imageInput.addEventListener('change', function(e) {
+                previewContainer.innerHTML = '';
+                const files = Array.from(e.target.files);
+                
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'relative group';
+                        previewDiv.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-32 object-cover rounded border border-stroke dark:border-gray-700">
+                            <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded px-2 py-1 text-xs">
+                                ${index === 0 ? 'Utama' : '#' + (index + 1)}
+                            </div>
+                        `;
+                        previewContainer.appendChild(previewDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
 
             // Fetch Subkategori based on Kategori
             kategoriSelect.addEventListener('change', function () {

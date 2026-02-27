@@ -6,17 +6,35 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
                 <!-- Image Gallery -->
                 <div class="space-y-4">
-                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative">
-                        <!-- Product Image (z-10) -->
-                        @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative group">
+                        <!-- Product Images (z-10) -->
+                        @if($product->images->count() > 0)
+                            @php
+                                $primaryImage = $product->images->where('is_primary', true)->first();
+                                if (!$primaryImage) {
+                                    $primaryImage = $product->images->sortBy('sort_order')->first();
+                                }
+                            @endphp
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                <img id="mainProductImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
-                                    alt="{{ $product->nama_produk }}" class="object-contain w-full h-full"
-                                    style="transform: scale(0.75); transform-origin: center;">
+                                <img id="mainProductImage" src="{{ $primaryImage->url }}"
+                                    alt="{{ $product->nama_produk }}" class="object-contain w-full h-full cursor-pointer"
+                                    style="transform: scale(0.75); transform-origin: center;" onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600">
+                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer" onclick="openZoomModal()">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                        @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                            <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                <img id="mainProductImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
+                                    alt="{{ $product->nama_produk }}" class="object-contain w-full h-full cursor-pointer"
+                                    style="transform: scale(0.75); transform-origin: center;" onclick="openZoomModal()">
+                            </div>
+                            <!-- Search Icon Overlay -->
+                            <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer" onclick="openZoomModal()">
                                     <i class="fas fa-search-plus"></i>
                                 </div>
                             </div>
@@ -26,7 +44,25 @@
                             </div>
                         @endif
                     </div>
-                    @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                    
+                    <!-- Thumbnail Gallery -->
+                    @if($product->images->count() > 0)
+                        <div class="flex gap-2 overflow-x-auto pb-2">
+                            @foreach($product->images->sortBy('sort_order') as $image)
+                                <div
+                                    class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-orange-500' : '' }}"
+                                    onclick="changeMainImage('{{ $image->url }}')">
+                                    <img src="{{ $image->url }}"
+                                        alt="{{ $product->nama_produk }}" class="w-full h-full object-contain p-2">
+                                    @if($image->is_primary)
+                                        <div class="absolute top-1 right-1 bg-orange-500 text-white text-xs rounded px-1">
+                                            Utama
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                         <div class="flex gap-2">
                             <div
                                 class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden">
@@ -397,6 +433,13 @@
     </div>
 
     <script>
+        function changeMainImage(imageUrl) {
+            const mainImage = document.getElementById('mainProductImage');
+            if (mainImage) {
+                mainImage.src = imageUrl;
+            }
+        }
+
         function incrementQty() {
             const input = document.getElementById('quantity');
             const hidden = document.getElementById('quantityHidden');

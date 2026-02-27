@@ -110,4 +110,38 @@ class Produk extends Model
         $specialDeal = $this->specialDeals()->first();
         return $specialDeal ? $specialDeal->pivot->discount_percentage : null;
     }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'id_produk')->orderBy('sort_order');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(ProductImage::class, 'id_produk')->where('is_primary', true);
+    }
+
+    public function getFirstImageAttribute()
+    {
+        $primaryImage = $this->primaryImage;
+        if ($primaryImage) {
+            return $primaryImage;
+        }
+        
+        return $this->images()->first();
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->firstImage) {
+            return $this->firstImage->url;
+        }
+        
+        // Fallback to legacy single image if exists
+        if ($this->gambar_produk) {
+            return asset('storage/products/' . $this->gambar_produk);
+        }
+        
+        return asset('images/default-product.jpg');
+    }
 }

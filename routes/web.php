@@ -10,6 +10,9 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\HelpController;
+use App\Http\Controllers\AdminFaqController;
+use App\Http\Controllers\ComplaintController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +23,10 @@ use App\Http\Controllers\ShippingController;
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home/top-brand-products/{brandId}', [HomeController::class, 'getTopBrandProducts'])->name('home.top-brand-products');
+
+// Help
+Route::get('/bantuan', [HelpController::class, 'index'])->name('help.index');
+Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
 
 Route::get('/language/{locale}', function (string $locale) {
     if (!in_array($locale, ['id', 'en'], true)) {
@@ -140,6 +147,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/products/{id}/edit', [App\Http\Controllers\AdminProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'destroy'])->name('products.destroy');
+    Route::delete('/products/{productId}/delete-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'deleteImage'])->name('products.deleteImage');
+    Route::post('/products/{productId}/set-primary-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
 
     // Appearance Management
     Route::prefix('appearance')->name('appearance.')->group(function () {
@@ -216,4 +225,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/special-deals/{specialDeal}/edit', [App\Http\Controllers\AdminSpecialDealController::class, 'edit'])->name('special-deals.edit');
     Route::put('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'update'])->name('special-deals.update');
     Route::delete('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'destroy'])->name('special-deals.destroy');
+
+    // FAQ Management
+    Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faq.index');
+    Route::get('/faqs/create', [AdminFaqController::class, 'create'])->name('faq.create');
+    Route::post('/faqs', [AdminFaqController::class, 'store'])->name('faq.store');
+    Route::get('/faqs/{faq}/edit', [AdminFaqController::class, 'edit'])->name('faq.edit');
+    Route::put('/faqs/{faq}', [AdminFaqController::class, 'update'])->name('faq.update');
+    Route::delete('/faqs/{faq}', [AdminFaqController::class, 'destroy'])->name('faq.destroy');
+    Route::patch('/faqs/{faq}/toggle-status', [AdminFaqController::class, 'toggleStatus'])->name('faq.toggle-status');
+
+    // Complaint Management
+    Route::get('/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('/complaints/{id}', [ComplaintController::class, 'show'])->name('complaints.show');
+    Route::get('/complaints/{id}/download', [ComplaintController::class, 'downloadEvidence'])->name('complaints.download');
+    Route::put('/complaints/{id}/status', [ComplaintController::class, 'updateStatus'])->name('complaints.update-status');
 });

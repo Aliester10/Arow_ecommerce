@@ -46,6 +46,22 @@
                 <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $bannerCount }}</h3>
             </div>
         </div>
+
+        <!-- Complaints Stat -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-stroke dark:border-gray-700 p-6 flex items-center gap-5 hover:shadow-md transition-shadow">
+            <div
+                class="w-14 h-14 bg-red-50 text-red-600 rounded-lg flex items-center justify-center text-2xl shadow-inner">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm font-medium">Total Laporan</p>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $complaintCount }}</h3>
+                @if($pendingComplaints > 0)
+                    <p class="text-xs text-orange-600 mt-1">{{ $pendingComplaints }} menunggu</p>
+                @endif
+            </div>
+        </div>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-stroke dark:border-gray-700 p-8">
@@ -81,6 +97,17 @@
                 </div>
                 <i
                     class="fas fa-chevron-right text-gray-300 group-hover:text-orange-400 transition-all transform group-hover:translate-x-1"></i>
+            </a>
+            <a href="{{ route('admin.complaints.index') }}"
+                class="group p-4 border border-stroke dark:border-gray-700 rounded-lg hover:border-red-500 hover:bg-red-50 dark:hover:bg-meta-4 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-exclamation-triangle text-gray-400 group-hover:text-red-500 transition-colors"></i>
+                    <span
+                        class="font-medium text-gray-700 dark:text-gray-300 group-hover:text-red-700 dark:group-hover:text-white">Kelola
+                        Laporan Kendala</span>
+                </div>
+                <i
+                    class="fas fa-chevron-right text-gray-300 group-hover:text-red-400 transition-all transform group-hover:translate-x-1"></i>
             </a>
         </div>
     </div>
