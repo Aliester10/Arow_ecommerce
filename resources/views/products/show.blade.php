@@ -4,9 +4,10 @@
     <div class="container mx-auto px-4">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
-                <!-- Image Gallery -->
-                <div class="space-y-4">
-                    <div class="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200 relative group">
+                <!-- Image Gallery (Left Column) -->
+                <div class="space-y-4 max-w-md mx-auto w-full">
+                    <div
+                        class="aspect-square bg-white overflow-hidden relative group w-full border border-gray-100 rounded-lg">
                         <!-- Product Images (z-10) -->
                         @if($product->images->count() > 0)
                             @php
@@ -50,89 +51,36 @@
                     @if($product->images->count() > 0)
                         <div class="flex gap-2 overflow-x-auto pb-2">
                             @foreach($product->images->sortBy('sort_order') as $image)
-                                <div class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-orange-500' : '' }}"
-                                    onclick="changeMainImage('{{ $image->url }}')">
+                                <div class="w-16 h-16 bg-gray-50 rounded-sm border border-gray-200 cursor-pointer hover:border-[#ee4d2d] transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-[#ee4d2d]' : '' }}"
+                                    onclick="changeMainImage('{{ $image->url }}', this)">
                                     <img src="{{ $image->url }}" alt="{{ $product->nama_produk }}"
-                                        class="w-full h-full object-contain p-2">
-                                    @if($image->is_primary)
-                                        <div class="absolute top-1 right-1 bg-orange-500 text-white text-xs rounded px-1">
-                                            Utama
-                                        </div>
-                                    @endif
+                                        class="w-full h-full object-contain p-1">
                                 </div>
                             @endforeach
                         </div>
                     @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                         <div class="flex gap-2">
                             <div
-                                class="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 cursor-pointer hover:border-orange-500 transition overflow-hidden">
+                                class="w-16 h-16 bg-gray-50 rounded-sm border-2 border-[#ee4d2d] cursor-pointer overflow-hidden">
                                 <img src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
-                                    alt="{{ $product->nama_produk }}" class="w-full h-full object-contain p-2">
+                                    alt="{{ $product->nama_produk }}" class="w-full h-full object-contain p-1">
                             </div>
                         </div>
                     @endif
-                </div>
 
-                <!-- Product Info -->
-                <div class="order-2 md:order-none md:col-start-2 md:row-start-1 md:row-span-2">
-                    <nav class="flex text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                            <li class="inline-flex items-center">
-                                <a href="{{ route('home') }}" class="hover:text-orange-600">Home</a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mx-2"></i>
-                                    <a href="{{ route('products.index', ['category' => $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'All']) }}"
-                                        class="hover:text-orange-600">{{ $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'Kategori' }}</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mx-2"></i>
-                                    <span class="text-gray-400">{{ Str::limit($product->nama_produk, 20) }}</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
-
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ $product->nama_produk }}</h1>
-
-                    <div class="flex items-center mb-4 space-x-4">
-                        <div class="text-sm text-gray-500 border-r border-gray-300 pr-4">
-                            Brand: <span
-                                class="text-orange-600 font-medium">{{ $product->brand->nama_brand ?? 'N/A' }}</span>
+                    <!-- Share & Favorit -->
+                    <div class="flex items-center justify-center space-x-8 mt-6 pt-4 text-gray-600">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="font-medium mr-1">Share:</span>
+                            <button class="text-[#0384FF] hover:opacity-80"><i
+                                    class="fab fa-facebook-messenger text-xl"></i></button>
+                            <button class="text-[#1877F2] hover:opacity-80"><i class="fab fa-facebook text-xl"></i></button>
+                            <button class="text-[#E60023] hover:opacity-80"><i
+                                    class="fab fa-pinterest text-xl"></i></button>
+                            <button class="text-black hover:opacity-80"><i class="fab fa-x-twitter text-xl"></i></button>
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-star text-yellow-400 text-sm"></i>
-                            <span class="text-sm text-gray-600 ml-1 font-bold">4.8</span>
-                            <span class="text-sm text-gray-400 ml-1">(12 Ulasan)</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="text-sm font-bold text-gray-900 mb-2">Deskripsi Produk</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            {{ $product->deskripsi_produk }}
-                        </p>
-                    </div>
-
-                    <div class="border-t border-gray-100 pt-6">
-                        <div class="flex items-center space-x-4 mb-6">
-                            <div class="flex items-center border border-gray-300 rounded-lg">
-                                <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                                    onclick="decrementQty()">-</button>
-                                <input type="number" id="quantity" value="1" min="1" max="{{ $product->stok_produk }}"
-                                    class="w-12 text-center text-sm focus:outline-none" readonly>
-                                <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                                    onclick="incrementQty()">+</button>
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                Stok: <span class="font-medium">{{ $product->stok_produk }}</span>
-                            </div>
-                        </div>
-
-                        <div class="flex space-x-3">
+                        <div class="w-px h-6 bg-gray-300"></div>
+                        <div class="flex items-center text-sm">
                             @auth
                                 @php
                                     $isWishlisted = \App\Models\Wishlist::where('id_user', \Illuminate\Support\Facades\Auth::user()->id_user)
@@ -140,45 +88,151 @@
                                         ->exists();
                                 @endphp
                                 @if($isWishlisted)
-                                    <form action="{{ route('wishlist.destroy', $product->id_produk) }}" method="POST"
-                                        class="flex-1">
+                                    <form action="{{ route('wishlist.destroy', $product->id_produk) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="w-full px-6 py-3 border border-red-600 text-red-600 font-bold rounded-lg hover:bg-red-50 transition flex items-center justify-center">
-                                            <i class="fas fa-heart mr-2"></i> Favorit
+                                            class="flex items-center text-[#ee4d2d] hover:text-red-600 font-medium transition space-x-2">
+                                            <i class="fas fa-heart text-xl"></i>
+                                            <span>Favorit
+                                                ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
                                         </button>
                                     </form>
                                 @else
-                                    <form action="{{ route('wishlist.store', $product->id_produk) }}" method="POST" class="flex-1">
+                                    <form action="{{ route('wishlist.store', $product->id_produk) }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="w-full px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                            <i class="far fa-heart mr-2"></i> Favorit
+                                            class="flex items-center text-gray-500 hover:text-[#ee4d2d] font-medium transition space-x-2">
+                                            <i class="far fa-heart text-xl"></i>
+                                            <span>Favorit
+                                                ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
                                         </button>
                                     </form>
                                 @endif
                             @else
                                 <a href="{{ route('login') }}"
-                                    class="flex-1 px-6 py-3 border border-orange-600 text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition flex items-center justify-center">
-                                    <i class="far fa-heart mr-2"></i> Favorit
+                                    class="flex items-center text-gray-500 hover:text-[#ee4d2d] font-medium transition space-x-2">
+                                    <i class="far fa-heart text-xl"></i>
+                                    <span>Favorit
+                                        ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
                                 </a>
                             @endauth
-
-                            <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" class="flex-1">
-                                @csrf
-                                <input type="hidden" name="quantity" id="quantityHidden" value="1">
-                                <button type="submit"
-                                    class="w-full px-6 py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Keranjang
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="bg-white rounded-lg border border-gray-100 overflow-hidden order-3 md:order-none md:col-start-1 md:row-start-2">
+                <!-- Product Info (Right Column) -->
+                <div class="mt-6 md:mt-0 lg:pr-8">
+                    <!-- Title & Ratings -->
+                    <h1 class="text-xl md:text-[22px] font-medium text-gray-900 mb-3 leading-tight">
+                        {{ $product->nama_produk }}
+                    </h1>
+
+                    <div class="flex flex-wrap items-center mb-4 text-sm">
+                        <div class="flex items-center text-[#ee4d2d] pr-4 border-r border-gray-300">
+                            <span class="font-medium mr-1 border-b border-[#ee4d2d]">4.9</span>
+                            <div class="flex space-x-0.5 text-xs">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="px-4 border-r border-gray-300 text-gray-700">
+                            <span class="font-medium border-b border-gray-700">13</span> <span
+                                class="text-gray-500 ml-1">Penilaian</span>
+                        </div>
+                        <div class="px-4 text-gray-700">
+                            <span class="font-medium">{{ $product->stok_produk > 0 ? rand(10, 500) : 0 }}</span> <span
+                                class="text-gray-500 ml-1">Terjual</span>
+                        </div>
+
+                        <div class="ml-auto text-gray-400 text-sm hover:text-gray-600 cursor-pointer">
+                            Laporkan
+                        </div>
+                    </div>
+
+                    <!-- Price Block -->
+                    <div class="bg-[#fafafa] px-5 py-4 mb-6 flex flex-col justify-center min-h-[80px]">
+                        <div class="flex items-baseline space-x-3">
+                            @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                                <span
+                                    class="text-base text-gray-400 line-through">Rp{{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                <span
+                                    class="text-3xl font-medium text-[#ee4d2d]">Rp{{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
+                            @else
+                                <span
+                                    class="text-3xl font-medium text-[#ee4d2d]">Rp{{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Details Table -->
+                    <div class="space-y-4 md:space-y-6 mb-8 text-sm">
+
+                        <div class="flex items-start">
+                            <div class="w-[120px] text-gray-500 font-medium pt-1">Pengiriman</div>
+                            <div class="flex-1 text-gray-700">
+                                <div class="flex items-center mb-1">
+                                    <i class="fas fa-truck text-gray-500 mr-2 w-4"></i>
+                                    <span>Layanan Pengiriman Reguler</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-[120px] text-gray-500 font-medium pt-1">Kategori</div>
+                            <div class="flex-1 text-gray-700 font-medium text-[#0384FF] cursor-pointer">
+                                {{ $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'Semua' }} >
+                                {{ $product->subSubkategori->subkategori->nama_subkategori ?? 'Produk' }} >
+                                {{ $product->subSubkategori->nama_sub_subkategori ?? 'Item' }}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center mt-6">
+                            <div class="w-[120px] text-gray-500 font-medium">Kuantitas</div>
+                            <div class="flex-1 flex items-center space-x-4">
+                                <div class="flex items-center border border-gray-300 rounded-sm overflow-hidden">
+                                    <button type="button"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-500 bg-white hover:bg-gray-50 border-r border-gray-300 transition-colors"
+                                        onclick="decrementQty()">
+                                        <i class="fas fa-minus text-[10px]"></i>
+                                    </button>
+                                    <input type="number" id="quantity" value="1" min="1" max="{{ $product->stok_produk }}"
+                                        class="w-12 h-8 text-center text-gray-700 focus:outline-none text-[15px]" readonly>
+                                    <button type="button"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-500 bg-white hover:bg-gray-50 border-l border-gray-300 transition-colors"
+                                        onclick="incrementQty()">
+                                        <i class="fas fa-plus text-[10px]"></i>
+                                    </button>
+                                </div>
+                                <div class="text-gray-500">
+                                    Tersisa {{ $product->stok_produk }} Buah
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-3 mt-8">
+                        <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" id="addToCartForm"
+                            class="mr-1">
+                            @csrf
+                            <input type="hidden" name="quantity" id="quantityHidden" value="1">
+                            <button type="submit"
+                                class="px-6 md:px-10 py-3 bg-[#ffeee8] border border-[#ee4d2d] text-[#ee4d2d] font-medium rounded-sm hover:bg-[#ffe4dc] transition flex items-center justify-center min-w-[180px]">
+                                <i class="fas fa-cart-plus mr-2 text-lg"></i> Masukkan Keranjang
+                            </button>
+                        </form>
+                        <button type="button" onclick="document.getElementById('addToCartForm').submit()"
+                            class="px-6 md:px-10 py-3 bg-[#ee4d2d] text-white font-medium rounded-sm hover:bg-[#d73f22] transition flex flex-col items-center justify-center min-w-[180px] shadow-sm">
+                            <span>Beli Sekarang</span>
+                        </button>
+                    </div>
+                </div>
+            </div> <!-- End Flex Top Section -->
+
+            <!-- Bottom Specs Section (Full Width) -->
+            <div class="px-6 md:px-8 pb-8">
+                <div class="bg-white rounded-lg border border-gray-100 overflow-hidden w-full">
                     <div class="flex border-b border-gray-100">
                         <button type="button" id="tabSpecBtn"
                             class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50">
@@ -358,19 +412,20 @@
                                 <!-- Product Image -->
                                 <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                                     @php
-                                        $relatedImagePath = null;
-                                        if ($related->gambar_produk) {
-                                            $rPath1 = 'storage/images/produk/' . $related->gambar_produk;
-                                            $rPath2 = 'storage/images/produk/' . str_replace(' ', '', $related->gambar_produk);
-                                            $rPath3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $related->gambar_produk));
-
-                                            if (file_exists(public_path($rPath1)))
-                                                $relatedImagePath = $rPath1;
-                                            elseif (file_exists(public_path($rPath2)))
-                                                $relatedImagePath = $rPath2;
-                                            elseif (file_exists(public_path($rPath3)))
-                                                $relatedImagePath = $rPath3;
-                                        }
+                                        $relatedImagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($related->id_produk ?? $related->gambar_produk ?? 'none'), 86400, function () use ($related) {
+                                            if (!$related->gambar_produk)
+                                                return null;
+                                            $p1 = 'storage/images/produk/' . $related->gambar_produk;
+                                            if (file_exists(public_path($p1)))
+                                                return $p1;
+                                            $p2 = 'storage/images/produk/' . str_replace(' ', '', $related->gambar_produk);
+                                            if (file_exists(public_path($p2)))
+                                                return $p2;
+                                            $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $related->gambar_produk));
+                                            if (file_exists(public_path($p3)))
+                                                return $p3;
+                                            return null;
+                                        });
                                     @endphp
 
                                     @if($relatedImagePath)
@@ -580,7 +635,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-            ];
+                                    ];
 
         let currentGalleryIndex = 0;
 

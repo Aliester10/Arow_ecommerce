@@ -242,16 +242,16 @@
                         <!-- Product Image -->
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @php
-                                $imagePath = null;
-                                if ($product->gambar_produk) {
-                                    $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                    $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                    $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                    
-                                    if (file_exists(public_path($path1))) $imagePath = $path1;
-                                    elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                    elseif (file_exists(public_path($path3))) $imagePath = $path3;
-                                }
+                                $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
+                                    if (!$product->gambar_produk) return null;
+                                    $p1 = 'storage/images/produk/' . $product->gambar_produk;
+                                    if (file_exists(public_path($p1))) return $p1;
+                                    $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
+                                    if (file_exists(public_path($p2))) return $p2;
+                                    $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                    if (file_exists(public_path($p3))) return $p3;
+                                    return null;
+                                });
                             @endphp
 
                             @if($imagePath)
@@ -352,16 +352,16 @@
                                 <!-- Product Image Container -->
                                 <div class="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
                                     @php
-                                        $imagePath = null;
-                                        if ($product->gambar_produk) {
-                                            $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                            $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                            $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                            
-                                            if (file_exists(public_path($path1))) $imagePath = $path1;
-                                            elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                            elseif (file_exists(public_path($path3))) $imagePath = $path3;
-                                        }
+                                        $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
+                                            if (!$product->gambar_produk) return null;
+                                            $p1 = 'storage/images/produk/' . $product->gambar_produk;
+                                            if (file_exists(public_path($p1))) return $p1;
+                                            $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
+                                            if (file_exists(public_path($p2))) return $p2;
+                                            $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                            if (file_exists(public_path($p3))) return $p3;
+                                            return null;
+                                        });
                                     @endphp
                                     
                                     @if($imagePath)
@@ -511,16 +511,16 @@
                                             <!-- Product Image -->
                                             <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                                                 @php
-                                                    $imagePath = null;
-                                                    if ($product->gambar_produk) {
-                                                        $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                                        $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                                        $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                                        
-                                                        if (file_exists(public_path($path1))) $imagePath = $path1;
-                                                        elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                                        elseif (file_exists(public_path($path3))) $imagePath = $path3;
-                                                    }
+                                                    $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
+                                                        if (!$product->gambar_produk) return null;
+                                                        $p1 = 'storage/images/produk/' . $product->gambar_produk;
+                                                        if (file_exists(public_path($p1))) return $p1;
+                                                        $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
+                                                        if (file_exists(public_path($p2))) return $p2;
+                                                        $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                                        if (file_exists(public_path($p3))) return $p3;
+                                                        return null;
+                                                    });
                                                 @endphp
 
                                                 @if($imagePath)
@@ -660,16 +660,16 @@
                         <!-- Product Image -->
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @php
-                                $imagePath = null;
-                                if ($product->gambar_produk) {
-                                    $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                    $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                    $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                    
-                                    if (file_exists(public_path($path1))) $imagePath = $path1;
-                                    elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                    elseif (file_exists(public_path($path3))) $imagePath = $path3;
-                                }
+                                $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
+                                    if (!$product->gambar_produk) return null;
+                                    $p1 = 'storage/images/produk/' . $product->gambar_produk;
+                                    if (file_exists(public_path($p1))) return $p1;
+                                    $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
+                                    if (file_exists(public_path($p2))) return $p2;
+                                    $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                    if (file_exists(public_path($p3))) return $p3;
+                                    return null;
+                                });
                             @endphp
 
                             @if($imagePath)

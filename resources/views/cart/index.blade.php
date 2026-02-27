@@ -39,19 +39,21 @@
                                                 <div
                                                     class="h-16 w-16 flex-shrink-0 bg-white rounded-md overflow-hidden border border-gray-200 flex items-center justify-center mr-4">
                                                     @php
-                                                        $cartImagePath = null;
-                                                        if ($detail->produk && $detail->produk->gambar_produk) {
-                                                            $cPath1 = 'storage/images/produk/' . $detail->produk->gambar_produk;
-                                                            $cPath2 = 'storage/images/produk/' . str_replace(' ', '', $detail->produk->gambar_produk);
-                                                            $cPath3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $detail->produk->gambar_produk));
-
-                                                            if (file_exists(public_path($cPath1)))
-                                                                $cartImagePath = $cPath1;
-                                                            elseif (file_exists(public_path($cPath2)))
-                                                                $cartImagePath = $cPath2;
-                                                            elseif (file_exists(public_path($cPath3)))
-                                                                $cartImagePath = $cPath3;
-                                                        }
+                                                        $imgCacheKey = 'img_path_' . md5($detail->produk->id_produk ?? 'none');
+                                                        $cartImagePath = \Illuminate\Support\Facades\Cache::remember($imgCacheKey, 86400, function () use ($detail) {
+                                                            if (!isset($detail->produk) || !$detail->produk->gambar_produk)
+                                                                return null;
+                                                            $p1 = 'storage/images/produk/' . $detail->produk->gambar_produk;
+                                                            if (file_exists(public_path($p1)))
+                                                                return $p1;
+                                                            $p2 = 'storage/images/produk/' . str_replace(' ', '', $detail->produk->gambar_produk);
+                                                            if (file_exists(public_path($p2)))
+                                                                return $p2;
+                                                            $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $detail->produk->gambar_produk));
+                                                            if (file_exists(public_path($p3)))
+                                                                return $p3;
+                                                            return null;
+                                                        });
                                                     @endphp
 
                                                     @if($cartImagePath)

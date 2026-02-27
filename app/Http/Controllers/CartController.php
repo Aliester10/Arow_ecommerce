@@ -13,21 +13,21 @@ class CartController extends Controller
     public function index()
     {
         $cart = Cart::with(['details.produk'])->where('id_user', Auth::user()->id_user)->where('status', 'active')->first();
-        
+
         return view('cart.index', compact('cart'));
     }
 
     public function addToCart(Request $request, $id)
     {
         $product = Produk::findOrFail($id);
-        
+
         $cart = Cart::firstOrCreate(
             ['id_user' => Auth::user()->id_user, 'status' => 'active']
         );
 
         $cartDetail = CartDetail::where('id_cart', $cart->id_cart)
-                                ->where('id_produk', $product->id_produk)
-                                ->first();
+            ->where('id_produk', $product->id_produk)
+            ->first();
 
         if ($cartDetail) {
             $cartDetail->qty_cart += $request->input('quantity', 1);
@@ -40,6 +40,10 @@ class CartController extends Controller
                 'qty_cart' => $request->input('quantity', 1), // custom column name from migration
                 'harga' => $product->harga_produk
             ]);
+        }
+
+        if ($request->input('action') === 'buy_now') {
+            return redirect()->route('checkout.index');
         }
 
         return redirect()->back()->with('success', 'Product added to cart!');
