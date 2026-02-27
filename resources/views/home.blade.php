@@ -256,10 +256,10 @@
 
                             @if($imagePath)
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
-                                <div class="absolute inset-0 flex items-center justify-center p-3" style="z-index: 10;">
+                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                     <img src="{{ asset($imagePath) }}" 
                                          alt="{{ $product->nama_produk }}" 
-                                         class="max-w-full max-h-full object-contain"
+                                         class="w-full h-full object-contain"
                                          data-skeleton-image
                                          loading="lazy">
                                 </div>
@@ -506,67 +506,72 @@
                         @if($products->count() > 0)
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
                                 @foreach($products as $product)
-                                    <div class="bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"
-                                         style="border-radius: 8px;">
-                                        <!-- Product Image -->
-                                        <div class="aspect-[4/3] overflow-hidden bg-gray-50 flex-shrink-0">
-                                            @php
-                                                $imagePath = null;
-                                                if ($product->gambar_produk) {
-                                                    $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                                    $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                                    $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                                    
-                                                    if (file_exists(public_path($path1))) $imagePath = $path1;
-                                                    elseif (file_exists(public_path($path2))) $imagePath = $path2;
-                                                    elseif (file_exists(public_path($path3))) $imagePath = $path3;
-                                                }
-                                            @endphp
-                                            
-                                            @if($imagePath)
-                                                <a href="{{ route('products.show', $product->slug) }}" class="block w-full h-full">
-                                                    <img src="{{ asset($imagePath) }}" 
-                                                         alt="{{ $product->nama_produk }}"
-                                                         class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
-                                                </a>
-                                            @else
-                                                <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                                    <i class="fas fa-image text-gray-400 text-xl lg:text-2xl"></i>
+                                    <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container style="border-radius: 8px; overflow: hidden;">
+                                        <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
+                                            <!-- Product Image -->
+                                            <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
+                                                @php
+                                                    $imagePath = null;
+                                                    if ($product->gambar_produk) {
+                                                        $path1 = 'storage/images/produk/' . $product->gambar_produk;
+                                                        $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
+                                                        $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                                        
+                                                        if (file_exists(public_path($path1))) $imagePath = $path1;
+                                                        elseif (file_exists(public_path($path2))) $imagePath = $path2;
+                                                        elseif (file_exists(public_path($path3))) $imagePath = $path3;
+                                                    }
+                                                @endphp
+
+                                                @if($imagePath)
+                                                    <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
+                                                    <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                                        <img src="{{ asset($imagePath) }}" 
+                                                             alt="{{ $product->nama_produk }}" 
+                                                             class="w-full h-full object-contain"
+                                                             data-skeleton-image
+                                                             loading="lazy">
+                                                    </div>
+                                                @else
+                                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
+                                                        <i class="fas fa-image text-gray-300 text-3xl"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <!-- Product Info -->
+                                            <div class="flex flex-col flex-grow p-3 bg-white">
+                                                <!-- Product Name -->
+                                                <h3 class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
+                                                    {{ $product->nama_produk }}
+                                                </h3>
+
+                                                <!-- Price Section -->
+                                                <div class="mt-auto">
+                                                    <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                                    @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                                                        <span class="text-[15px] font-bold text-[#eab308]">
+                                                            Rp {{ number_format($product->harga_diskon, 0, ',', '.') }},00
+                                                        </span>
+                                                    @else
+                                                        <span class="text-[15px] font-bold text-[#eab308]">
+                                                            Rp {{ number_format($product->harga_produk, 0, ',', '.') }},00
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            @endif
-                                        </div>
-                                        
-                                        <!-- Product Info -->
-                                        <div class="p-2 lg:p-3 flex flex-col flex-grow">
-                                            <!-- Product Name -->
-                                            <h3 class="font-semibold text-xs lg:text-sm text-gray-800 mb-1 lg:mb-2 line-clamp-2">
-                                                {{ $product->nama_produk }}
-                                            </h3>
-                                            
-                                            <!-- Rating Section -->
-                                            <div class="flex items-center gap-1 mb-1 lg:mb-2">
-                                                <i class="fas fa-star text-yellow-400 text-[10px] lg:text-xs"></i>
-                                                <span class="text-gray-600 text-[10px] lg:text-xs">
-                                                    {{ $product->ulasan && $product->ulasan->count() > 0 
-                                                        ? number_format($product->ulasan->avg('rating_ulasan'), 1) 
-                                                        : '0.0' }}
-                                                </span>
-                                                <span class="text-gray-400 text-[10px] lg:text-xs">|</span>
-                                                <span class="text-gray-400 text-[10px] lg:text-xs">
-                                                    {{ $isEducation ? $product->ulasan->count() . ' sold' : $product->ulasan->count() . ' terjual' }}
-                                                </span>
+
+                                                <!-- Seller Info -->
+                                                <div class="mt-3 flex flex-col gap-1">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                                        <span class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">{{ $product->asal_produk ?: 'Indonesia' }}</span>
+                                                    </div>
+                                                    <div class="text-[11px] text-gray-400">
+                                                        Tipe: {{ $product->tipe_produk ?: '-' }}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            
-                                            <!-- Separator Line -->
-                                            <div class="border-t border-gray-100 mb-1 lg:mb-2 mt-auto"></div>
-                                            
-                                            <!-- Price (Right Aligned) -->
-                                            <div class="text-right">
-                                                <span class="text-xs lg:text-sm font-bold text-gray-800">
-                                                    Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                                </span>
-                                            </div>
-                                        </div>
+                                        </a>
                                     </div>
                                 @endforeach
                             </div>
@@ -595,10 +600,10 @@
                 <i class="fas fa-check-circle text-green-500 text-lg sm:text-xl"></i>
                 <div>
                     <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
-                        Top Brand
+                        Produk Unggulan
                     </h2>
                     <p class="text-sm text-gray-600">
-                        Best quality guaranteed.
+                        Kualitas terbaik terjamin.
                     </p>
                 </div>
             </div>
@@ -613,7 +618,7 @@
 
         <!-- Brand Menu (Horizontal Scrollable) -->
         <div class="relative mb-6 md:mb-8">
-            <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <div class="flex gap-3 sm:gap-4 overflow-x-auto py-4 px-2 -mx-2 scrollbar-hide" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 @foreach($topBrands as $brand)
                     <button onclick="loadTopBrandProducts({{ $brand->id_brand }})" 
                             class="brand-tab flex-shrink-0 group relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden transition-all duration-300
@@ -648,12 +653,12 @@
         </div>
 
         <!-- Products Display -->
-        <div id="topBrandProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div id="topBrandProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             @forelse($topBrandProducts as $product)
-                <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
-                    <a href="{{ route('products.show', $product->slug) }}" class="block">
+                <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container>
+                    <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
                         <!-- Product Image -->
-                        <div class="aspect-[4/3] overflow-hidden bg-gray-50">
+                        <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @php
                                 $imagePath = null;
                                 if ($product->gambar_produk) {
@@ -666,59 +671,61 @@
                                     elseif (file_exists(public_path($path3))) $imagePath = $path3;
                                 }
                             @endphp
-                            
+
                             @if($imagePath)
-                                <img src="{{ asset($imagePath) }}" 
-                                     alt="{{ $product->nama_produk }}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
+                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                    <img src="{{ asset($imagePath) }}" 
+                                         alt="{{ $product->nama_produk }}" 
+                                         class="w-full h-full object-contain"
+                                         data-skeleton-image
+                                         loading="lazy">
+                                </div>
                             @else
-                                <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                    <i class="fas fa-image text-gray-400 text-2xl"></i>
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
+                                    <i class="fas fa-image text-gray-300 text-3xl"></i>
                                 </div>
                             @endif
                         </div>
-                        
+
                         <!-- Product Info -->
-                        <div class="p-3 sm:p-4">
-                            <!-- Brand Name -->
-                            <p class="text-xs text-gray-500 mb-1">
-                                ARO BASKARA ESA
-                            </p>
-                            
+                        <div class="flex flex-col flex-grow p-3 bg-white">
                             <!-- Product Name -->
-                            <h3 class="font-bold text-sm sm:text-base text-gray-800 mb-2 line-clamp-2">
+                            <h3 class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
                                 {{ $product->nama_produk }}
                             </h3>
-                            
-                            <!-- Rating Section -->
-                            <div class="flex items-center gap-1 mb-2">
-                                <i class="fas fa-star text-yellow-400 text-xs"></i>
-                                <span class="text-gray-600 text-xs">
-                                    {{ $product->ulasan && $product->ulasan->count() > 0 
-                                        ? number_format($product->ulasan->avg('rating_ulasan'), 1) 
-                                        : '0.0' }}
-                                </span>
+
+                            <!-- Price Section -->
+                            <div class="mt-auto">
+                                <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                                    <span class="text-[15px] font-bold text-[#eab308]">
+                                        Rp {{ number_format($product->harga_diskon, 0, ',', '.') }},00
+                                    </span>
+                                @else
+                                    <span class="text-[15px] font-bold text-[#eab308]">
+                                        Rp {{ number_format($product->harga_produk, 0, ',', '.') }},00
+                                    </span>
+                                @endif
                             </div>
-                            
-                            <!-- Separator Line -->
-                            <div class="border-t border-gray-200 mb-2"></div>
-                            
-                            <!-- Sold Count -->
-                            <p class="text-xs text-gray-500 mb-2">
-                                {{ $product->ulasan->count() }} terjual
-                            </p>
-                            
-                            <!-- Price -->
-                            <p class="text-sm sm:text-base font-bold text-orange-500">
-                                Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                            </p>
+
+                            <!-- Seller Info -->
+                            <div class="mt-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                    <span class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">{{ $product->asal_produk ?: 'Indonesia' }}</span>
+                                </div>
+                                <div class="text-[11px] text-gray-400">
+                                    Tipe: {{ $product->tipe_produk ?: '-' }}
+                                </div>
+                            </div>
                         </div>
                     </a>
                 </div>
             @empty
-                <div class="col-span-2 sm:col-span-3 lg:col-span-4 text-center py-8">
-                    <i class="fas fa-box-open text-gray-300 text-4xl mb-4"></i>
-                    <p class="text-gray-500">No products available for this brand yet.</p>
+                <div class="col-span-full w-full text-center py-8 sm:py-12 bg-white border border-dashed border-gray-300">
+                    <i class="fas fa-box-open text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
+                    <p class="text-gray-500 font-medium text-sm sm:text-base">Belum ada produk untuk brand ini.</p>
                 </div>
             @endforelse
         </div>
@@ -915,65 +922,50 @@ function loadTopBrandProducts(brandId) {
                 let productsHtml = '';
                 
                 data.products.forEach(product => {
-                    // Handle image path (similar to the blade template logic)
                     let imageHtml = '';
                     if (product.gambar_produk) {
-                        imageHtml = `<img src="/storage/images/produk/${product.gambar_produk}" 
-                                     alt="${product.nama_produk}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">`;
+                        imageHtml = `<div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                         <img src="/storage/images/produk/${product.gambar_produk}" 
+                                              alt="${product.nama_produk}"
+                                              class="w-full h-full object-contain"
+                                              loading="lazy">
+                                     </div>`;
                     } else {
-                        imageHtml = `<div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                     <i class="fas fa-image text-gray-400 text-2xl"></i>
-                                   </div>`;
+                        imageHtml = `<div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
+                                         <i class="fas fa-image text-gray-300 text-3xl"></i>
+                                     </div>`;
+                    }
+                    
+                    let targetPrice = product.harga_produk;
+                    if (product.harga_diskon && product.harga_diskon < product.harga_produk) {
+                        targetPrice = product.harga_diskon;
                     }
 
-                    // Calculate rating
-                    const rating = product.ulasan && product.ulasan.length > 0 
-                        ? (product.ulasan.reduce((sum, review) => sum + review.rating_ulasan, 0) / product.ulasan.length).toFixed(1)
-                        : '0.0';
-                    
-                    const soldCount = product.ulasan ? product.ulasan.length : 0;
-                    
                     productsHtml += `
-                        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
-                            <a href="/products/${product.slug}" class="block">
-                                <!-- Product Image -->
-                                <div class="aspect-[4/3] overflow-hidden bg-gray-50">
+                        <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container>
+                            <a href="/products/${product.slug}" class="flex flex-col h-full relative group">
+                                <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                                     ${imageHtml}
                                 </div>
-                                
-                                <!-- Product Info -->
-                                <div class="p-3 sm:p-4">
-                                    <!-- Brand Name -->
-                                    <p class="text-xs text-gray-500 mb-1">
-                                        ${data.brand ? data.brand.nama_brand : 'ARO BASKARA ESA'}
-                                    </p>
-                                    
-                                    <!-- Product Name -->
-                                    <h3 class="font-bold text-sm sm:text-base text-gray-800 mb-2 line-clamp-2">
+                                <div class="flex flex-col flex-grow p-3 bg-white">
+                                    <h3 class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
                                         ${product.nama_produk}
                                     </h3>
-                                    
-                                    <!-- Rating Section -->
-                                    <div class="flex items-center gap-1 mb-2">
-                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
-                                        <span class="text-gray-600 text-xs">
-                                            ${rating}
+                                    <div class="mt-auto">
+                                        <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                        <span class="text-[15px] font-bold text-[#eab308]">
+                                            Rp ${parseInt(targetPrice).toLocaleString('id-ID')},00
                                         </span>
                                     </div>
-                                    
-                                    <!-- Separator Line -->
-                                    <div class="border-t border-gray-200 mb-2"></div>
-                                    
-                                    <!-- Sold Count -->
-                                    <p class="text-xs text-gray-500 mb-2">
-                                        ${soldCount} terjual
-                                    </p>
-                                    
-                                    <!-- Price -->
-                                    <p class="text-sm sm:text-base font-bold text-orange-500">
-                                        Rp ${parseInt(product.harga_produk).toLocaleString('id-ID')}
-                                    </p>
+                                    <div class="mt-3 flex flex-col gap-1">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                            <span class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">${product.asal_produk ? product.asal_produk : 'Indonesia'}</span>
+                                        </div>
+                                        <div class="text-[11px] text-gray-400">
+                                            Tipe: ${product.tipe_produk ? product.tipe_produk : '-'}
+                                        </div>
+                                    </div>
                                 </div>
                             </a>
                         </div>
@@ -983,9 +975,9 @@ function loadTopBrandProducts(brandId) {
                 productsContainer.innerHTML = productsHtml;
             } else {
                 productsContainer.innerHTML = `
-                    <div class="col-span-2 sm:col-span-3 lg:col-span-4 text-center py-8">
-                        <i class="fas fa-box-open text-gray-300 text-4xl mb-4"></i>
-                        <p class="text-gray-500">No products available for this brand yet.</p>
+                    <div class="col-span-full w-full text-center py-8 sm:py-12 bg-white border border-dashed border-gray-300">
+                        <i class="fas fa-box-open text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
+                        <p class="text-gray-500 font-medium text-sm sm:text-base">Belum ada produk untuk brand ini.</p>
                     </div>
                 `;
             }
