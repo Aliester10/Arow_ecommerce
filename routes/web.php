@@ -12,7 +12,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\AdminFaqController;
-use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\AdminPrivacyPolicyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,9 @@ Route::get('/home/top-brand-products/{brandId}', [HomeController::class, 'getTop
 // Help
 Route::get('/bantuan', [HelpController::class, 'index'])->name('help.index');
 Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
+
+// Privacy Policy
+Route::get('/kebijakan-privasi', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
 
 Route::get('/language/{locale}', function (string $locale) {
     if (!in_array($locale, ['id', 'en'], true)) {
@@ -240,4 +244,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/complaints/{id}', [ComplaintController::class, 'show'])->name('complaints.show');
     Route::get('/complaints/{id}/download', [ComplaintController::class, 'downloadEvidence'])->name('complaints.download');
     Route::put('/complaints/{id}/status', [ComplaintController::class, 'updateStatus'])->name('complaints.update-status');
+
+    // Privacy Policy Management
+    Route::get('/privacy-policy', [AdminPrivacyPolicyController::class, 'index'])->name('privacy-policy.index');
+    Route::get('/privacy-policy/create', [AdminPrivacyPolicyController::class, 'create'])->name('privacy-policy.create');
+    Route::post('/privacy-policy', [AdminPrivacyPolicyController::class, 'store'])->name('privacy-policy.store');
+    Route::get('/privacy-policy/{privacyPolicy}/edit', [AdminPrivacyPolicyController::class, 'edit'])->name('privacy-policy.edit');
+    Route::put('/privacy-policy/{privacyPolicy}', [AdminPrivacyPolicyController::class, 'update'])->name('privacy-policy.update');
+    Route::delete('/privacy-policy/{privacyPolicy}', [AdminPrivacyPolicyController::class, 'destroy'])->name('privacy-policy.destroy');
+    Route::patch('/privacy-policy/{privacyPolicy}/toggle-status', [AdminPrivacyPolicyController::class, 'toggleStatus'])->name('privacy-policy.toggle-status');
 });
