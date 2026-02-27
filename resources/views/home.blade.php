@@ -228,7 +228,7 @@
         <!-- Section Header -->
         <div class="mb-4 md:mb-6 flex justify-between items-center">
             <h2 class="text-xl md:text-2xl font-bold" style="color: #0f172a;">
-                Produk Terbaru di Mbizmarket
+                Produk Unggulan
             </h2>
         </div>
 

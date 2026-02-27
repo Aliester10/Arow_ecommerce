@@ -54,9 +54,19 @@ class AdminSubSubCategoryController extends Controller
 
     public function destroy(SubSubCategory $subSubCategory)
     {
-        $subSubCategory->delete();
+        try {
+            $subSubCategory->delete();
 
-        return redirect()->route('admin.sub-sub-categories.index')
-            ->with('success', 'Sub Sub Kategori berhasil dihapus');
+            return redirect()->route('admin.sub-sub-categories.index')
+                ->with('success', 'Sub Sub Kategori berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->errorInfo[1] == 1451) {
+                return redirect()->route('admin.sub-sub-categories.index')
+                    ->with('error', 'Tidak dapat menghapus Sub Sub Kategori ini karena masih digunakan oleh satu atau lebih produk.');
+            }
+
+            return redirect()->route('admin.sub-sub-categories.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
     }
 }

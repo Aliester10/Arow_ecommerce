@@ -37,8 +37,29 @@
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <div
-                                                    class="h-16 w-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden border border-gray-200 flex items-center justify-center mr-4">
-                                                    <i class="fas fa-box text-gray-400 text-2xl"></i>
+                                                    class="h-16 w-16 flex-shrink-0 bg-white rounded-md overflow-hidden border border-gray-200 flex items-center justify-center mr-4">
+                                                    @php
+                                                        $cartImagePath = null;
+                                                        if ($detail->produk && $detail->produk->gambar_produk) {
+                                                            $cPath1 = 'storage/images/produk/' . $detail->produk->gambar_produk;
+                                                            $cPath2 = 'storage/images/produk/' . str_replace(' ', '', $detail->produk->gambar_produk);
+                                                            $cPath3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $detail->produk->gambar_produk));
+
+                                                            if (file_exists(public_path($cPath1)))
+                                                                $cartImagePath = $cPath1;
+                                                            elseif (file_exists(public_path($cPath2)))
+                                                                $cartImagePath = $cPath2;
+                                                            elseif (file_exists(public_path($cPath3)))
+                                                                $cartImagePath = $cPath3;
+                                                        }
+                                                    @endphp
+
+                                                    @if($cartImagePath)
+                                                        <img src="{{ asset($cartImagePath) }}" alt="{{ $detail->produk->nama_produk }}"
+                                                            class="object-contain w-full h-full p-1">
+                                                    @else
+                                                        <i class="fas fa-box text-gray-400 text-2xl"></i>
+                                                    @endif
                                                 </div>
                                                 <div>
                                                     <a href="{{ route('products.show', $detail->produk->slug) }}"

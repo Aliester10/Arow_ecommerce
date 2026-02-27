@@ -17,7 +17,7 @@ class AdminCategoryController extends Controller
         foreach ($categories as $category) {
             $category->sub_categories_count = SubCategory::where('id_kategori', $category->id_kategori)->count();
         }
-        
+
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -34,7 +34,7 @@ class AdminCategoryController extends Controller
         ]);
 
         $data = $request->all();
-        
+
         // Handle image upload
         if ($request->hasFile('icon_kategori')) {
             $image = $request->file('icon_kategori');
@@ -62,14 +62,14 @@ class AdminCategoryController extends Controller
         ]);
 
         $data = $request->all();
-        
+
         // Handle image upload
         if ($request->hasFile('icon_kategori')) {
             // Delete old image if exists
             if ($category->icon_kategori && file_exists(public_path('storage/images/' . $category->icon_kategori))) {
                 unlink(public_path('storage/images/' . $category->icon_kategori));
             }
-            
+
             $image = $request->file('icon_kategori');
             $imageName = Str::slug($request->nama_kategori) . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('storage/images/kategori'), $imageName);
@@ -87,14 +87,24 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        // Delete image if exists
-        if ($category->icon_kategori && file_exists(public_path('storage/images/' . $category->icon_kategori))) {
-            unlink(public_path('storage/images/' . $category->icon_kategori));
-        }
-        
-        $category->delete();
+        try {
+            $category->delete();
 
-        return redirect()->route('admin.categories.index')
-            ->with('success', 'Kategori berhasil dihapus');
+            // Delete image if exists, only after successful DB deletion
+            if ($category->icon_kategori && file_exists(public_path('storage/images/' . $category->icon_kategori))) {
+                unlink(public_path('storage/images/' . $category->icon_kategori));
+            }
+
+            return redirect()->route('admin.categories.index')
+                ->with('success', 'Kategori berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->errorInfo[1] == 1451) {
+                return redirect()->route('admin.categories.index')
+                    ->with('error', 'Tidak dapat menghapus Kategori ini karena masih memiliki Sub Kategori atau Kategori ini masih digunakan.');
+            }
+
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
     }
 }

@@ -17,8 +17,7 @@
                             @endphp
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                 <img id="mainProductImage" src="{{ $primaryImage->url }}" alt="{{ $product->nama_produk }}"
-                                    class="object-contain w-full h-full cursor-pointer"
-                                    onclick="openZoomModal()">
+                                    class="object-contain w-full h-full cursor-pointer" onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -353,11 +352,11 @@
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     @foreach($relatedProducts as $related)
-                        <div
-                            class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-                            <a href="{{ route('products.show', $related->slug) }}" class="flex flex-col h-full">
+                        <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+                            data-skeleton-container style="border-radius: 8px; overflow: hidden;">
+                            <a href="{{ route('products.show', $related->slug) }}" class="flex flex-col h-full relative group">
                                 <!-- Product Image -->
-                                <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
+                                <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                                     @php
                                         $relatedImagePath = null;
                                         if ($related->gambar_produk) {
@@ -374,56 +373,62 @@
                                         }
                                     @endphp
 
-                                    <!-- Product Image (z-10) -->
                                     @if($relatedImagePath)
+                                        <div data-skeleton
+                                            class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
+                                            style="z-index: 30;"></div>
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <img src="{{ asset($relatedImagePath) }}" alt="{{ $related->nama_produk }}"
-                                                class="object-contain w-full h-full"
-                                                style="transform: scale(0.9); transform-origin: center;">
+                                                class="w-full h-full object-contain" data-skeleton-image loading="lazy">
                                         </div>
                                     @else
-                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <img src="{{ asset('hitam-putih.svg') }}" alt="{{ $related->nama_produk }}"
-                                                class="object-contain w-12 h-12 sm:w-20 sm:h-20 opacity-60">
+                                        <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
+                                            <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         </div>
                                     @endif
 
-
-                                    <!-- Badges (z-30) -->
+                                    <!-- Out of Stock Badge -->
                                     @if($related->stok_produk <= 0)
                                         <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider shadow-sm"
-                                            style="z-index: 30;">
+                                            style="z-index: 40;">
                                             Habis
                                         </div>
                                     @endif
                                 </div>
 
                                 <!-- Product Info -->
-                                <div class="p-3 flex flex-col flex-1 border-t border-gray-100 text-left">
-                                    <!-- Category/Brand (Meta) -->
-                                    <div
-                                        class="text-[9px] sm:text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold line-clamp-1">
-                                        {{ $related->brand->nama_brand ?? 'Generic' }}
-                                    </div>
-                                    <h4
-                                        class="text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 leading-snug min-h-[2.5em]">
+                                <div class="flex flex-col flex-grow p-3 bg-white">
+                                    <!-- Product Name -->
+                                    <h3
+                                        class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
                                         {{ $related->nama_produk }}
-                                    </h4>
+                                    </h3>
 
-                                    <!-- Rating Info -->
-                                    <div class="flex items-center gap-1 mb-2">
-                                        <i class="fas fa-star text-yellow-400 text-[10px] sm:text-xs"></i>
-                                        <span class="text-gray-600 text-[10px] sm:text-xs font-medium">
-                                            {{ $related->ulasan->count() > 0 ? number_format($related->ulasan->avg('rating_ulasan'), 1) : '0.0' }}
-                                        </span>
-                                        <span class="text-gray-400 text-[10px] sm:text-xs">| {{ $related->ulasan->count() }}
-                                            terjual</span>
+                                    <!-- Price Section -->
+                                    <div class="mt-auto">
+                                        <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                        @if($related->harga_diskon && $related->harga_diskon < $related->harga_produk)
+                                            <span class="text-[15px] font-bold text-[#eab308]">
+                                                Rp {{ number_format($related->harga_diskon, 0, ',', '.') }},00
+                                            </span>
+                                        @else
+                                            <span class="text-[15px] font-bold text-[#eab308]">
+                                                Rp {{ number_format($related->harga_produk, 0, ',', '.') }},00
+                                            </span>
+                                        @endif
                                     </div>
-                                    @if($related->harga_produk)
-                                        <div class="text-orange-600 font-bold text-sm sm:text-base mt-auto">
-                                            Rp {{ number_format($related->harga_produk, 0, ',', '.') }}
+
+                                    <!-- Seller Info -->
+                                    <div class="mt-3 flex flex-col gap-1">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                            <span
+                                                class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">{{ $related->asal_produk ?: 'Indonesia' }}</span>
                                         </div>
-                                    @endif
+                                        <div class="text-[11px] text-gray-400">
+                                            Tipe: {{ $related->tipe_produk ?: '-' }}
+                                        </div>
+                                    </div>
                                 </div>
                             </a>
                         </div>
@@ -504,7 +509,8 @@
 
             <!-- Header (Close only) -->
             <div class="absolute top-0 right-0 p-6 z-50 pointer-events-auto flex items-center gap-4">
-                <span id="zoomImageCounter" class="text-white/70 font-mono text-sm tracking-wider mr-2 font-medium">1 / 1</span>
+                <span id="zoomImageCounter" class="text-white/70 font-mono text-sm tracking-wider mr-2 font-medium">1 /
+                    1</span>
                 <button onclick="closeZoomModal()"
                     class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-md border border-white/10 group">
                     <i class="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-300"></i>
@@ -512,10 +518,12 @@
             </div>
 
             <!-- Navigation Buttons (Prev/Next) -->
-            <button id="zoomPrevBtn" onclick="zoomPrevImage(event)" class="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
+            <button id="zoomPrevBtn" onclick="zoomPrevImage(event)"
+                class="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
                 <i class="fas fa-chevron-left text-xl sm:text-2xl"></i>
             </button>
-            <button id="zoomNextBtn" onclick="zoomNextImage(event)" class="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
+            <button id="zoomNextBtn" onclick="zoomNextImage(event)"
+                class="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-40 pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 hidden">
                 <i class="fas fa-chevron-right text-xl sm:text-2xl"></i>
             </button>
 
@@ -572,8 +580,8 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-        ];
-        
+            ];
+
         let currentGalleryIndex = 0;
 
         // Zoom functionality variables
@@ -591,31 +599,31 @@
         const zoomImage = document.getElementById('zoomImage');
         const zoomDisplay = document.getElementById('zoomLevelDisplay');
         const mainImage = document.getElementById('mainProductImage');
-        
+
         const zoomPrevBtn = document.getElementById('zoomPrevBtn');
         const zoomNextBtn = document.getElementById('zoomNextBtn');
         const zoomImageCounter = document.getElementById('zoomImageCounter');
 
         function updateGalleryUI() {
             if (productGallery.length <= 1) {
-                if(zoomPrevBtn) zoomPrevBtn.style.display = 'none';
-                if(zoomNextBtn) zoomNextBtn.style.display = 'none';
-                if(zoomImageCounter) zoomImageCounter.style.display = 'none';
+                if (zoomPrevBtn) zoomPrevBtn.style.display = 'none';
+                if (zoomNextBtn) zoomNextBtn.style.display = 'none';
+                if (zoomImageCounter) zoomImageCounter.style.display = 'none';
                 return;
             }
-            
-            if(zoomPrevBtn) zoomPrevBtn.style.display = 'flex';
-            if(zoomNextBtn) zoomNextBtn.style.display = 'flex';
-            if(zoomImageCounter) {
+
+            if (zoomPrevBtn) zoomPrevBtn.style.display = 'flex';
+            if (zoomNextBtn) zoomNextBtn.style.display = 'flex';
+            if (zoomImageCounter) {
                 zoomImageCounter.style.display = 'inline-block';
                 zoomImageCounter.innerText = `${currentGalleryIndex + 1} / ${productGallery.length}`;
             }
         }
 
         function zoomPrevImage(e) {
-            if(e) e.stopPropagation();
+            if (e) e.stopPropagation();
             if (productGallery.length <= 1) return;
-            
+
             currentGalleryIndex = (currentGalleryIndex - 1 + productGallery.length) % productGallery.length;
             zoomImage.src = productGallery[currentGalleryIndex];
             mainImage.src = productGallery[currentGalleryIndex]; // sync background thumb
@@ -624,9 +632,9 @@
         }
 
         function zoomNextImage(e) {
-            if(e) e.stopPropagation();
+            if (e) e.stopPropagation();
             if (productGallery.length <= 1) return;
-            
+
             currentGalleryIndex = (currentGalleryIndex + 1) % productGallery.length;
             zoomImage.src = productGallery[currentGalleryIndex];
             mainImage.src = productGallery[currentGalleryIndex]; // sync background thumb
@@ -638,7 +646,7 @@
             if (!mainImage) return;
 
             // Find current image in gallery array
-            if(productGallery.length > 0) {
+            if (productGallery.length > 0) {
                 const currentSrc = mainImage.src;
                 // find index by matching ending of URL to handle domain differences if any
                 const idx = productGallery.findIndex(url => currentSrc.includes(url) || url.includes(currentSrc));
