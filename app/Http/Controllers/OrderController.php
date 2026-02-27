@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use App\Models\CartDetail;
 use App\Models\Payment;
 use App\Models\PaymentAccount;
 use App\Models\Quotation;
@@ -24,6 +25,17 @@ class OrderController extends Controller
 
         if (!$cart || $cart->details->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Cart is empty!');
+        }
+
+        if ($request->has('buy_now_item')) {
+            $buyNowItemId = $request->input('buy_now_item');
+            $cart->details = $cart->details->filter(function ($detail) use ($buyNowItemId) {
+                return $detail->id_cart_detail == $buyNowItemId;
+            })->values();
+
+            if ($cart->details->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Item not found in cart!');
+            }
         }
 
         $total = $cart->details->sum(function ($detail) {
@@ -77,6 +89,17 @@ class OrderController extends Controller
 
         if (!$cart) {
             return redirect()->route('cart.index')->with('error', 'Cart is empty!');
+        }
+
+        if ($request->filled('buy_now_item')) {
+            $buyNowItemId = $request->input('buy_now_item');
+            $cart->details = $cart->details->filter(function ($detail) use ($buyNowItemId) {
+                return $detail->id_cart_detail == $buyNowItemId;
+            })->values();
+
+            if ($cart->details->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Item not found in cart!');
+            }
         }
 
         $subtotal = $cart->details->sum(function ($detail) {
@@ -138,9 +161,14 @@ class OrderController extends Controller
                 );
             }
 
-            // Clear Cart (mark as ordered)
-            $cart->status = 'ordered';
-            $cart->save();
+            if ($request->filled('buy_now_item')) {
+                // Remove only the checked-out item from the active cart database
+                CartDetail::where('id_cart_detail', $request->input('buy_now_item'))->delete();
+            } else {
+                // Clear Cart (mark as ordered) for standard checkout
+                $cart->status = 'ordered';
+                $cart->save();
+            }
         });
 
         if ($paymentMethod === 'quotation') {

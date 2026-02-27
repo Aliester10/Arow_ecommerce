@@ -34,7 +34,7 @@ class CartController extends Controller
             $cartDetail->harga = $product->harga_produk; // Update price if changed
             $cartDetail->save();
         } else {
-            CartDetail::create([
+            $cartDetail = CartDetail::create([
                 'id_cart' => $cart->id_cart,
                 'id_produk' => $product->id_produk, // Fixed: use id_produk
                 'qty_cart' => $request->input('quantity', 1), // custom column name from migration
@@ -43,7 +43,7 @@ class CartController extends Controller
         }
 
         if ($request->input('action') === 'buy_now') {
-            return redirect()->route('checkout.index');
+            return redirect()->route('checkout.index', ['buy_now_item' => $cartDetail->id_cart_detail]);
         }
 
         return redirect()->back()->with('success', 'Product added to cart!');

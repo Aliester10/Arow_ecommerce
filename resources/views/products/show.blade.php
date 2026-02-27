@@ -68,61 +68,23 @@
                         </div>
                     @endif
 
-                    <!-- Share & Favorit -->
-                    <div class="flex items-center justify-center space-x-8 mt-6 pt-4 text-gray-600">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <span class="font-medium mr-1">Share:</span>
-                            <button class="text-[#0384FF] hover:opacity-80"><i
-                                    class="fab fa-facebook-messenger text-xl"></i></button>
-                            <button class="text-[#1877F2] hover:opacity-80"><i class="fab fa-facebook text-xl"></i></button>
-                            <button class="text-[#E60023] hover:opacity-80"><i
-                                    class="fab fa-pinterest text-xl"></i></button>
-                            <button class="text-black hover:opacity-80"><i class="fab fa-x-twitter text-xl"></i></button>
-                        </div>
-                        <div class="w-px h-6 bg-gray-300"></div>
-                        <div class="flex items-center text-sm">
-                            @auth
-                                @php
-                                    $isWishlisted = \App\Models\Wishlist::where('id_user', \Illuminate\Support\Facades\Auth::user()->id_user)
-                                        ->where('id_produk', $product->id_produk)
-                                        ->exists();
-                                @endphp
-                                @if($isWishlisted)
-                                    <form action="{{ route('wishlist.destroy', $product->id_produk) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="flex items-center text-[#ee4d2d] hover:text-red-600 font-medium transition space-x-2">
-                                            <i class="fas fa-heart text-xl"></i>
-                                            <span>Favorit
-                                                ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
-                                        </button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('wishlist.store', $product->id_produk) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="flex items-center text-gray-500 hover:text-[#ee4d2d] font-medium transition space-x-2">
-                                            <i class="far fa-heart text-xl"></i>
-                                            <span>Favorit
-                                                ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
-                                        </button>
-                                    </form>
-                                @endif
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="flex items-center text-gray-500 hover:text-[#ee4d2d] font-medium transition space-x-2">
-                                    <i class="far fa-heart text-xl"></i>
-                                    <span>Favorit
-                                        ({{ \App\Models\Wishlist::where('id_produk', $product->id_produk)->count() }})</span>
-                                </a>
-                            @endauth
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Product Info (Right Column) -->
                 <div class="mt-6 md:mt-0 lg:pr-8">
+                    @if(session('success'))
+                        <div class="mb-4 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded relative flex items-center shadow-sm"
+                            role="alert">
+                            <i class="fas fa-check-circle mr-2 text-lg"></i>
+                            <span class="block sm:inline text-sm font-medium">{{ session('success') }}</span>
+                            <button type="button"
+                                class="absolute top-0 bottom-0 right-0 px-4 py-3 text-green-600 hover:text-green-800"
+                                onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    @endif
+
                     <!-- Title & Ratings -->
                     <h1 class="text-xl md:text-[22px] font-medium text-gray-900 mb-3 leading-tight">
                         {{ $product->nama_produk }}
@@ -212,20 +174,55 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex space-x-3 mt-8">
+                    <div class="flex items-stretch space-x-3 mt-8">
                         <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" id="addToCartForm"
-                            class="mr-1">
+                            class="flex space-x-3">
                             @csrf
                             <input type="hidden" name="quantity" id="quantityHidden" value="1">
-                            <button type="submit"
+                            <button type="submit" name="action" value="add_to_cart"
                                 class="px-6 md:px-10 py-3 bg-[#ffeee8] border border-[#ee4d2d] text-[#ee4d2d] font-medium rounded-sm hover:bg-[#ffe4dc] transition flex items-center justify-center min-w-[180px]">
                                 <i class="fas fa-cart-plus mr-2 text-lg"></i> Masukkan Keranjang
                             </button>
+                            <button type="submit" name="action" value="buy_now"
+                                class="px-6 md:px-10 py-3 bg-[#ee4d2d] text-white font-medium rounded-sm hover:bg-[#d73f22] transition flex flex-col items-center justify-center min-w-[180px] shadow-sm">
+                                <span>Beli Sekarang</span>
+                            </button>
                         </form>
-                        <button type="button" onclick="document.getElementById('addToCartForm').submit()"
-                            class="px-6 md:px-10 py-3 bg-[#ee4d2d] text-white font-medium rounded-sm hover:bg-[#d73f22] transition flex flex-col items-center justify-center min-w-[180px] shadow-sm">
-                            <span>Beli Sekarang</span>
-                        </button>
+
+                        <!-- Wishlist Button -->
+                        @auth
+                            @php
+                                $isWishlisted = \App\Models\Wishlist::where('id_user', \Illuminate\Support\Facades\Auth::user()->id_user)
+                                    ->where('id_produk', $product->id_produk)
+                                    ->exists();
+                            @endphp
+                            @if($isWishlisted)
+                                <form action="{{ route('wishlist.destroy', $product->id_produk) }}" method="POST" class="flex">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="w-12 flex items-center justify-center border border-gray-300 rounded-sm text-[#ee4d2d] hover:bg-gray-50 transition shadow-sm"
+                                        title="Hapus dari Favorit">
+                                        <i class="fas fa-heart text-xl"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('wishlist.store', $product->id_produk) }}" method="POST" class="flex">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-12 flex items-center justify-center border border-gray-300 rounded-sm text-gray-400 hover:text-[#ee4d2d] hover:bg-gray-50 transition shadow-sm"
+                                        title="Tambah ke Favorit">
+                                        <i class="far fa-heart text-xl"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="w-12 flex items-center justify-center border border-gray-300 rounded-sm text-gray-400 hover:text-[#ee4d2d] hover:bg-gray-50 transition shadow-sm"
+                                title="Favorit">
+                                <i class="far fa-heart text-xl"></i>
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </div> <!-- End Flex Top Section -->
@@ -635,7 +632,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-                                    ];
+                                        ];
 
         let currentGalleryIndex = 0;
 

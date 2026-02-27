@@ -116,9 +116,13 @@
                     {{-- Loading indicator --}}
                     <div id="shipping-loading" class="hidden text-center py-3">
                         <div class="inline-flex items-center text-sm text-gray-500">
-                            <svg class="animate-spin h-4 w-4 mr-2 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <svg class="animate-spin h-4 w-4 mr-2 text-orange-500" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                </circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
                             </svg>
                             Menghitung ongkos kirim...
                         </div>
@@ -136,7 +140,8 @@
                     </div>
 
                     {{-- Error --}}
-                    <div id="shipping-error" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                    <div id="shipping-error"
+                        class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
                         Gagal menghitung ongkos kirim. Pastikan API Key RajaOngkir sudah dikonfigurasi.
                     </div>
                 </div>
@@ -145,6 +150,9 @@
                     <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Metode Pembayaran</h3>
                     <form id="checkout-form" action="{{ route('checkout.placeOrder') }}" method="POST">
                         @csrf
+                        @if(request()->has('buy_now_item'))
+                            <input type="hidden" name="buy_now_item" value="{{ request('buy_now_item') }}">
+                        @endif
                         {{-- Hidden shipping fields --}}
                         <input type="hidden" name="shipping_cost" id="input_shipping_cost" value="0">
                         <input type="hidden" name="shipping_courier" id="input_shipping_courier" value="">
@@ -184,7 +192,8 @@
                                             <option value="">Pilih rekening tujuan</option>
                                             @foreach(($paymentAccounts ?? collect()) as $account)
                                                 <option value="{{ $account->id }}" {{ (string) old('payment_account_id') === (string) $account->id ? 'selected' : '' }}>
-                                                    {{ $account->bank_name }} - {{ $account->account_number }} ({{ $account->account_holder }})
+                                                    {{ $account->bank_name }} - {{ $account->account_number }}
+                                                    ({{ $account->account_holder }})
                                                 </option>
                                             @endforeach
                                         </select>
@@ -228,7 +237,8 @@
                             <span>Ongkos Kirim</span>
                             <span id="summary-shipping-cost" class="font-medium text-gray-500">Belum dipilih</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs text-gray-400" id="summary-courier-info" style="display:none;">
+                        <div class="flex justify-between items-center text-xs text-gray-400" id="summary-courier-info"
+                            style="display:none;">
                             <span id="summary-courier-detail"></span>
                         </div>
                         <div
@@ -243,238 +253,239 @@
                         disabled>
                         Buat Pesanan
                     </button>
-                    <p id="btn-hint" class="text-xs text-center text-gray-400 mt-2">Pilih kurir dan layanan pengiriman untuk melanjutkan</p>
+                    <p id="btn-hint" class="text-xs text-center text-gray-400 mt-2">Pilih kurir dan layanan pengiriman untuk
+                        melanjutkan</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const provinceSelect = document.getElementById('shipping_province_id');
-        const citySelect = document.getElementById('shipping_city_select');
-        const courierSelect = document.getElementById('courier_select');
-        const serviceSelect = document.getElementById('service_select');
-        const shippingLoading = document.getElementById('shipping-loading');
-        const shippingResult = document.getElementById('shipping-result');
-        const shippingError = document.getElementById('shipping-error');
-        const btnPlaceOrder = document.getElementById('btn-place-order');
-        const btnHint = document.getElementById('btn-hint');
+        document.addEventListener('DOMContentLoaded', function () {
+            const provinceSelect = document.getElementById('shipping_province_id');
+            const citySelect = document.getElementById('shipping_city_select');
+            const courierSelect = document.getElementById('courier_select');
+            const serviceSelect = document.getElementById('service_select');
+            const shippingLoading = document.getElementById('shipping-loading');
+            const shippingResult = document.getElementById('shipping-result');
+            const shippingError = document.getElementById('shipping-error');
+            const btnPlaceOrder = document.getElementById('btn-place-order');
+            const btnHint = document.getElementById('btn-hint');
 
-        // Hidden inputs
-        const inputShippingCost = document.getElementById('input_shipping_cost');
-        const inputShippingCourier = document.getElementById('input_shipping_courier');
-        const inputShippingService = document.getElementById('input_shipping_service');
-        const inputShippingEtd = document.getElementById('input_shipping_etd');
-        const inputDestinationCityId = document.getElementById('input_destination_city_id');
+            // Hidden inputs
+            const inputShippingCost = document.getElementById('input_shipping_cost');
+            const inputShippingCourier = document.getElementById('input_shipping_courier');
+            const inputShippingService = document.getElementById('input_shipping_service');
+            const inputShippingEtd = document.getElementById('input_shipping_etd');
+            const inputDestinationCityId = document.getElementById('input_destination_city_id');
 
-        // Summary elements
-        const summaryShippingCost = document.getElementById('summary-shipping-cost');
-        const summaryTotal = document.getElementById('summary-total');
-        const summaryCourierInfo = document.getElementById('summary-courier-info');
-        const summaryCourierDetail = document.getElementById('summary-courier-detail');
+            // Summary elements
+            const summaryShippingCost = document.getElementById('summary-shipping-cost');
+            const summaryTotal = document.getElementById('summary-total');
+            const summaryCourierInfo = document.getElementById('summary-courier-info');
+            const summaryCourierDetail = document.getElementById('summary-courier-detail');
 
-        const subtotal = {{ $total }};
-        const totalWeight = {{ $totalWeight }};
+            const subtotal = {{ $total }};
+            const totalWeight = {{ $totalWeight }};
 
-        let costData = []; // store cost results for service selection
+            let costData = []; // store cost results for service selection
 
-        // Formatter
-        function formatRupiah(amount) {
-            return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
-        }
+            // Formatter
+            function formatRupiah(amount) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
+            }
 
-        // --- Load Provinces (V2: {data: [{id, name}]}) ---
-        fetch('{{ route("shipping.provinces") }}')
-            .then(r => r.json())
-            .then(res => {
-                provinceSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
-                const provinces = res.data || [];
-                provinces.sort((a, b) => a.name.localeCompare(b.name));
-                provinces.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.name;
-                    opt.dataset.id = p.id;
-                    opt.textContent = p.name;
-                    provinceSelect.appendChild(opt);
-                });
-            })
-            .catch(() => {
-                provinceSelect.innerHTML = '<option value="">Gagal memuat provinsi</option>';
-            });
-
-        // --- Province Change => Load Cities ---
-        provinceSelect.addEventListener('change', function() {
-            const selectedOpt = this.options[this.selectedIndex];
-            const provinceId = selectedOpt?.dataset?.id;
-
-            citySelect.innerHTML = '<option value="">Memuat kota...</option>';
-            citySelect.disabled = true;
-            courierSelect.disabled = true;
-            serviceSelect.disabled = true;
-            resetShippingResult();
-
-            if (!provinceId) return;
-
-            fetch('{{ url("/shipping/cities") }}/' + provinceId)
+            // --- Load Provinces (V2: {data: [{id, name}]}) ---
+            fetch('{{ route("shipping.provinces") }}')
                 .then(r => r.json())
                 .then(res => {
-                    citySelect.innerHTML = '<option value="">-- Pilih Kota --</option>';
-                    const cities = res.data || [];
-                    cities.sort((a, b) => a.name.localeCompare(b.name));
-                    cities.forEach(c => {
+                    provinceSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                    const provinces = res.data || [];
+                    provinces.sort((a, b) => a.name.localeCompare(b.name));
+                    provinces.forEach(p => {
                         const opt = document.createElement('option');
-                        opt.value = c.name;
-                        opt.dataset.id = c.id;
-                        opt.textContent = c.name;
-                        citySelect.appendChild(opt);
+                        opt.value = p.name;
+                        opt.dataset.id = p.id;
+                        opt.textContent = p.name;
+                        provinceSelect.appendChild(opt);
                     });
-                    citySelect.disabled = false;
                 })
                 .catch(() => {
-                    citySelect.innerHTML = '<option value="">Gagal memuat kota</option>';
+                    provinceSelect.innerHTML = '<option value="">Gagal memuat provinsi</option>';
                 });
-        });
 
-        // --- City Change => Enable Courier ---
-        citySelect.addEventListener('change', function() {
-            const selectedOpt = this.options[this.selectedIndex];
-            const cityId = selectedOpt?.dataset?.id;
+            // --- Province Change => Load Cities ---
+            provinceSelect.addEventListener('change', function () {
+                const selectedOpt = this.options[this.selectedIndex];
+                const provinceId = selectedOpt?.dataset?.id;
 
-            inputDestinationCityId.value = cityId || '';
-            resetShippingResult();
-
-            if (cityId) {
-                courierSelect.disabled = false;
-                courierSelect.value = '';
-                serviceSelect.disabled = true;
-                serviceSelect.innerHTML = '<option value="">Pilih kurir dulu</option>';
-            } else {
+                citySelect.innerHTML = '<option value="">Memuat kota...</option>';
+                citySelect.disabled = true;
                 courierSelect.disabled = true;
                 serviceSelect.disabled = true;
-            }
-        });
+                resetShippingResult();
 
-        // --- Courier Change => Fetch Cost (V2: flat array {data: [{name, code, service, description, cost, etd}]}) ---
-        courierSelect.addEventListener('change', function() {
-            const courierCode = this.value;
-            const cityId = inputDestinationCityId.value;
+                if (!provinceId) return;
 
-            if (!courierCode || !cityId) return;
+                fetch('{{ url("/shipping/cities") }}/' + provinceId)
+                    .then(r => r.json())
+                    .then(res => {
+                        citySelect.innerHTML = '<option value="">-- Pilih Kota --</option>';
+                        const cities = res.data || [];
+                        cities.sort((a, b) => a.name.localeCompare(b.name));
+                        cities.forEach(c => {
+                            const opt = document.createElement('option');
+                            opt.value = c.name;
+                            opt.dataset.id = c.id;
+                            opt.textContent = c.name;
+                            citySelect.appendChild(opt);
+                        });
+                        citySelect.disabled = false;
+                    })
+                    .catch(() => {
+                        citySelect.innerHTML = '<option value="">Gagal memuat kota</option>';
+                    });
+            });
 
-            resetShippingResult();
-            shippingLoading.classList.remove('hidden');
-            serviceSelect.innerHTML = '<option value="">Memuat layanan...</option>';
-            serviceSelect.disabled = true;
+            // --- City Change => Enable Courier ---
+            citySelect.addEventListener('change', function () {
+                const selectedOpt = this.options[this.selectedIndex];
+                const cityId = selectedOpt?.dataset?.id;
 
-            fetch('{{ route("shipping.cost") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({
-                    destination: parseInt(cityId),
-                    weight: Math.round(totalWeight),
-                    courier: courierCode,
-                }),
-            })
-            .then(r => {
-                if (!r.ok) {
-                    return r.json().then(err => { throw err; });
+                inputDestinationCityId.value = cityId || '';
+                resetShippingResult();
+
+                if (cityId) {
+                    courierSelect.disabled = false;
+                    courierSelect.value = '';
+                    serviceSelect.disabled = true;
+                    serviceSelect.innerHTML = '<option value="">Pilih kurir dulu</option>';
+                } else {
+                    courierSelect.disabled = true;
+                    serviceSelect.disabled = true;
                 }
-                return r.json();
-            })
-            .then(res => {
-                shippingLoading.classList.add('hidden');
+            });
 
-                // V2 returns flat array: [{name, code, service, description, cost, etd}]
-                costData = res.data || [];
+            // --- Courier Change => Fetch Cost (V2: flat array {data: [{name, code, service, description, cost, etd}]}) ---
+            courierSelect.addEventListener('change', function () {
+                const courierCode = this.value;
+                const cityId = inputDestinationCityId.value;
 
-                if (costData.length === 0) {
-                    shippingError.textContent = 'Tidak ada layanan tersedia untuk rute ini.';
-                    shippingError.classList.remove('hidden');
+                if (!courierCode || !cityId) return;
+
+                resetShippingResult();
+                shippingLoading.classList.remove('hidden');
+                serviceSelect.innerHTML = '<option value="">Memuat layanan...</option>';
+                serviceSelect.disabled = true;
+
+                fetch('{{ route("shipping.cost") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        destination: parseInt(cityId),
+                        weight: Math.round(totalWeight),
+                        courier: courierCode,
+                    }),
+                })
+                    .then(r => {
+                        if (!r.ok) {
+                            return r.json().then(err => { throw err; });
+                        }
+                        return r.json();
+                    })
+                    .then(res => {
+                        shippingLoading.classList.add('hidden');
+
+                        // V2 returns flat array: [{name, code, service, description, cost, etd}]
+                        costData = res.data || [];
+
+                        if (costData.length === 0) {
+                            shippingError.textContent = 'Tidak ada layanan tersedia untuk rute ini.';
+                            shippingError.classList.remove('hidden');
+                            return;
+                        }
+
+                        serviceSelect.innerHTML = '<option value="">-- Pilih Layanan --</option>';
+                        costData.forEach((svc, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            opt.textContent = svc.service + ' - ' + formatRupiah(svc.cost) + ' (' + svc.etd + ')';
+                            opt.dataset.cost = svc.cost;
+                            opt.dataset.etd = svc.etd;
+                            opt.dataset.service = svc.service;
+                            opt.dataset.description = svc.description || '';
+                            opt.dataset.courierName = svc.name || courierCode.toUpperCase();
+                            serviceSelect.appendChild(opt);
+                        });
+                        serviceSelect.disabled = false;
+                    })
+                    .catch(() => {
+                        shippingLoading.classList.add('hidden');
+                        shippingError.classList.remove('hidden');
+                    });
+            });
+
+            // --- Service Change => Update Summary ---
+            serviceSelect.addEventListener('change', function () {
+                const selectedOpt = this.options[this.selectedIndex];
+                if (!selectedOpt || !selectedOpt.dataset.cost) {
+                    resetShippingResult();
                     return;
                 }
 
-                serviceSelect.innerHTML = '<option value="">-- Pilih Layanan --</option>';
-                costData.forEach((svc, idx) => {
-                    const opt = document.createElement('option');
-                    opt.value = idx;
-                    opt.textContent = svc.service + ' - ' + formatRupiah(svc.cost) + ' (' + svc.etd + ')';
-                    opt.dataset.cost = svc.cost;
-                    opt.dataset.etd = svc.etd;
-                    opt.dataset.service = svc.service;
-                    opt.dataset.description = svc.description || '';
-                    opt.dataset.courierName = svc.name || courierCode.toUpperCase();
-                    serviceSelect.appendChild(opt);
-                });
-                serviceSelect.disabled = false;
-            })
-            .catch(() => {
-                shippingLoading.classList.add('hidden');
-                shippingError.classList.remove('hidden');
+                const cost = parseInt(selectedOpt.dataset.cost);
+                const etd = selectedOpt.dataset.etd;
+                const service = selectedOpt.dataset.service;
+                const courierName = selectedOpt.dataset.courierName;
+                const courierCode = courierSelect.value;
+                const description = selectedOpt.dataset.description;
+
+                // Update hidden inputs
+                inputShippingCost.value = cost;
+                inputShippingCourier.value = courierCode;
+                inputShippingService.value = service;
+                inputShippingEtd.value = etd;
+
+                // Show result
+                document.getElementById('result-courier-name').textContent = courierName + ' - ' + service;
+                document.getElementById('result-etd').textContent = (description ? description + ' | ' : '') + 'Estimasi: ' + etd;
+                document.getElementById('result-cost').textContent = formatRupiah(cost);
+                shippingResult.classList.remove('hidden');
+                shippingError.classList.add('hidden');
+
+                // Update summary
+                summaryShippingCost.textContent = formatRupiah(cost);
+                summaryShippingCost.className = 'font-medium text-gray-800';
+                summaryTotal.textContent = formatRupiah(subtotal + cost);
+
+                summaryCourierDetail.textContent = courierName + ' ' + service + ' (' + etd + ')';
+                summaryCourierInfo.style.display = '';
+
+                // Enable button
+                btnPlaceOrder.disabled = false;
+                btnHint.style.display = 'none';
             });
-        });
 
-        // --- Service Change => Update Summary ---
-        serviceSelect.addEventListener('change', function() {
-            const selectedOpt = this.options[this.selectedIndex];
-            if (!selectedOpt || !selectedOpt.dataset.cost) {
-                resetShippingResult();
-                return;
+            function resetShippingResult() {
+                shippingResult.classList.add('hidden');
+                shippingError.classList.add('hidden');
+                inputShippingCost.value = '0';
+                inputShippingCourier.value = '';
+                inputShippingService.value = '';
+                inputShippingEtd.value = '';
+
+                summaryShippingCost.textContent = 'Belum dipilih';
+                summaryShippingCost.className = 'font-medium text-gray-500';
+                summaryTotal.textContent = formatRupiah(subtotal);
+                summaryCourierInfo.style.display = 'none';
+
+                btnPlaceOrder.disabled = true;
+                btnHint.style.display = '';
             }
-
-            const cost = parseInt(selectedOpt.dataset.cost);
-            const etd = selectedOpt.dataset.etd;
-            const service = selectedOpt.dataset.service;
-            const courierName = selectedOpt.dataset.courierName;
-            const courierCode = courierSelect.value;
-            const description = selectedOpt.dataset.description;
-
-            // Update hidden inputs
-            inputShippingCost.value = cost;
-            inputShippingCourier.value = courierCode;
-            inputShippingService.value = service;
-            inputShippingEtd.value = etd;
-
-            // Show result
-            document.getElementById('result-courier-name').textContent = courierName + ' - ' + service;
-            document.getElementById('result-etd').textContent = (description ? description + ' | ' : '') + 'Estimasi: ' + etd;
-            document.getElementById('result-cost').textContent = formatRupiah(cost);
-            shippingResult.classList.remove('hidden');
-            shippingError.classList.add('hidden');
-
-            // Update summary
-            summaryShippingCost.textContent = formatRupiah(cost);
-            summaryShippingCost.className = 'font-medium text-gray-800';
-            summaryTotal.textContent = formatRupiah(subtotal + cost);
-
-            summaryCourierDetail.textContent = courierName + ' ' + service + ' (' + etd + ')';
-            summaryCourierInfo.style.display = '';
-
-            // Enable button
-            btnPlaceOrder.disabled = false;
-            btnHint.style.display = 'none';
         });
-
-        function resetShippingResult() {
-            shippingResult.classList.add('hidden');
-            shippingError.classList.add('hidden');
-            inputShippingCost.value = '0';
-            inputShippingCourier.value = '';
-            inputShippingService.value = '';
-            inputShippingEtd.value = '';
-
-            summaryShippingCost.textContent = 'Belum dipilih';
-            summaryShippingCost.className = 'font-medium text-gray-500';
-            summaryTotal.textContent = formatRupiah(subtotal);
-            summaryCourierInfo.style.display = 'none';
-
-            btnPlaceOrder.disabled = true;
-            btnHint.style.display = '';
-        }
-    });
     </script>
 @endsection
