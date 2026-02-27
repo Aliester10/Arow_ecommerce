@@ -86,8 +86,7 @@
                                     @if($imagePath)
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                             <img src="{{ $imagePath }}" alt="{{ $product->nama_produk }}" data-skeleton-image
-                                                class="object-contain w-full h-full"
-                                                style="transform: scale(0.75); transform-origin: center;">
+                                                class="object-contain w-full h-full">
                                         </div>
                                     @else
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
@@ -97,7 +96,7 @@
                                         </div>
                                     @endif
 
-                                    
+
                                     <!-- Overlay Actions (z-40) -->
                                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2"
                                         style="z-index: 40;">
