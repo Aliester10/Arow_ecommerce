@@ -31,7 +31,7 @@
             <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <a href="{{ route('help.index') }}" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
                 <div id="gtranslate-dropdown" style="position:relative;"></div>
-                <a href="#" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
+                <a href="{{ route('about.index') }}" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
             </div>
         </div>
     </div>

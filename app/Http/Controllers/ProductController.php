@@ -30,9 +30,23 @@ class ProductController extends Controller
                 });
         }
 
+        // Brand filtering
+        if ($request->has('brands') && is_array($request->brands)) {
+            $query->whereIn('id_brand', $request->brands);
+        }
+
+        // Price range filtering
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('harga_produk', '>=', (int)str_replace(['.', ','], '', $request->min_price));
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('harga_produk', '<=', (int)str_replace(['.', ','], '', $request->max_price));
+        }
+
         $products = $query->paginate(12);
         $categories = Kategori::all();
-        $brands = Brand::all();
+        $brands = Brand::orderBy('nama_brand')->get();
 
         return view('products.index', compact('products', 'categories', 'brands'));
     }

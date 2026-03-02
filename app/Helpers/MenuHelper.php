@@ -75,6 +75,11 @@ class MenuHelper
                 'path' => '/admin/faqs',
             ],
             [
+                'icon' => 'privacy',
+                'name' => 'Privacy Policy',
+                'path' => '/admin/privacy-policy',
+            ],
+            [
                 'icon' => 'warning',
                 'name' => 'Laporan Kendala',
                 'path' => '/admin/complaints',
@@ -178,6 +183,8 @@ class MenuHelper
             'support-ticket' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 17.0518V12C20 7.58174 16.4183 4 12 4C7.58168 4 3.99994 7.58174 3.99994 12V17.0518M19.9998 14.041V19.75C19.9998 20.5784 19.3282 21.25 18.4998 21.25H13.9998M6.5 18.75H5.5C4.67157 18.75 4 18.0784 4 17.25V13.75C4 12.9216 4.67157 12.25 5.5 12.25H6.5C7.32843 12.25 8 12.9216 8 13.75V17.25C8 18.0784 7.32843 18.75 6.5 18.75ZM17.4999 18.75H18.4999C19.3284 18.75 19.9999 18.0784 19.9999 17.25V13.75C19.9999 12.9216 19.3284 12.25 18.4999 12.25H17.4999C16.6715 12.25 15.9999 12.9216 15.9999 13.75V17.25C15.9999 18.0784 16.6715 18.75 17.4999 18.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
 
             'warning' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM11 8C11 7.44772 11.4477 7 12 7C12.5523 7 13 7.44772 13 8V12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12V8ZM12 16C11.4477 16 11 15.5523 11 15C11 14.4477 11.4477 14 12 14C12.5523 14 13 14.4477 13 15C13 15.5523 12.5523 16 12 16Z" fill="currentColor"></path></svg>',
+
+            'privacy' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C9.23858 2 7 4.23858 7 7V9.5C6.44772 9.5 6 9.94772 6 10.5V19.5C6 20.0523 6.44772 20.5 7 20.5H17C17.5523 20.5 18 20.0523 18 19.5V10.5C18 9.94772 17.5523 9.5 17 9.5V7C17 4.23858 14.7614 2 12 2ZM12 4C13.6569 4 15 5.34315 15 7V9.5H9V7C9 5.34315 10.3431 4 12 4ZM8 11.5V18.5H16V11.5H8Z" fill="currentColor"></path></svg>',
 
             'special-deals' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM8.5 8.5C8.5 7.67157 9.17157 7 10 7H14C14.8284 7 15.5 7.67157 15.5 8.5V10.5C15.5 11.3284 14.8284 12 14 12H10C9.17157 12 8.5 11.3284 8.5 10.5V8.5ZM7 15.5C7 14.6716 7.67157 14 8.5 14H15.5C16.3284 14 17 14.6716 17 15.5C17 16.3284 16.3284 17 15.5 17H8.5C7.67157 17 7 16.3284 7 15.5Z" fill="currentColor"></path></svg>',
 

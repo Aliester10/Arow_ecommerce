@@ -208,9 +208,12 @@
             
             if (e.target.closest('.add-item')) {
                 const sectionItems = e.target.closest('.section-item').querySelector('.section-items');
+                const sectionIndex = Array.from(document.querySelectorAll('.section-item')).indexOf(e.target.closest('.section-item'));
+                const itemIndex = sectionItems.querySelectorAll('.item-input').length;
                 const itemHtml = `
                     <div class="item-input mb-2 flex gap-2">
                         <input type="text" 
+                               name="sections[${sectionIndex}][items][]"
                                placeholder="Item baru"
                                class="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                         <button type="button" class="remove-item text-red-600 hover:text-red-800">
@@ -219,10 +222,20 @@
                     </div>
                 `;
                 sectionItems.insertAdjacentHTML('beforeend', itemHtml);
+                console.log(`Added item to section ${sectionIndex} with name sections[${sectionIndex}][items][]`);
             }
             
             if (e.target.closest('.remove-item')) {
                 e.target.closest('.item-input').remove();
+            }
+        });
+
+        // Debug form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
             }
         });
     </script>

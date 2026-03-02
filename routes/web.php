@@ -14,6 +14,7 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\AdminFaqController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\AdminPrivacyPolicyController;
+use App\Http\Controllers\AboutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,9 @@ Route::post('/complaints', [ComplaintController::class, 'store'])->name('complai
 
 // Privacy Policy
 Route::get('/kebijakan-privasi', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
+
+// About Us
+Route::get('/tentang-kami', [AboutController::class, 'index'])->name('about.index');
 
 Route::get('/language/{locale}', function (string $locale) {
     if (!in_array($locale, ['id', 'en'], true)) {

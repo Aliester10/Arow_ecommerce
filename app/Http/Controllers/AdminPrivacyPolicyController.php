@@ -20,6 +20,10 @@ class AdminPrivacyPolicyController extends Controller
 
     public function store(Request $request)
     {
+        // Debug: Log incoming request data
+        \Log::info('PrivacyPolicy store method called');
+        \Log::info('Request data: ', $request->all());
+        
         $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string|max:255',
@@ -32,6 +36,9 @@ class AdminPrivacyPolicyController extends Controller
             'sections.*.description' => 'nullable|string',
         ]);
 
+        // Debug: Log after validation
+        \Log::info('Validation passed');
+
         // Deactivate all other policies when creating a new one
         PrivacyPolicy::where('is_active', true)->update(['is_active' => false]);
 
@@ -43,6 +50,9 @@ class AdminPrivacyPolicyController extends Controller
             'sections' => $request->sections,
             'is_active' => $request->has('is_active'),
         ]);
+
+        // Debug: Log after creation
+        \Log::info('PrivacyPolicy created with ID: ' . $privacyPolicy->id);
 
         return redirect()
             ->route('admin.privacy-policy.index')
