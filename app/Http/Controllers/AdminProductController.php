@@ -8,6 +8,7 @@ use App\Models\ProductImage;
 use App\Models\SubSubkategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 
 class AdminProductController extends Controller
 {
@@ -50,6 +51,9 @@ class AdminProductController extends Controller
             'gambar_produk' => 'required|array|min:1',
             'gambar_produk.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_produk' => 'required|in:aktif,nonaktif',
+        ], [
+            'gambar_produk.*.uploaded' => 'Gambar gagal diunggah, ukuran file mungkin melebihi batas maksimal server (2MB).',
+            'gambar_produk.*.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         $data = $request->all();
@@ -64,11 +68,15 @@ class AdminProductController extends Controller
         // Handle multiple image uploads
         if ($request->hasFile('gambar_produk')) {
             $product = Produk::create($data);
-            
+
             foreach ($request->file('gambar_produk') as $index => $image) {
                 $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('images/produk', $imageName, 'public');
-                
+
+                // Optimize the uploaded image
+                $fullPath = storage_path('app/public/' . $path);
+                ImageOptimizer::optimize($fullPath);
+
                 ProductImage::create([
                     'id_produk' => $product->id_produk,
                     'image_path' => $path,
@@ -119,6 +127,9 @@ class AdminProductController extends Controller
             'gambar_produk' => 'nullable|array',
             'gambar_produk.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_produk' => 'required|in:aktif,nonaktif',
+        ], [
+            'gambar_produk.*.uploaded' => 'Gambar gagal diunggah, ukuran file mungkin melebihi batas maksimal server (2MB).',
+            'gambar_produk.*.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         $data = $request->all();
@@ -137,12 +148,16 @@ class AdminProductController extends Controller
                 Storage::disk('public')->delete($existingImage->image_path);
                 $existingImage->delete();
             }
-            
+
             // Upload new images
             foreach ($request->file('gambar_produk') as $index => $image) {
                 $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('images/produk', $imageName, 'public');
-                
+
+                // Optimize the uploaded image
+                $fullPath = storage_path('app/public/' . $path);
+                ImageOptimizer::optimize($fullPath);
+
                 ProductImage::create([
                     'id_produk' => $product->id_produk,
                     'image_path' => $path,
@@ -184,10 +199,10 @@ class AdminProductController extends Controller
     {
         $product = Produk::findOrFail($productId);
         $image = ProductImage::where('id_produk', $productId)->findOrFail($imageId);
-        
+
         Storage::disk('public')->delete($image->image_path);
         $image->delete();
-        
+
         // If this was primary image, set next image as primary
         if ($image->is_primary) {
             $nextImage = $product->images()->orderBy('sort_order')->first();
@@ -195,7 +210,7 @@ class AdminProductController extends Controller
                 $nextImage->update(['is_primary' => true]);
             }
         }
-        
+
         return response()->json(['success' => true]);
     }
 
@@ -205,14 +220,14 @@ class AdminProductController extends Controller
     public function setPrimaryImage($productId, $imageId)
     {
         $product = Produk::findOrFail($productId);
-        
+
         // Remove primary status from all images
         $product->images()->update(['is_primary' => false]);
-        
+
         // Set new primary image
         $image = ProductImage::where('id_produk', $productId)->findOrFail($imageId);
         $image->update(['is_primary' => true]);
-        
+
         return response()->json(['success' => true]);
     }
 }
