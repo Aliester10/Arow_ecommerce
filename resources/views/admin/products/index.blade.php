@@ -66,9 +66,9 @@
                             <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
                                 <div style="width: 80px; height: 80px;"
                                     class="rounded-md overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-700 border border-stroke dark:border-gray-600 flex-shrink-0">
-                                    @if($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
+                                    @if($product->firstImage || $product->gambar_produk)
                                         <img style="width: 80px; height: 80px; object-fit: cover;"
-                                            src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
+                                            src="{{ $product->firstImage ? $product->firstImage->url : asset('storage/images/produk/' . $product->gambar_produk) }}"
                                             alt="{{ $product->nama_produk }}" />
                                     @else
                                         <i class="fas fa-image text-gray-400 text-xl"></i>

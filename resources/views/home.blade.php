@@ -241,23 +241,10 @@
 
                         <!-- Product Image -->
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
-                            @php
-                                $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
-                                    if (!$product->gambar_produk) return null;
-                                    $p1 = 'storage/images/produk/' . $product->gambar_produk;
-                                    if (file_exists(public_path($p1))) return $p1;
-                                    $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                    if (file_exists(public_path($p2))) return $p2;
-                                    $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                    if (file_exists(public_path($p3))) return $p3;
-                                    return null;
-                                });
-                            @endphp
-
-                            @if($imagePath)
+                            @if(isset($product) && $product->image_url)
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
                                 <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                    <img src="{{ asset($imagePath) }}" 
+                                    <img src="{{ $product->image_url }}" 
                                          alt="{{ $product->nama_produk }}" 
                                          class="w-full h-full object-contain"
                                          data-skeleton-image
@@ -351,22 +338,9 @@
                             <div class="bg-white rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2 overflow-hidden h-full flex flex-col">
                                 <!-- Product Image Container -->
                                 <div class="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
-                                    @php
-                                        $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
-                                            if (!$product->gambar_produk) return null;
-                                            $p1 = 'storage/images/produk/' . $product->gambar_produk;
-                                            if (file_exists(public_path($p1))) return $p1;
-                                            $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                            if (file_exists(public_path($p2))) return $p2;
-                                            $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                            if (file_exists(public_path($p3))) return $p3;
-                                            return null;
-                                        });
-                                    @endphp
-                                    
-                                    @if($imagePath)
+                                    @if(isset($product) && $product->image_url)
                                         <a href="{{ route('products.show', $product->slug) }}" class="block w-full h-full">
-                                            <img src="{{ asset($imagePath) }}" 
+                                            <img src="{{ $product->image_url }}" 
                                                  alt="{{ $product->nama_produk }}"
                                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                         </a>
@@ -510,23 +484,10 @@
                                         <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
                                             <!-- Product Image -->
                                             <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
-                                                @php
-                                                    $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
-                                                        if (!$product->gambar_produk) return null;
-                                                        $p1 = 'storage/images/produk/' . $product->gambar_produk;
-                                                        if (file_exists(public_path($p1))) return $p1;
-                                                        $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                                        if (file_exists(public_path($p2))) return $p2;
-                                                        $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                                        if (file_exists(public_path($p3))) return $p3;
-                                                        return null;
-                                                    });
-                                                @endphp
-
-                                                @if($imagePath)
+                                                @if(isset($product) && $product->image_url)
                                                     <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
                                                     <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                                        <img src="{{ asset($imagePath) }}" 
+                                                        <img src="{{ $product->image_url }}" 
                                                              alt="{{ $product->nama_produk }}" 
                                                              class="w-full h-full object-contain"
                                                              data-skeleton-image
@@ -659,23 +620,10 @@
                     <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
                         <!-- Product Image -->
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
-                            @php
-                                $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($product->id_produk ?? $product->gambar_produk ?? 'none'), 86400, function() use ($product) {
-                                    if (!$product->gambar_produk) return null;
-                                    $p1 = 'storage/images/produk/' . $product->gambar_produk;
-                                    if (file_exists(public_path($p1))) return $p1;
-                                    $p2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                    if (file_exists(public_path($p2))) return $p2;
-                                    $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
-                                    if (file_exists(public_path($p3))) return $p3;
-                                    return null;
-                                });
-                            @endphp
-
-                            @if($imagePath)
+                            @if(isset($product) && $product->image_url)
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
                                 <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                    <img src="{{ asset($imagePath) }}" 
+                                    <img src="{{ $product->image_url }}" 
                                          alt="{{ $product->nama_produk }}" 
                                          class="w-full h-full object-contain"
                                          data-skeleton-image

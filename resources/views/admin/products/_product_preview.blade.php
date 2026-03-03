@@ -12,7 +12,7 @@
         {{-- Preview mimics the frontend product detail layout --}}
         <div
             class="bg-white dark:bg-boxdark-2 rounded-xl border border-gray-200 dark:border-strokedark overflow-hidden shadow-sm">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 p-5">
                 {{-- Left: Image Preview --}}
                 <div>
                     <div
@@ -20,9 +20,9 @@
                         {{-- Product Image (z-10) --}}
                         <div id="previewImageContainer" class="absolute inset-0 flex items-center justify-center"
                             style="z-index: 10;">
-                            @if(isset($product) && $product->gambar_produk)
-                                <img id="previewImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
-                                    alt="Preview" class="object-contain w-full h-full"
+                            @if(isset($product) && ($product->firstImage || $product->gambar_produk))
+                                <img id="previewImage" src="{{ $product->image_url }}" alt="Preview"
+                                    class="object-contain w-full h-full"
                                     style="transform: scale(0.75); transform-origin: center;">
                             @else
                                 <img id="previewImage" src="" alt="Preview" class="object-contain w-full h-full hidden"
@@ -33,7 +33,7 @@
                                 </div>
                             @endif
                         </div>
-                                            </div>
+                    </div>
                 </div>
 
                 {{-- Right: Product Info Preview --}}
@@ -117,32 +117,38 @@
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">NAMA</dt>
                             <dd id="previewSpecName" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? $product->nama_produk : '-' }}</dd>
+                                {{ isset($product) ? $product->nama_produk : '-' }}
+                            </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">MEREK</dt>
                             <dd id="previewSpecBrand" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) && $product->brand ? $product->brand->nama_brand : '-' }}</dd>
+                                {{ isset($product) && $product->brand ? $product->brand->nama_brand : '-' }}
+                            </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">SKU</dt>
                             <dd id="previewSpecSKU" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->sku_produk ?? '-') : '-' }}</dd>
+                                {{ isset($product) ? ($product->sku_produk ?? '-') : '-' }}
+                            </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">TYPE/COVER</dt>
                             <dd id="previewSpecType" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->tipe_produk ?? '-') : '-' }}</dd>
+                                {{ isset($product) ? ($product->tipe_produk ?? '-') : '-' }}
+                            </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">ASAL NEGARA</dt>
                             <dd id="previewSpecOrigin" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->asal_produk ?? '-') : '-' }}</dd>
+                                {{ isset($product) ? ($product->asal_produk ?? '-') : '-' }}
+                            </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-2 py-1.5">
                             <dt class="text-gray-500 dark:text-gray-400">DIMENSI</dt>
                             <dd id="previewSpecDimension" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->dimensi_produk ?? '-') : '-' }}</dd>
+                                {{ isset($product) ? ($product->dimensi_produk ?? '-') : '-' }}
+                            </dd>
                         </div>
                     </dl>
                 </div>

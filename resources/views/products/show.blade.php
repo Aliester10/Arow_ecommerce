@@ -408,29 +408,12 @@
                             <a href="{{ route('products.show', $related->slug) }}" class="flex flex-col h-full relative group">
                                 <!-- Product Image -->
                                 <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
-                                    @php
-                                        $relatedImagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($related->id_produk ?? $related->gambar_produk ?? 'none'), 86400, function () use ($related) {
-                                            if (!$related->gambar_produk)
-                                                return null;
-                                            $p1 = 'storage/images/produk/' . $related->gambar_produk;
-                                            if (file_exists(public_path($p1)))
-                                                return $p1;
-                                            $p2 = 'storage/images/produk/' . str_replace(' ', '', $related->gambar_produk);
-                                            if (file_exists(public_path($p2)))
-                                                return $p2;
-                                            $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $related->gambar_produk));
-                                            if (file_exists(public_path($p3)))
-                                                return $p3;
-                                            return null;
-                                        });
-                                    @endphp
-
-                                    @if($relatedImagePath)
+                                    @if(isset($related) && $related->image_url)
                                         <div data-skeleton
                                             class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
                                             style="z-index: 30;"></div>
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <img src="{{ asset($relatedImagePath) }}" alt="{{ $related->nama_produk }}"
+                                            <img src="{{ $related->image_url }}" alt="{{ $related->nama_produk }}"
                                                 class="w-full h-full object-contain" data-skeleton-image loading="lazy">
                                         </div>
                                     @else
@@ -632,7 +615,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-                                        ];
+                                            ];
 
         let currentGalleryIndex = 0;
 

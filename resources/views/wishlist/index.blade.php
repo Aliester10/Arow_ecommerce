@@ -38,29 +38,12 @@
                                 <a href="{{ route('products.show', $item->produk->slug) }}" class="flex flex-col h-full">
                                     <!-- Product Image -->
                                     <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
-                                        @php
-                                            $imagePath = \Illuminate\Support\Facades\Cache::remember('img_path_' . md5($item->produk->id_produk ?? $item->produk->gambar_produk ?? 'none'), 86400, function () use ($item) {
-                                                if (!$item->produk->gambar_produk)
-                                                    return null;
-                                                $p1 = 'storage/images/produk/' . $item->produk->gambar_produk;
-                                                if (file_exists(public_path($p1)))
-                                                    return $p1;
-                                                $p2 = 'storage/images/produk/' . str_replace(' ', '', $item->produk->gambar_produk);
-                                                if (file_exists(public_path($p2)))
-                                                    return $p2;
-                                                $p3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $item->produk->gambar_produk));
-                                                if (file_exists(public_path($p3)))
-                                                    return $p3;
-                                                return null;
-                                            });
-                                        @endphp
-
-                                        @if($imagePath)
+                                        @if(isset($item->produk) && $item->produk->image_url)
                                             <div data-skeleton
                                                 class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
                                                 style="z-index: 30;"></div>
                                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                                <img src="{{ asset($imagePath) }}" alt="{{ $item->produk->nama_produk }}"
+                                                <img src="{{ $item->produk->image_url }}" alt="{{ $item->produk->nama_produk }}"
                                                     class="w-full h-full object-contain p-2" data-skeleton-image loading="lazy">
                                             </div>
                                         @else

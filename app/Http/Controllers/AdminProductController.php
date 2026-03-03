@@ -65,8 +65,11 @@ class AdminProductController extends Controller
         if (empty($data['id_sub_subkategori']))
             $data['id_sub_subkategori'] = null;
 
-        // Handle multiple image uploads
         if ($request->hasFile('gambar_produk')) {
+            // Remove gambar_produk from mass assignment to prevent error formatting array to string
+            // as Product model still has 'gambar_produk' fillable expecting a string
+            unset($data['gambar_produk']);
+
             $product = Produk::create($data);
 
             foreach ($request->file('gambar_produk') as $index => $image) {
@@ -143,6 +146,9 @@ class AdminProductController extends Controller
 
         // Handle multiple image uploads
         if ($request->hasFile('gambar_produk')) {
+            // Remove gambar_produk from mass assignment to prevent error formatting array to string
+            unset($data['gambar_produk']);
+
             // Delete existing images
             foreach ($product->images as $existingImage) {
                 Storage::disk('public')->delete($existingImage->image_path);

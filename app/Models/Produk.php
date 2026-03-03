@@ -127,7 +127,7 @@ class Produk extends Model
         if ($primaryImage) {
             return $primaryImage;
         }
-        
+
         return $this->images()->first();
     }
 
@@ -136,12 +136,12 @@ class Produk extends Model
         if ($this->firstImage) {
             return $this->firstImage->url;
         }
-        
+
         // Fallback to legacy single image if exists
         if ($this->gambar_produk) {
-            return asset('storage/products/' . $this->gambar_produk);
+            return asset('storage/images/produk/' . $this->gambar_produk);
         }
-        
-        return asset('images/default-product.jpg');
+
+        return null;
     }
 }
