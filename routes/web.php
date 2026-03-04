@@ -96,6 +96,8 @@ Route::middleware('auth')->group(function () {
     // Shipping (RajaOngkir)
     Route::get('/shipping/provinces', [ShippingController::class, 'getProvinces'])->name('shipping.provinces');
     Route::get('/shipping/cities/{province_id}', [ShippingController::class, 'getCities'])->name('shipping.cities');
+    Route::get('/shipping/districts/{city_id}', [ShippingController::class, 'getDistricts'])->name('shipping.districts');
+    Route::get('/shipping/villages/{district_id}', [ShippingController::class, 'getVillages'])->name('shipping.villages');
     Route::post('/shipping/cost', [ShippingController::class, 'getCost'])->name('shipping.cost');
 });
 

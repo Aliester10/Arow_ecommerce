@@ -59,7 +59,7 @@
                             @enderror
                         </div>
 
-                        {{-- Kota/Kabupaten (Dropdown from RajaOngkir V2) --}}
+                        {{-- Kota/Kabupaten --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Kota/Kabupaten</label>
                             <select id="shipping_city_select" name="shipping_city" form="checkout-form"
@@ -68,6 +68,32 @@
                                 <option value="">Pilih provinsi dulu</option>
                             </select>
                             @error('shipping_city')
+                                <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Kecamatan --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Kecamatan</label>
+                            <select id="shipping_district_select" name="shipping_district" form="checkout-form"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
+                                required disabled>
+                                <option value="">Pilih kota dulu</option>
+                            </select>
+                            @error('shipping_district')
+                                <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Desa/Kelurahan --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Desa/Kelurahan</label>
+                            <select id="shipping_village_select" name="shipping_village" form="checkout-form"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
+                                required disabled>
+                                <option value="">Pilih kecamatan dulu</option>
+                            </select>
+                            @error('shipping_village')
                                 <div class="text-xs text-red-600 mt-1">{{ $message }}</div>
                             @enderror
                         </div>
@@ -97,7 +123,7 @@
                             <select id="courier_select"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
                                 disabled>
-                                <option value="">Pilih kota dulu</option>
+                                <option value="">Pilih desa/kelurahan dulu</option>
                                 @foreach($couriers as $courier)
                                     <option value="{{ $courier }}">{{ strtoupper($courier) }}</option>
                                 @endforeach
@@ -159,6 +185,7 @@
                         <input type="hidden" name="shipping_service" id="input_shipping_service" value="">
                         <input type="hidden" name="shipping_etd" id="input_shipping_etd" value="">
                         <input type="hidden" name="destination_city_id" id="input_destination_city_id" value="">
+                        <input type="hidden" name="destination_village_code" id="input_destination_village_code" value="">
 
                         <div class="space-y-3">
                             @php
@@ -264,6 +291,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             const provinceSelect = document.getElementById('shipping_province_id');
             const citySelect = document.getElementById('shipping_city_select');
+            const districtSelect = document.getElementById('shipping_district_select');
+            const villageSelect = document.getElementById('shipping_village_select');
             const courierSelect = document.getElementById('courier_select');
             const serviceSelect = document.getElementById('service_select');
             const shippingLoading = document.getElementById('shipping-loading');
@@ -278,6 +307,7 @@
             const inputShippingService = document.getElementById('input_shipping_service');
             const inputShippingEtd = document.getElementById('input_shipping_etd');
             const inputDestinationCityId = document.getElementById('input_destination_city_id');
+            const inputDestinationVillageCode = document.getElementById('input_destination_village_code');
 
             // Summary elements
             const summaryShippingCost = document.getElementById('summary-shipping-cost');
@@ -305,7 +335,7 @@
                     provinces.forEach(p => {
                         const opt = document.createElement('option');
                         opt.value = p.name;
-                        opt.dataset.id = p.id;
+                        opt.dataset.id = p.code;
                         opt.textContent = p.name;
                         provinceSelect.appendChild(opt);
                     });
@@ -321,6 +351,8 @@
 
                 citySelect.innerHTML = '<option value="">Memuat kota...</option>';
                 citySelect.disabled = true;
+                districtSelect.disabled = true;
+                villageSelect.disabled = true;
                 courierSelect.disabled = true;
                 serviceSelect.disabled = true;
                 resetShippingResult();
@@ -336,7 +368,7 @@
                         cities.forEach(c => {
                             const opt = document.createElement('option');
                             opt.value = c.name;
-                            opt.dataset.id = c.id;
+                            opt.dataset.id = c.code;
                             opt.textContent = c.name;
                             citySelect.appendChild(opt);
                         });
@@ -347,15 +379,84 @@
                     });
             });
 
-            // --- City Change => Enable Courier ---
+            // --- City Change => Load Districts ---
             citySelect.addEventListener('change', function () {
                 const selectedOpt = this.options[this.selectedIndex];
                 const cityId = selectedOpt?.dataset?.id;
 
                 inputDestinationCityId.value = cityId || '';
+
+                districtSelect.innerHTML = '<option value="">Memuat kecamatan...</option>';
+                districtSelect.disabled = true;
+                villageSelect.disabled = true;
+                courierSelect.disabled = true;
+                serviceSelect.disabled = true;
                 resetShippingResult();
 
-                if (cityId) {
+                if (!cityId) return;
+
+                fetch('{{ url("/shipping/districts") }}/' + cityId)
+                    .then(r => r.json())
+                    .then(res => {
+                        districtSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+                        const districts = res.data || [];
+                        districts.sort((a, b) => a.name.localeCompare(b.name));
+                        districts.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.name;
+                            opt.dataset.id = d.code;
+                            opt.textContent = d.name;
+                            districtSelect.appendChild(opt);
+                        });
+                        districtSelect.disabled = false;
+                    })
+                    .catch(() => {
+                        districtSelect.innerHTML = '<option value="">Gagal memuat kecamatan</option>';
+                    });
+            });
+
+            // --- District Change => Load Villages ---
+            districtSelect.addEventListener('change', function () {
+                const selectedOpt = this.options[this.selectedIndex];
+                const districtId = selectedOpt?.dataset?.id;
+
+                villageSelect.innerHTML = '<option value="">Memuat desa...</option>';
+                villageSelect.disabled = true;
+                courierSelect.disabled = true;
+                serviceSelect.disabled = true;
+                resetShippingResult();
+
+                if (!districtId) return;
+
+                fetch('{{ url("/shipping/villages") }}/' + districtId)
+                    .then(r => r.json())
+                    .then(res => {
+                        villageSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
+                        const villages = res.data || [];
+                        villages.sort((a, b) => a.name.localeCompare(b.name));
+                        villages.forEach(v => {
+                            const opt = document.createElement('option');
+                            opt.value = v.name;
+                            opt.dataset.id = v.code;
+                            opt.textContent = v.name;
+                            villageSelect.appendChild(opt);
+                        });
+                        villageSelect.disabled = false;
+                    })
+                    .catch(() => {
+                        villageSelect.innerHTML = '<option value="">Gagal memuat desa</option>';
+                    });
+            });
+
+            // --- Village Change => Enable Courier ---
+            villageSelect.addEventListener('change', function () {
+                const selectedOpt = this.options[this.selectedIndex];
+                const villageId = selectedOpt?.dataset?.id;
+
+                inputDestinationVillageCode.value = villageId || '';
+                resetShippingResult();
+
+                if (villageId) {
                     courierSelect.disabled = false;
                     courierSelect.value = '';
                     serviceSelect.disabled = true;
@@ -369,9 +470,9 @@
             // --- Courier Change => Fetch Cost (V2: flat array {data: [{name, code, service, description, cost, etd}]}) ---
             courierSelect.addEventListener('change', function () {
                 const courierCode = this.value;
-                const cityId = inputDestinationCityId.value;
+                const villageId = inputDestinationVillageCode.value;
 
-                if (!courierCode || !cityId) return;
+                if (!courierCode || !villageId) return;
 
                 resetShippingResult();
                 shippingLoading.classList.remove('hidden');
@@ -386,7 +487,7 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
                     body: JSON.stringify({
-                        destination: parseInt(cityId),
+                        destination: villageId,
                         weight: Math.round(totalWeight),
                         courier: courierCode,
                     }),

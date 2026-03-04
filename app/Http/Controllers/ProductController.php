@@ -14,11 +14,11 @@ class ProductController extends Controller
     {
         $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan', 'images']);
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('nama_produk', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->whereHas('subSubkategori', function ($q) use ($request) {
                 $q->where('nama_sub_subkategori', $request->category);
             })
@@ -37,14 +37,14 @@ class ProductController extends Controller
 
         // Price range filtering
         if ($request->has('min_price') && $request->min_price) {
-            $query->where('harga_produk', '>=', (int)str_replace(['.', ','], '', $request->min_price));
+            $query->where('harga_produk', '>=', (int) str_replace(['.', ','], '', $request->min_price));
         }
 
         if ($request->has('max_price') && $request->max_price) {
-            $query->where('harga_produk', '<=', (int)str_replace(['.', ','], '', $request->max_price));
+            $query->where('harga_produk', '<=', (int) str_replace(['.', ','], '', $request->max_price));
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Kategori::all();
         $brands = Brand::orderBy('nama_brand')->get();
 

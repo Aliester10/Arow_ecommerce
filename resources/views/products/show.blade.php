@@ -244,15 +244,37 @@
                     <div id="tabSpec" class="p-4">
                         <dl class="text-sm divide-y divide-gray-100">
                             <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">NAMA</dt>
+                                <dt class="text-gray-500">Nama Produk</dt>
                                 <dd class="col-span-2 font-medium text-gray-800">{{ $product->nama_produk }}</dd>
                             </div>
 
                             <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">MEREK</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">
-                                    {{ $product->brand->nama_brand ?? '-' }}
-                                </dd>
+                                <dt class="text-gray-500">Tipe Produk</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">Dimensi</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
+                            </div>
+
+                            @if($product->spesifikasi_produk)
+                                <div class="grid grid-cols-3 gap-3 py-2">
+                                    <dt class="text-gray-500">Spesifikasi</dt>
+                                    <dd class="col-span-2 text-gray-800 leading-relaxed whitespace-pre-line">{{ $product->spesifikasi_produk }}</dd>
+                                </div>
+                            @endif
+
+                            @if($product->deskripsi_produk)
+                                <div class="grid grid-cols-3 gap-3 py-2">
+                                    <dt class="text-gray-500">Deskripsi</dt>
+                                    <dd class="col-span-2 text-gray-800 leading-relaxed whitespace-pre-line">{{ $product->deskripsi_produk }}</dd>
+                                </div>
+                            @endif
+
+                            <div class="grid grid-cols-3 gap-3 py-2">
+                                <dt class="text-gray-500">Merek</dt>
+                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->brand->nama_brand ?? '-' }}</dd>
                             </div>
 
                             <div class="grid grid-cols-3 gap-3 py-2">
@@ -261,44 +283,10 @@
                             </div>
 
                             <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">TYPE/COVER</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">ASAL NEGARA</dt>
+                                <dt class="text-gray-500">Asal Negara</dt>
                                 <dd class="col-span-2 font-medium text-gray-800">{{ $product->asal_produk ?? '-' }}</dd>
                             </div>
-
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">SUB KATEGORI</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">
-                                    {{ $product->subSubkategori->subkategori->nama_subkategori ?? '-' }}
-                                </dd>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">SUB SUB KATEGORI</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">
-                                    {{ $product->subSubkategori->nama_sub_subkategori ?? '-' }}
-                                </dd>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">DIMENSI</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}
-                                </dd>
-                            </div>
                         </dl>
-
-                        @if($product->spesifikasi_produk)
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="text-sm font-semibold text-gray-800 mb-2">Spesifikasi</div>
-                                <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                                    {{ $product->spesifikasi_produk }}
-                                </div>
-                            </div>
-                        @endif
                     </div>
 
                     <div id="tabReview" class="p-4 hidden">
@@ -615,7 +603,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-                                            ];
+                                                ];
 
         let currentGalleryIndex = 0;
 

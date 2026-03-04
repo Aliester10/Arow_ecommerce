@@ -41,18 +41,44 @@ class ShippingController extends Controller
     }
 
     /**
+     * Get districts by city ID.
+     */
+    public function getDistricts($cityId)
+    {
+        $districts = $this->rajaOngkir->getDistricts((int) $cityId);
+
+        return response()->json([
+            'success' => true,
+            'data' => $districts,
+        ]);
+    }
+
+    /**
+     * Get villages by district ID.
+     */
+    public function getVillages($districtId)
+    {
+        $villages = $this->rajaOngkir->getVillages((int) $districtId);
+
+        return response()->json([
+            'success' => true,
+            'data' => $villages,
+        ]);
+    }
+
+    /**
      * Calculate shipping cost.
      */
     public function getCost(Request $request)
     {
         $request->validate([
-            'destination' => 'required|numeric',
+            'destination' => 'required|string',
             'weight' => 'required|numeric|min:1',
-            'courier' => 'required|string|in:jne,pos,tiki',
+            'courier' => 'required|string',
         ]);
 
         $results = $this->rajaOngkir->getCost(
-            (int) $request->destination,
+            $request->destination,
             (int) $request->weight,
             $request->courier
         );
