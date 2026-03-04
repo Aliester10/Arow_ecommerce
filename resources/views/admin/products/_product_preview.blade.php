@@ -73,14 +73,7 @@
                         </span>
                     </div>
 
-                    {{-- Description --}}
-                    <div class="mb-3">
-                        <h3 class="text-xs font-bold text-gray-900 dark:text-white mb-1">Deskripsi Produk</h3>
-                        <p id="previewDesc"
-                            class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed line-clamp-3">
-                            {{ isset($product) ? $product->deskripsi_produk : 'Deskripsi produk akan tampil di sini...' }}
-                        </p>
-                    </div>
+
 
                     {{-- Stock & Weight --}}
                     <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -107,47 +100,67 @@
             </div>
 
             {{-- Spec Table Preview --}}
-            <div class="border-t border-gray-100 dark:border-strokedark">
-                <div
-                    class="px-5 py-3 bg-orange-50 dark:bg-meta-4 text-sm font-semibold text-orange-600 dark:text-orange-400 border-b-2 border-orange-600">
-                    Spesifikasi Produk
+            <div class="border-t border-gray-100 dark:border-strokedark -mx-5 px-5 lg:mx-0 lg:px-0">
+                <div class="flex border-b border-gray-100 dark:border-strokedark">
+                    <button type="button"
+                        class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50 dark:bg-meta-4">
+                        Spesifikasi Produk
+                    </button>
+                    <!-- Space to mimic the review tab placement -->
+                    <div class="flex-1"></div>
                 </div>
-                <div class="px-5 py-3">
+                <div class="p-4">
                     <dl class="text-xs divide-y divide-gray-100 dark:divide-strokedark">
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
-                            <dt class="text-gray-500 dark:text-gray-400">NAMA</dt>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowName">
+                            <dt class="text-gray-500 dark:text-gray-400">Nama Produk</dt>
                             <dd id="previewSpecName" class="col-span-2 font-medium text-gray-800 dark:text-white">
                                 {{ isset($product) ? $product->nama_produk : '-' }}
                             </dd>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
-                            <dt class="text-gray-500 dark:text-gray-400">MEREK</dt>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowType">
+                            <dt class="text-gray-500 dark:text-gray-400">Tipe Produk</dt>
+                            <dd id="previewSpecType" class="col-span-2 font-medium text-gray-800 dark:text-white">
+                                {{ isset($product) ? ($product->tipe_produk ?? '-') : '-' }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowDimension">
+                            <dt class="text-gray-500 dark:text-gray-400">Dimensi</dt>
+                            <dd id="previewSpecDimension" class="col-span-2 font-medium text-gray-800 dark:text-white">
+                                {{ isset($product) ? ($product->dimensi_produk ?? '-') : '-' }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowSpesifikasi"
+                            style="display: {{ isset($product) && $product->spesifikasi_produk ? 'grid' : 'none' }};">
+                            <dt class="text-gray-500 dark:text-gray-400">Spesifikasi</dt>
+                            <dd id="previewSpecSpesifikasi"
+                                class="col-span-2 font-medium text-gray-800 dark:text-white whitespace-pre-line">
+                                {{ isset($product) ? ($product->spesifikasi_produk ?? '-') : '-' }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowDeskripsi"
+                            style="display: {{ isset($product) && $product->deskripsi_produk ? 'grid' : 'none' }};">
+                            <dt class="text-gray-500 dark:text-gray-400">Deskripsi</dt>
+                            <dd id="previewDesc"
+                                class="col-span-2 font-medium text-gray-800 dark:text-white whitespace-pre-line">
+                                {{ isset($product) ? $product->deskripsi_produk : '-' }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowBrand">
+                            <dt class="text-gray-500 dark:text-gray-400">Merek</dt>
                             <dd id="previewSpecBrand" class="col-span-2 font-medium text-gray-800 dark:text-white">
                                 {{ isset($product) && $product->brand ? $product->brand->nama_brand : '-' }}
                             </dd>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowSKU">
                             <dt class="text-gray-500 dark:text-gray-400">SKU</dt>
                             <dd id="previewSpecSKU" class="col-span-2 font-medium text-gray-800 dark:text-white">
                                 {{ isset($product) ? ($product->sku_produk ?? '-') : '-' }}
                             </dd>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
-                            <dt class="text-gray-500 dark:text-gray-400">TYPE/COVER</dt>
-                            <dd id="previewSpecType" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->tipe_produk ?? '-') : '-' }}
-                            </dd>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
-                            <dt class="text-gray-500 dark:text-gray-400">ASAL NEGARA</dt>
+                        <div class="grid grid-cols-3 gap-3 py-2" id="rowOrigin">
+                            <dt class="text-gray-500 dark:text-gray-400">Asal Negara</dt>
                             <dd id="previewSpecOrigin" class="col-span-2 font-medium text-gray-800 dark:text-white">
                                 {{ isset($product) ? ($product->asal_produk ?? '-') : '-' }}
-                            </dd>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 py-1.5">
-                            <dt class="text-gray-500 dark:text-gray-400">DIMENSI</dt>
-                            <dd id="previewSpecDimension" class="col-span-2 font-medium text-gray-800 dark:text-white">
-                                {{ isset($product) ? ($product->dimensi_produk ?? '-') : '-' }}
                             </dd>
                         </div>
                     </dl>
@@ -165,13 +178,13 @@
             return 'Rp ' + parseInt(num).toLocaleString('id-ID');
         }
 
-        // Text field mappings: input name -> preview element IDs
         const textMappings = {
             'nama_produk': ['previewName', 'previewSpecName', 'previewBreadcrumbName'],
             'sku_produk': ['previewSpecSKU'],
             'tipe_produk': ['previewSpecType'],
             'asal_produk': ['previewSpecOrigin'],
             'dimensi_produk': ['previewSpecDimension'],
+            'spesifikasi_produk': ['previewSpecSpesifikasi'],
             'deskripsi_produk': ['previewDesc'],
             'stok_produk': ['previewStock'],
             'berat_produk': ['previewWeight'],
@@ -190,6 +203,24 @@
                 });
             }
         });
+
+        // Conditionally hide empty rows for Spesifikasi & Deskripsi
+        function setupConditionalRow(inputName, rowId) {
+            const input = document.querySelector(`[name="${inputName}"]`);
+            const row = document.getElementById(rowId);
+            if (input && row) {
+                const updateRow = () => {
+                    const val = input.value.trim();
+                    row.style.display = val ? 'grid' : 'none';
+                };
+                input.addEventListener('input', updateRow);
+                // Also trigger initially but wait a bit to ensure it processes if pre-filled
+                setTimeout(updateRow, 100);
+            }
+        }
+
+        setupConditionalRow('spesifikasi_produk', 'rowSpesifikasi');
+        setupConditionalRow('deskripsi_produk', 'rowDeskripsi');
 
         // Price field - special formatting
         const priceInput = document.querySelector('[name="harga_produk"]');
