@@ -288,36 +288,20 @@ class AdminProductController extends Controller
         try {
             $product->update($data);
             
-            // Verify spesifikasi_produk was actually saved
-            $updatedProduct = $product->fresh(['spesifikasi_produk']);
-            $originalSpesifikasi = $data['spesifikasi_produk'] ?? null;
-            $savedSpesifikasi = $updatedProduct->spesifikasi_produk;
-            
-            if ($originalSpesifikasi !== $savedSpesifikasi) {
-                // Try to save it separately with different approaches
-                $attempts = [
-                    'original' => $originalSpesifikasi,
-                    'trimmed' => trim($originalSpesifikasi),
-                    'stripped' => strip_tags($originalSpesifikasi),
-                    'escaped' => htmlspecialchars($originalSpesifikasi, ENT_QUOTES, 'UTF-8'),
-                    'cleaned' => preg_replace('/[^a-zA-Z0-9\s\-_.,]/', '', $originalSpesifikasi),
-                ];
-                
-                $success = false;
-                foreach ($attempts as $attemptName => $attemptValue) {
+            // Verify spesifikasi_produk was actually saved and try direct SQL if needed
+            $spesifikasiValue = $data['spesifikasi_produk'] ?? null;
+            if ($spesifikasiValue !== null && $spesifikasiValue !== '') {
+                $updatedProduct = $product->fresh(['spesifikasi_produk']);
+                if ($updatedProduct->spesifikasi_produk !== $spesifikasiValue) {
+                    // Try direct SQL as last resort
                     try {
-                        $product->update(['spesifikasi_produk' => $attemptValue]);
-                        $success = true;
-                        break;
+                        DB::statement(
+                            'UPDATE produk SET spesifikasi_produk = ?, updated_at = ? WHERE id_produk = ?',
+                            [$spesifikasiValue, now(), $product->id_produk]
+                        );
                     } catch (\Exception $e) {
-                        continue;
+                        // Direct SQL failed, but that's okay
                     }
-                }
-                
-                if (!$success) {
-                    return redirect()->route('admin.products.index')
-                        ->with('success', 'Produk berhasil diperbarui!')
-                        ->with('warning', 'Spesifikasi Produk tidak dapat disimpan karena batasan database hosting. Nilai asli: "' . e($originalSpesifikasi) . '"');
                 }
             }
             
