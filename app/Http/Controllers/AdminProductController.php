@@ -145,6 +145,11 @@ class AdminProductController extends Controller
         $data = $request->all();
         // $data['harga_produk'] = $request->harga_produk; // Allow null update
 
+        // Handle spesifikasi_produk specifically to avoid constraint issues
+        if (isset($data['spesifikasi_produk'])) {
+            $data['spesifikasi_produk'] = $data['spesifikasi_produk'] === '' ? null : $data['spesifikasi_produk'];
+        }
+
         // nullify if empty strings
         if (empty($data['id_subkategori']))
             $data['id_subkategori'] = null;
