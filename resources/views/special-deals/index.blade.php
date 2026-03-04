@@ -18,68 +18,66 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             @forelse($products as $product)
-                <div
-                    class="flex flex-col h-full bg-white rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden shadow-md group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full">
-                        <!-- Product Image -->
-                        <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
+                <div class="group">
+                    <!-- Product Card with White Background and Enhanced Styling -->
+                    <div class="bg-white rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2 overflow-hidden h-full flex flex-col">
+                        <!-- Product Image Container -->
+                        <div class="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
                             @if(isset($product) && $product->image_url)
-                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
-                                    <img src="{{ $product->image_url }}" alt="{{ $product->nama_produk }}"
-                                        class="object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-110"
-                                        loading="lazy">
-                                </div>
+                                <a href="{{ route('products.show', $product->slug) }}" class="block w-full h-full">
+                                    <img src="{{ $product->image_url }}" 
+                                         alt="{{ $product->nama_produk }}"
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                </a>
                             @else
-                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                    <i class="fas fa-image text-gray-300 text-2xl sm:text-3xl"></i>
+                                <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-300 lg:text-gray-400 text-4xl lg:text-6xl"></i>
                                 </div>
                             @endif
-
+                            
                             <!-- Discount Badge -->
                             @if($product->special_deal_discount)
-                                <div
-                                    class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold z-20">
-                                    Diskon {{ $product->special_deal_discount }}%
-                                </div>
+                            <div class="absolute top-2 right-2 lg:top-4 lg:right-4 bg-red-500 text-white px-2 py-1 lg:px-3 lg:py-2 rounded-full text-[10px] lg:text-sm font-bold shadow-lg z-10">
+                                {{ $product->special_deal_discount }}%
+                            </div>
                             @endif
                         </div>
-
+                        
                         <!-- Product Info -->
-                        <div class="flex flex-col flex-grow p-3 sm:p-4 bg-white">
+                        <div class="p-3 lg:p-5 flex flex-col flex-grow">
                             <!-- Product Name -->
-                            <h3
-                                class="text-sm sm:text-base font-semibold text-gray-800 mb-2 sm:mb-3 line-clamp-2 leading-tight">
-                                {{ $product->nama_produk }}
+                            <h3 class="font-bold text-sm lg:text-xl text-gray-800 mb-2 lg:mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                                <a href="{{ route('products.show', $product->slug) }}" class="block text-gray-800 hover:text-orange-600 transition-colors">
+                                    {{ $product->nama_produk }}
+                                </a>
                             </h3>
-
+                            
                             <!-- Price Section -->
-                            <div class="flex flex-col mt-auto">
+                            <div class="space-y-1 mt-auto">
                                 @if($product->special_deal_price)
-                                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                        <span class="text-base sm:text-lg font-bold text-red-600">
-                                            Rp. {{ number_format($product->special_deal_price, 0, ',', '.') }}
+                                    <div class="flex flex-wrap items-baseline gap-1 lg:gap-2">
+                                        <span class="text-sm lg:text-2xl font-bold text-red-600 whitespace-nowrap">
+                                            Rp {{ number_format($product->special_deal_price, 0, ',', '.') }}
                                         </span>
-                                        <span class="text-xs sm:text-sm text-gray-400 line-through">
-                                            Rp. {{ number_format($product->harga_produk, 0, ',', '.') }}
+                                        <span class="text-[10px] lg:text-base text-gray-400 line-through whitespace-nowrap">
+                                            Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
                                         </span>
                                     </div>
                                 @else
-                                    <span class="text-base sm:text-lg font-bold text-gray-800">
-                                        Rp. {{ number_format($product->harga_produk, 0, ',', '.') }}
+                                    <span class="text-sm lg:text-2xl font-bold text-gray-800 whitespace-nowrap">
+                                        Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
                                     </span>
                                 @endif
                             </div>
-
-                            <!-- Cart Button -->
-                            <div class="mt-3">
-                                <button onclick="addToCart({{ $product->id_produk }}, 1)"
-                                    class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 sm:py-2.5 rounded-lg transition-colors text-sm sm:text-base">
-                                    <i class="fas fa-shopping-cart mr-2"></i>
-                                    Add to Cart
-                                </button>
-                            </div>
+                            
+                            <!-- Add to Cart Button -->
+                            <button onclick="addToCart({{ $product->id_produk }}, 1)" 
+                                    class="mt-3 lg:mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 lg:py-3 px-2 lg:px-4 rounded-lg lg:rounded-xl text-xs lg:text-base transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-1 lg:gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Add to Cart</span>
+                            </button>
                         </div>
-                    </a>
+                    </div>
                 </div>
             @empty
                 <div

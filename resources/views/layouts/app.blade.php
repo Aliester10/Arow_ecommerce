@@ -29,9 +29,11 @@
                 @endif
             </div>
             <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
-                <a href="{{ route('help.index') }}" class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
+                <a href="{{ route('help.index') }}"
+                    class="hover:underline whitespace-nowrap">{{ __('messages.help') }}</a>
                 <div id="gtranslate-dropdown" style="position:relative;"></div>
-                <a href="{{ route('about.index') }}" class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
+                <a href="{{ route('about.index') }}"
+                    class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
             </div>
         </div>
     </div>
@@ -135,6 +137,13 @@
                                             Saya</a>
                                         <a href="{{ route('profile.show') }}"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">Profil</a>
+                                        @if(Auth::user()->role_user === 'admin')
+                                            <div class="border-t border-gray-100 my-1"></div>
+                                            <a href="{{ route('admin.dashboard') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition">
+                                                <i class="fas fa-fw fa-tachometer-alt mr-1"></i> Admin Panel
+                                            </a>
+                                        @endif
                                         <div class="border-t border-gray-100 my-1"></div>
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
@@ -199,7 +208,8 @@
                     <div class="space-y-4 text-sm text-gray-500 leading-relaxed">
                         @if($perusahaan->alamat_perusahaan)
                             <div class="flex items-start gap-4">
-                                <div class="w-6 flex justify-center"><i class="fas fa-map-marker-alt mt-1 text-orange-500"></i></div>
+                                <div class="w-6 flex justify-center"><i
+                                        class="fas fa-map-marker-alt mt-1 text-orange-500"></i></div>
                                 <p>{{ $perusahaan->alamat_perusahaan }}</p>
                             </div>
                         @endif

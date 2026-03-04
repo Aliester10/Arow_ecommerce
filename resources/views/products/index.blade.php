@@ -49,94 +49,63 @@
                 @if($products->count() > 0)
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                         @foreach($products as $product)
-                            <div class="bg-white rounded-lg sm:rounded-xl shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
+                            <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300"
                                 data-skeleton-container>
-                                <div class="relative aspect-[4/3] bg-white overflow-hidden">
-                                    <!-- Skeleton Loading (z-30) -->
-                                    <div data-skeleton
-                                        class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
-                                        style="z-index: 30;">
+                                <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
+                                    <!-- Product Image -->
+                                    <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
+                                        @if(isset($product) && $product->image_url)
+                                            <div data-skeleton
+                                                class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
+                                                style="z-index: 30;"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center bg-gray-50"
+                                                style="z-index: 10;">
+                                                <img src="{{ $product->image_url }}" alt="{{ $product->nama_produk }}"
+                                                    class="object-contain max-w-full max-h-full" data-skeleton-image loading="lazy">
+                                            </div>
+                                        @else
+                                            <div class="absolute inset-0 flex items-center justify-center bg-gray-50"
+                                                style="z-index: 10;">
+                                                <i class="fas fa-image text-gray-300 text-3xl"></i>
+                                            </div>
+                                        @endif
                                     </div>
 
-                                    <!-- Product Image (z-10) -->
-                                    @php
-                                        $imagePath = null;
-                                        // Try new image system first
-                                        if ($product->images->count() > 0) {
-                                            $primaryImage = $product->images->where('is_primary', true)->first();
-                                            if (!$primaryImage) {
-                                                $primaryImage = $product->images->sortBy('sort_order')->first();
-                                            }
-                                            $imagePath = $primaryImage->url;
-                                        } elseif ($product->gambar_produk) {
-                                            // Fallback to legacy system
-                                            $path1 = 'storage/images/produk/' . $product->gambar_produk;
-                                            $path2 = 'storage/images/produk/' . str_replace(' ', '', $product->gambar_produk);
-                                            $path3 = 'storage/images/produk/' . strtolower(str_replace(' ', '', $product->gambar_produk));
+                                    <!-- Product Info -->
+                                    <div class="flex flex-col flex-grow p-3 bg-white">
+                                        <!-- Product Name -->
+                                        <h3
+                                            class="text-[13px] text-gray-800 mb-2 line-clamp-2 leading-[1.3] min-h-[34px] group-hover:text-blue-600 transition-colors">
+                                            {{ $product->nama_produk }}
+                                        </h3>
 
-                                            if (file_exists(public_path($path1)))
-                                                $imagePath = asset($path1);
-                                            elseif (file_exists(public_path($path2)))
-                                                $imagePath = asset($path2);
-                                            elseif (file_exists(public_path($path3)))
-                                                $imagePath = asset($path3);
-                                        }
-                                    @endphp
-
-                                    @if($imagePath)
-                                        <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
-                                            <img src="{{ $imagePath }}" alt="{{ $product->nama_produk }}" data-skeleton-image
-                                                class="object-contain max-w-full max-h-full">
+                                        <!-- Price Section -->
+                                        <div class="mt-auto">
+                                            <p class="text-[11px] text-gray-500 mb-0.5">Mulai dari</p>
+                                            @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                                                <span class="text-[15px] font-bold text-[#eab308]">
+                                                    Rp {{ number_format($product->harga_diskon, 0, ',', '.') }},00
+                                                </span>
+                                            @else
+                                                <span class="text-[15px] font-bold text-[#eab308]">
+                                                    Rp {{ number_format($product->harga_produk, 0, ',', '.') }},00
+                                                </span>
+                                            @endif
                                         </div>
-                                    @else
-                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                            <img src="{{ asset('hitam-putih.svg') }}" alt="{{ $product->nama_produk }}"
-                                                data-skeleton-image class="object-contain w-12 h-12 sm:w-20 sm:h-20 opacity-60"
-                                                style="display: block;">
+
+                                        <!-- Seller Info mapping to actual product data -->
+                                        <div class="mt-3 flex flex-col gap-1">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-map-marker-alt text-blue-500 text-[10px]"></i>
+                                                <span
+                                                    class="text-[11px] font-bold text-[#1e3a8a] tracking-tight truncate">{{ $product->asal_produk ?: 'Indonesia' }}</span>
+                                            </div>
+                                            <div class="text-[11px] text-gray-400">
+                                                Tipe: {{ $product->tipe_produk ?: '-' }}
+                                            </div>
                                         </div>
-                                    @endif
-
-
-                                    <!-- Overlay Actions (z-40) -->
-                                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 gap-1 sm:gap-2"
-                                        style="z-index: 40;">
-                                        <a href="{{ route('products.show', $product->slug) }}"
-                                            class="p-1 sm:p-2 bg-white rounded-full text-gray-800 hover:text-orange-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 text-xs sm:text-base">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit"
-                                                class="p-1 sm:p-2 bg-orange-600 rounded-full text-white hover:bg-orange-700 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300 delay-75 text-xs sm:text-base">
-                                                <i class="fas fa-shopping-cart"></i>
-                                            </button>
-                                        </form>
                                     </div>
-                                </div>
-                                <div class="p-2 sm:p-4 border-t border-gray-100">
-                                    <div class="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">
-                                        {{ $product->brand->nama_brand ?? 'Brand' }}
-                                    </div>
-                                    <a href="{{ route('products.show', $product->slug) }}"
-                                        class="block text-gray-800 font-medium text-xs sm:text-sm mb-1 hover:text-orange-600 line-clamp-2 min-h-[2.5em]">
-                                        {{ $product->nama_produk }}
-                                    </a>
-
-                                    <!-- Rating Info -->
-                                    <div class="flex items-center gap-1 mb-2">
-                                        <i class="fas fa-star text-yellow-400 text-[10px] sm:text-xs"></i>
-                                        <span class="text-gray-600 text-[10px] sm:text-xs font-medium">
-                                            {{ $product->ulasan->count() > 0 ? number_format($product->ulasan->avg('rating_ulasan'), 1) : '0.0' }}
-                                        </span>
-                                        <span class="text-gray-400 text-[10px] sm:text-xs">| {{ $product->ulasan->count() }}
-                                            terjual</span>
-                                    </div>
-                                    @if($product->harga_produk)
-                                        <div class="text-orange-600 font-bold text-sm sm:text-base">
-                                            Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                        </div>
-                                    @endif
-                                </div>
+                                </a>
                             </div>
                         @endforeach
                     </div>

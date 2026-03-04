@@ -99,7 +99,7 @@
                 </div>
             </div>
 
-            {{-- Detail Produk Preview --}}
+            {{-- Spec Table Preview --}}
             <div class="border-t border-gray-100 dark:border-strokedark -mx-5 px-5 lg:mx-0 lg:px-0">
                 <div class="flex border-b border-gray-100 dark:border-strokedark">
                     <button type="button"
@@ -131,7 +131,7 @@
                         </div>
                         <div class="grid grid-cols-3 gap-3 py-2" id="rowDeskripsi"
                             style="display: {{ isset($product) && $product->deskripsi_produk ? 'grid' : 'none' }};">
-                            <dt class="text-gray-500 dark:text-gray-400">Deskripsi</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">Spesifikasi</dt>
                             <dd id="previewDesc"
                                 class="col-span-2 font-medium text-gray-800 dark:text-white whitespace-pre-line">
                                 {{ isset($product) ? $product->deskripsi_produk : '-' }}
@@ -176,6 +176,7 @@
             'tipe_produk': ['previewSpecType'],
             'asal_produk': ['previewSpecOrigin'],
             'dimensi_produk': ['previewSpecDimension'],
+            'spesifikasi_produk': ['previewSpecSpesifikasi'],
             'deskripsi_produk': ['previewDesc'],
             'stok_produk': ['previewStock'],
             'berat_produk': ['previewWeight'],
@@ -210,6 +211,7 @@
             }
         }
 
+        setupConditionalRow('spesifikasi_produk', 'rowSpesifikasi');
         setupConditionalRow('deskripsi_produk', 'rowDeskripsi');
 
         // Price field - special formatting
