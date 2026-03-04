@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8 pb-1 md:pb-1">
                 <!-- Image Gallery (Left Column) -->
                 <div class="space-y-4 max-w-md mx-auto w-full">
                     <div
@@ -128,7 +128,7 @@
                     </div>
 
                     <!-- Details Table -->
-                    <div class="space-y-4 md:space-y-6 mb-8 text-sm">
+                    <div class="space-y-4 md:space-y-6 mb-2 text-sm">
 
                         <div class="flex items-start">
                             <div class="w-[120px] text-gray-500 font-medium pt-1">Pengiriman</div>
@@ -174,7 +174,7 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex items-stretch space-x-3 mt-8">
+                    <div class="flex items-stretch space-x-3 mt-3">
                         <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" id="addToCartForm"
                             class="flex space-x-3">
                             @csrf
@@ -228,7 +228,7 @@
             </div> <!-- End Flex Top Section -->
 
             <!-- Bottom Specs Section (Full Width) -->
-            <div class="px-6 md:px-8 pb-8">
+            <div class="px-6 md:px-8 pb-6 -mt-4">
                 <div class="bg-white rounded-lg border border-gray-100 overflow-hidden w-full">
                     <div class="flex border-b border-gray-100">
                         <button type="button" id="tabSpecBtn"
@@ -243,42 +243,42 @@
 
                     <div id="tabSpec" class="p-4">
                         <dl class="text-sm divide-y divide-gray-100">
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">Nama Produk</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->nama_produk }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Nama Produk</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->nama_produk }}</dd>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">Tipe Produk</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Tipe Produk</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">Dimensi</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Dimensi</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
                             </div>
 
-                            
                             @if($product->deskripsi_produk)
-                                <div class="grid grid-cols-3 gap-3 py-2">
-                                    <dt class="text-gray-500">Spesifikasi</dt>
-                                    <dd class="col-span-2 text-gray-800 leading-relaxed whitespace-pre-line">{{ $product->deskripsi_produk }}</dd>
+                                <div class="flex py-2">
+                                    <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Spesifikasi</dt>
+                                    <dd class="flex-1 text-gray-800 leading-relaxed whitespace-pre-line">
+                                        {{ $product->deskripsi_produk }}</dd>
                                 </div>
                             @endif
 
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">Merek</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->brand->nama_brand ?? '-' }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Merek</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->brand->nama_brand ?? '-' }}</dd>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">SKU</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->sku_produk ?? '-' }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">SKU</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->sku_produk ?? '-' }}</dd>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3 py-2">
-                                <dt class="text-gray-500">Asal Negara</dt>
-                                <dd class="col-span-2 font-medium text-gray-800">{{ $product->asal_produk ?? '-' }}</dd>
+                            <div class="flex py-2">
+                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Asal Negara</dt>
+                                <dd class="flex-1 font-medium text-gray-800">{{ $product->asal_produk ?? '-' }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -597,7 +597,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-                                                ];
+                                                            ];
 
         let currentGalleryIndex = 0;
 
