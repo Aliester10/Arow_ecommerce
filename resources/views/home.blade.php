@@ -243,10 +243,10 @@
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @if(isset($product) && $product->image_url)
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
-                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                     <img src="{{ $product->image_url }}" 
                                          alt="{{ $product->nama_produk }}" 
-                                         class="w-full h-full object-contain"
+                                         class="object-contain max-w-full max-h-full"
                                          data-skeleton-image
                                          loading="lazy">
                                 </div>
@@ -489,7 +489,7 @@
                                                     <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                                         <img src="{{ $product->image_url }}" 
                                                              alt="{{ $product->nama_produk }}" 
-                                                             class="w-full h-full object-contain"
+                                                             class="w-full h-full object-cover"
                                                              data-skeleton-image
                                                              loading="lazy">
                                                     </div>
@@ -622,10 +622,10 @@
                         <div class="relative w-full overflow-hidden bg-white shrink-0" style="aspect-ratio: 1/1;">
                             @if(isset($product) && $product->image_url)
                                 <div data-skeleton class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0" style="z-index: 30;"></div>
-                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                     <img src="{{ $product->image_url }}" 
                                          alt="{{ $product->nama_produk }}" 
-                                         class="w-full h-full object-contain"
+                                         class="object-contain max-w-full max-h-full"
                                          data-skeleton-image
                                          loading="lazy">
                                 </div>
@@ -875,7 +875,7 @@ function loadTopBrandProducts(brandId) {
                         imageHtml = `<div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
                                          <img src="/storage/images/produk/${product.gambar_produk}" 
                                               alt="${product.nama_produk}"
-                                              class="w-full h-full object-contain"
+                                              class="w-full h-full object-cover"
                                               loading="lazy">
                                      </div>`;
                     } else {

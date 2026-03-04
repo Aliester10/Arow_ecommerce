@@ -99,12 +99,12 @@
                 </div>
             </div>
 
-            {{-- Spec Table Preview --}}
+            {{-- Detail Produk Preview --}}
             <div class="border-t border-gray-100 dark:border-strokedark -mx-5 px-5 lg:mx-0 lg:px-0">
                 <div class="flex border-b border-gray-100 dark:border-strokedark">
                     <button type="button"
                         class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50 dark:bg-meta-4">
-                        Spesifikasi Produk
+                        Detail Produk
                     </button>
                     <!-- Space to mimic the review tab placement -->
                     <div class="flex-1"></div>
@@ -127,14 +127,6 @@
                             <dt class="text-gray-500 dark:text-gray-400">Dimensi</dt>
                             <dd id="previewSpecDimension" class="col-span-2 font-medium text-gray-800 dark:text-white">
                                 {{ isset($product) ? ($product->dimensi_produk ?? '-') : '-' }}
-                            </dd>
-                        </div>
-                        <div class="grid grid-cols-3 gap-3 py-2" id="rowSpesifikasi"
-                            style="display: {{ isset($product) && $product->spesifikasi_produk ? 'grid' : 'none' }};">
-                            <dt class="text-gray-500 dark:text-gray-400">Spesifikasi</dt>
-                            <dd id="previewSpecSpesifikasi"
-                                class="col-span-2 font-medium text-gray-800 dark:text-white whitespace-pre-line">
-                                {{ isset($product) ? ($product->spesifikasi_produk ?? '-') : '-' }}
                             </dd>
                         </div>
                         <div class="grid grid-cols-3 gap-3 py-2" id="rowDeskripsi"
@@ -184,7 +176,6 @@
             'tipe_produk': ['previewSpecType'],
             'asal_produk': ['previewSpecOrigin'],
             'dimensi_produk': ['previewSpecDimension'],
-            'spesifikasi_produk': ['previewSpecSpesifikasi'],
             'deskripsi_produk': ['previewDesc'],
             'stok_produk': ['previewStock'],
             'berat_produk': ['previewWeight'],
@@ -219,7 +210,6 @@
             }
         }
 
-        setupConditionalRow('spesifikasi_produk', 'rowSpesifikasi');
         setupConditionalRow('deskripsi_produk', 'rowDeskripsi');
 
         // Price field - special formatting

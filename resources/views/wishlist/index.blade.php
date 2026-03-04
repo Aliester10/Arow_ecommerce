@@ -42,9 +42,9 @@
                                             <div data-skeleton
                                                 class="skeleton-shimmer w-full h-full flex items-center justify-center bg-gray-200 absolute inset-0"
                                                 style="z-index: 30;"></div>
-                                            <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                            <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                                 <img src="{{ $item->produk->image_url }}" alt="{{ $item->produk->nama_produk }}"
-                                                    class="w-full h-full object-contain p-2" data-skeleton-image loading="lazy">
+                                                    class="object-contain max-w-full max-h-full" data-skeleton-image loading="lazy">
                                             </div>
                                         @else
                                             <div class="absolute inset-0 flex items-center justify-center bg-gray-50"

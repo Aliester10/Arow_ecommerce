@@ -233,7 +233,7 @@
                     <div class="flex border-b border-gray-100">
                         <button type="button" id="tabSpecBtn"
                             class="flex-1 px-4 py-3 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 bg-orange-50">
-                            Spesifikasi Produk
+                            Detail Produk
                         </button>
                         <button type="button" id="tabReviewBtn"
                             class="flex-1 px-4 py-3 text-sm font-semibold text-gray-600 hover:text-orange-600">
@@ -258,16 +258,10 @@
                                 <dd class="col-span-2 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
                             </div>
 
-                            @if($product->spesifikasi_produk)
-                                <div class="grid grid-cols-3 gap-3 py-2">
-                                    <dt class="text-gray-500">Spesifikasi</dt>
-                                    <dd class="col-span-2 text-gray-800 leading-relaxed whitespace-pre-line">{{ $product->spesifikasi_produk }}</dd>
-                                </div>
-                            @endif
-
+                            
                             @if($product->deskripsi_produk)
                                 <div class="grid grid-cols-3 gap-3 py-2">
-                                    <dt class="text-gray-500">Deskripsi</dt>
+                                    <dt class="text-gray-500">Spesifikasi</dt>
                                     <dd class="col-span-2 text-gray-800 leading-relaxed whitespace-pre-line">{{ $product->deskripsi_produk }}</dd>
                                 </div>
                             @endif

@@ -24,9 +24,9 @@
                         <!-- Product Image -->
                         <div class="relative aspect-[4/3] overflow-hidden bg-white shrink-0">
                             @if(isset($product) && $product->image_url)
-                                <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                     <img src="{{ $product->image_url }}" alt="{{ $product->nama_produk }}"
-                                        class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                                        class="object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-110"
                                         loading="lazy">
                                 </div>
                             @else

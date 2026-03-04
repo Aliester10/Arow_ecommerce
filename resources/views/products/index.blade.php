@@ -84,9 +84,9 @@
                                     @endphp
 
                                     @if($imagePath)
-                                        <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                                        <div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                             <img src="{{ $imagePath }}" alt="{{ $product->nama_produk }}" data-skeleton-image
-                                                class="object-contain w-full h-full">
+                                                class="object-contain max-w-full max-h-full">
                                         </div>
                                     @else
                                         <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">

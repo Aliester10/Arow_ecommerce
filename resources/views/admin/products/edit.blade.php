@@ -252,21 +252,12 @@
                                 </div>
                             </div>
 
-                            <div class="mb-4 flex flex-col gap-4 xl:flex-row">
-                                <div class="w-full xl:w-1/2">
-                                    <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
-                                        Spesifikasi Produk
-                                    </label>
-                                    <textarea name="spesifikasi_produk" rows="5"
-                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-2.5 px-4 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">{{ old('spesifikasi_produk', $product->spesifikasi_produk) }}</textarea>
-                                </div>
-                                <div class="w-full xl:w-1/2">
-                                    <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
-                                        Deskripsi Produk <span class="text-meta-1">*</span>
-                                    </label>
-                                    <textarea name="deskripsi_produk" rows="5" required
-                                        class="w-full rounded border-[1.5px] border-stroke bg-transparent py-2.5 px-4 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">{{ old('deskripsi_produk', $product->deskripsi_produk) }}</textarea>
-                                </div>
+                            <div class="mb-4">
+                                <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
+                                    Deskripsi Produk <span class="text-meta-1">*</span>
+                                </label>
+                                <textarea name="deskripsi_produk" rows="5" required
+                                    class="w-full rounded border-[1.5px] border-stroke bg-transparent py-2.5 px-4 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-500 dark:bg-gray-700 dark:focus:border-primary">{{ old('deskripsi_produk', $product->deskripsi_produk) }}</textarea>
                             </div>
 
                             <div class="mb-4.5">
