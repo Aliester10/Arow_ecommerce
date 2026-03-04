@@ -94,13 +94,46 @@ class AdminProductController extends Controller
                 ]);
             }
         } else {
-            // Try to create the product with error handling for check constraints
+            // Try to create product with error handling for check constraints
             try {
-                Produk::create($data);
+                $product = Produk::create($data);
+                
+                // Verify spesifikasi_produk was actually saved
+                $originalSpesifikasi = $data['spesifikasi_produk'] ?? null;
+                $savedSpesifikasi = $product->spesifikasi_produk;
+                
+                if ($originalSpesifikasi !== $savedSpesifikasi) {
+                    // Try to save it separately with different approaches
+                    $attempts = [
+                        'original' => $originalSpesifikasi,
+                        'trimmed' => trim($originalSpesifikasi),
+                        'stripped' => strip_tags($originalSpesifikasi),
+                        'escaped' => htmlspecialchars($originalSpesifikasi, ENT_QUOTES, 'UTF-8'),
+                        'cleaned' => preg_replace('/[^a-zA-Z0-9\s\-_.,]/', '', $originalSpesifikasi),
+                    ];
+                    
+                    $success = false;
+                    foreach ($attempts as $attemptName => $attemptValue) {
+                        try {
+                            $product->update(['spesifikasi_produk' => $attemptValue]);
+                            $success = true;
+                            break;
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+                    
+                    if (!$success) {
+                        return redirect()->route('admin.products.index')
+                            ->with('success', 'Produk berhasil ditambahkan!')
+                            ->with('warning', 'Spesifikasi Produk tidak dapat disimpan karena batasan database hosting. Nilai asli: "' . e($originalSpesifikasi) . '"');
+                    }
+                }
+                
             } catch (\Illuminate\Database\QueryException $e) {
                 // Handle check constraint violations
                 if (str_contains($e->getMessage(), 'Check constraint')) {
-                    // Try creating without the problematic field
+                    // Try creating without problematic field
                     $dataWithoutSpesifikasi = $data;
                     unset($dataWithoutSpesifikasi['spesifikasi_produk']);
                     
@@ -109,28 +142,40 @@ class AdminProductController extends Controller
                         
                         // Try to update spesifikasi separately with different approaches
                         $spesifikasiValue = $data['spesifikasi_produk'] ?? null;
-                        
-                        // Try different formats that might satisfy the constraint
                         $attempts = [
-                            $spesifikasiValue,
-                            trim($spesifikasiValue),
-                            htmlspecialchars($spesifikasiValue, ENT_QUOTES, 'UTF-8'),
-                            strip_tags($spesifikasiValue),
+                            'original' => $spesifikasiValue,
+                            'trimmed' => trim($spesifikasiValue),
+                            'stripped' => strip_tags($spesifikasiValue),
+                            'escaped' => htmlspecialchars($spesifikasiValue, ENT_QUOTES, 'UTF-8'),
+                            'cleaned' => preg_replace('/[^a-zA-Z0-9\s\-_.,]/', '', $spesifikasiValue),
+                            'null' => null,
                         ];
                         
-                        foreach ($attempts as $attempt) {
+                        $success = false;
+                        $savedValue = null;
+                        foreach ($attempts as $attemptName => $attemptValue) {
                             try {
-                                $product->update(['spesifikasi_produk' => $attempt]);
-                                break; // Success, stop trying
+                                $product->update(['spesifikasi_produk' => $attemptValue]);
+                                $success = true;
+                                $savedValue = $attemptValue;
+                                break;
                             } catch (\Exception $innerE) {
-                                // Continue to next attempt
                                 continue;
                             }
                         }
                         
-                        return redirect()->route('admin.products.index')
-                            ->with('success', 'Produk berhasil ditambahkan! (Catatan: Spesifikasi Produk mungkin tidak tersimpan sempurna karena batasan database)')
-                            ->with('warning', 'Beberapa field mungkin tidak tersimpan karena batasan database hosting.');
+                        if ($success) {
+                            $message = 'Produk berhasil ditambahkan!';
+                            if ($savedValue !== $spesifikasiValue) {
+                                $message .= ' (Spesifikasi Produk disimpan dengan format yang dimodifikasi)';
+                            }
+                            return redirect()->route('admin.products.index')->with('success', $message);
+                        } else {
+                            return redirect()->route('admin.products.index')
+                                ->with('success', 'Produk berhasil ditambahkan (tanpa Spesifikasi Produk)')
+                                ->with('warning', 'Spesifikasi Produk tidak dapat disimpan karena batasan database hosting. Nilai yang dicoba: "' . e($spesifikasiValue) . '"');
+                        }
+                        
                     } catch (\Exception $innerE) {
                         return redirect()->route('admin.products.index')
                             ->with('error', 'Gagal menambah produk: ' . $innerE->getMessage());
@@ -242,10 +287,44 @@ class AdminProductController extends Controller
         // Try to update the product with error handling for check constraints
         try {
             $product->update($data);
+            
+            // Verify spesifikasi_produk was actually saved
+            $updatedProduct = $product->fresh(['spesifikasi_produk']);
+            $originalSpesifikasi = $data['spesifikasi_produk'] ?? null;
+            $savedSpesifikasi = $updatedProduct->spesifikasi_produk;
+            
+            if ($originalSpesifikasi !== $savedSpesifikasi) {
+                // Try to save it separately with different approaches
+                $attempts = [
+                    'original' => $originalSpesifikasi,
+                    'trimmed' => trim($originalSpesifikasi),
+                    'stripped' => strip_tags($originalSpesifikasi),
+                    'escaped' => htmlspecialchars($originalSpesifikasi, ENT_QUOTES, 'UTF-8'),
+                    'cleaned' => preg_replace('/[^a-zA-Z0-9\s\-_.,]/', '', $originalSpesifikasi),
+                ];
+                
+                $success = false;
+                foreach ($attempts as $attemptName => $attemptValue) {
+                    try {
+                        $product->update(['spesifikasi_produk' => $attemptValue]);
+                        $success = true;
+                        break;
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+                
+                if (!$success) {
+                    return redirect()->route('admin.products.index')
+                        ->with('success', 'Produk berhasil diperbarui!')
+                        ->with('warning', 'Spesifikasi Produk tidak dapat disimpan karena batasan database hosting. Nilai asli: "' . e($originalSpesifikasi) . '"');
+                }
+            }
+            
         } catch (\Illuminate\Database\QueryException $e) {
             // Handle check constraint violations
             if (str_contains($e->getMessage(), 'Check constraint')) {
-                // Try updating without the problematic field
+                // Try updating without the problematic field first
                 $dataWithoutSpesifikasi = $data;
                 unset($dataWithoutSpesifikasi['spesifikasi_produk']);
                 
@@ -254,28 +333,40 @@ class AdminProductController extends Controller
                     
                     // Try to update spesifikasi separately with different approaches
                     $spesifikasiValue = $data['spesifikasi_produk'] ?? null;
-                    
-                    // Try different formats that might satisfy the constraint
                     $attempts = [
-                        $spesifikasiValue,
-                        trim($spesifikasiValue),
-                        htmlspecialchars($spesifikasiValue, ENT_QUOTES, 'UTF-8'),
-                        strip_tags($spesifikasiValue),
+                        'original' => $spesifikasiValue,
+                        'trimmed' => trim($spesifikasiValue),
+                        'stripped' => strip_tags($spesifikasiValue),
+                        'escaped' => htmlspecialchars($spesifikasiValue, ENT_QUOTES, 'UTF-8'),
+                        'cleaned' => preg_replace('/[^a-zA-Z0-9\s\-_.,]/', '', $spesifikasiValue),
+                        'null' => null,
                     ];
                     
-                    foreach ($attempts as $attempt) {
+                    $success = false;
+                    $savedValue = null;
+                    foreach ($attempts as $attemptName => $attemptValue) {
                         try {
-                            $product->update(['spesifikasi_produk' => $attempt]);
-                            break; // Success, stop trying
+                            $product->update(['spesifikasi_produk' => $attemptValue]);
+                            $success = true;
+                            $savedValue = $attemptValue;
+                            break;
                         } catch (\Exception $innerE) {
-                            // Continue to next attempt
                             continue;
                         }
                     }
                     
-                    return redirect()->route('admin.products.index')
-                        ->with('success', 'Produk berhasil diperbarui! (Catatan: Spesifikasi Produk mungkin tidak tersimpan sempurna karena batasan database)')
-                        ->with('warning', 'Beberapa field mungkin tidak tersimpan karena batasan database hosting.');
+                    if ($success) {
+                        $message = 'Produk berhasil diperbarui!';
+                        if ($savedValue !== $spesifikasiValue) {
+                            $message .= ' (Spesifikasi Produk disimpan dengan format yang dimodifikasi)';
+                        }
+                        return redirect()->route('admin.products.index')->with('success', $message);
+                    } else {
+                        return redirect()->route('admin.products.index')
+                            ->with('success', 'Produk berhasil diperbarui (tanpa Spesifikasi Produk)')
+                            ->with('warning', 'Spesifikasi Produk tidak dapat disimpan karena batasan database hosting. Nilai yang dicoba: "' . e($spesifikasiValue) . '"');
+                    }
+                    
                 } catch (\Exception $innerE) {
                     return redirect()->route('admin.products.index')
                         ->with('error', 'Gagal memperbarui produk: ' . $innerE->getMessage());
