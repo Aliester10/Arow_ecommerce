@@ -77,9 +77,14 @@ class AdminProductController extends Controller
                 $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('images/produk', $imageName, 'public');
 
-                // Optimize the uploaded image
+                // Optimize uploaded image (optional - will fail silently if tools not installed)
                 $fullPath = storage_path('app/public/' . $path);
-                ImageOptimizer::optimize($fullPath);
+                try {
+                    ImageOptimizer::optimize($fullPath);
+                } catch (\Exception $e) {
+                    // Image optimization failed, but continue with upload
+                    // This happens when optimization tools are not installed on the server
+                }
 
                 ProductImage::create([
                     'id_produk' => $product->id_produk,
@@ -162,9 +167,14 @@ class AdminProductController extends Controller
                 $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('images/produk', $imageName, 'public');
 
-                // Optimize the uploaded image
+                // Optimize uploaded image (optional - will fail silently if tools not installed)
                 $fullPath = storage_path('app/public/' . $path);
-                ImageOptimizer::optimize($fullPath);
+                try {
+                    ImageOptimizer::optimize($fullPath);
+                } catch (\Exception $e) {
+                    // Image optimization failed, but continue with upload
+                    // This happens when optimization tools are not installed on the server
+                }
 
                 ProductImage::create([
                     'id_produk' => $product->id_produk,
