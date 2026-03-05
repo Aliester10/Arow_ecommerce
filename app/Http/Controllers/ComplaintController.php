@@ -130,11 +130,10 @@ class ComplaintController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Validasi gagal. Periksa kembali input Anda.');
         }
 
         try {
@@ -144,18 +143,12 @@ class ComplaintController extends Controller
                 'admin_notes' => $request->admin_notes
             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Status laporan berhasil diperbarui',
-                'data' => $complaint
-            ]);
+            return redirect()->back()
+                ->with('success', 'Status laporan berhasil diperbarui');
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui status',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat memperbarui status: ' . $e->getMessage());
         }
     }
 }

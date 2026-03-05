@@ -4,6 +4,34 @@
 
 @section('content')
 <div class="space-y-6">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+    
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+    
+    @if($errors->any())
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white">
             <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
@@ -91,7 +119,7 @@
                     <h5 class="text-lg font-semibold">Update Status</h5>
                 </div>
                 <div class="p-6">
-                    <form id="updateStatusForm">
+                    <form action="/admin/complaints/{{ $complaint->id }}/status" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="mb-4">
@@ -131,87 +159,5 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle status update form
-    document.getElementById('updateStatusForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        // Show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
-        
-        fetch(`/admin/complaints/{{ $complaint->id }}/status`, {
-            method: 'PUT',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4';
-                alertDiv.innerHTML = `
-                    <div class="flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span>Status laporan berhasil diperbarui!</span>
-                    </div>
-                `;
-                document.querySelector('.space-y-6').insertBefore(alertDiv, document.querySelector('.space-y-6').firstChild);
-                
-                // Reload page after 2 seconds to show updated data
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                // Show error message
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4';
-                alertDiv.innerHTML = `
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        <span>${data.message || 'Terjadi kesalahan saat memperbarui status'}</span>
-                    </div>
-                `;
-                document.querySelector('.space-y-6').insertBefore(alertDiv, document.querySelector('.space-y-6').firstChild);
-                
-                // Remove alert after 5 seconds
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 5000);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Show error message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4';
-            alertDiv.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    <span>Terjadi kesalahan saat memperbarui status. Silakan coba lagi.</span>
-                </div>
-            `;
-            document.querySelector('.space-y-6').insertBefore(alertDiv, document.querySelector('.space-y-6').firstChild);
-            
-            // Remove alert after 5 seconds
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        })
-        .finally(() => {
-            // Reset button state
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        });
-    });
-});
-</script>
+<!-- Form submission handled by regular HTML form submission -->
 @endpush

@@ -100,9 +100,15 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])->latest()->paginate(10);
+        $perPage = $request->get('per_page', 10);
+        $perPage = in_array($perPage, [10, 20, 30, 40, 50]) ? $perPage : 10;
+        
+        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])
+            ->latest()
+            ->paginate($perPage);
+            
         return view('admin.products.index', compact('products'));
     }
 

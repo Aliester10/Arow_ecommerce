@@ -15,6 +15,7 @@ use App\Http\Controllers\AdminFaqController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\AdminPrivacyPolicyController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ComplaintController;
 
 /*
 |--------------------------------------------------------------------------
