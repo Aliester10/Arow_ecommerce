@@ -24,6 +24,7 @@
             <!-- Sidebar -->
             <aside class="products-sidebar w-full hidden md:block">
                 @include('partials.sidebar')
+                @include('partials.product-filters')
             </aside>
 
             <!-- Main Content -->
