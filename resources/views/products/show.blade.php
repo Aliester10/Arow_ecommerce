@@ -261,7 +261,7 @@
                             @if($product->deskripsi_produk)
                                 <div class="flex py-2">
                                     <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Spesifikasi</dt>
-                                    <dd class="flex-1 text-gray-800 leading-relaxed whitespace-pre-line">
+                                    <dd class="flex-1 text-gray-800 leading-relaxed">
                                         {{ $product->deskripsi_produk }}</dd>
                                 </div>
                             @endif
@@ -597,7 +597,7 @@
             @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
                 '{{ asset('storage/images/produk/' . $product->gambar_produk) }}'
             @endif
-                                                            ];
+                                                ];
 
         let currentGalleryIndex = 0;
 

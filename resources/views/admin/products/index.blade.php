@@ -4,9 +4,14 @@
 
 @section('content')
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 class="text-title-md2 font-bold text-black dark:text-white">
-            Daftar Produk
-        </h2>
+        <div>
+            <h2 class="text-title-md2 font-bold text-black dark:text-white">
+                Daftar Produk
+            </h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Total: {{ $products->total() }} produk
+            </p>
+        </div>
         <a href="{{ route('admin.products.create') }}"
             class="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
             <i class="fas fa-plus mr-2"></i> Tambah Produk
@@ -40,6 +45,9 @@
             <table class="w-full table-auto">
                 <thead>
                     <tr class="bg-gray-2 text-left dark:bg-gray-700">
+                        <th class="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white text-center">
+                            No
+                        </th>
                         <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                             Gambar
                         </th>
@@ -61,8 +69,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($products as $product)
+                    @forelse($products as $index => $product)
                         <tr>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
+                                {{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}
+                            </td>
                             <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
                                 <div style="width: 80px; height: 80px;"
                                     class="rounded-md overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-700 border border-stroke dark:border-gray-600 flex-shrink-0">
@@ -113,7 +124,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
+                            <td colspan="7" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
                                 Tidak ada produk ditemukan.
                             </td>
                         </tr>
