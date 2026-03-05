@@ -262,7 +262,7 @@
                                 <div class="flex py-2">
                                     <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Spesifikasi</dt>
                                     <dd class="text-gray-800 leading-relaxed break-words" style="max-width: 400px; word-break: break-word;">
-                                        {{ $product->deskripsi_produk }}</dd>
+                                        {!! nl2br(e($product->deskripsi_produk)) !!}</dd>
                                 </div>
                             @endif
 
