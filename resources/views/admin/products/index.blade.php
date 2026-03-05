@@ -134,18 +134,24 @@
         </div>
 
         <div class="mt-4 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-4">
-                <label for="perPage" class="text-gray-600 dark:text-gray-400 whitespace-nowrap">Tampilkan</label>
-                <select id="perPage" onchange="window.location.href = this.value" class="rounded-md border border-stroke dark:border-gray-700 dark:bg-gray-800 py-2 px-3 text-gray-800 dark:text-white focus:outline-none focus:ring focus:border-blue-300">
-                    @foreach ([10, 20, 30, 40, 50] as $perPageOption)
-                        <option value="{{ request()->fullUrlWithQuery(['per_page' => $perPageOption]) }}" {{ request('per_page', 10) == $perPageOption ? 'selected' : '' }}>
-                            {{ $perPageOption }} Data
-                        </option>
-                    @endforeach
-                </select>
-                <span class="text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                    dari {{ $products->total() }} data
-                </span>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="flex items-center space-x-4">
+                    <label for="perPage" class="text-gray-600 dark:text-gray-400 whitespace-nowrap">Tampilkan</label>
+                    <select id="perPage" onchange="window.location.href = this.value" class="rounded-md border border-stroke dark:border-gray-700 dark:bg-gray-800 py-2 px-3 text-gray-800 dark:text-white focus:outline-none focus:ring focus:border-blue-300">
+                        @foreach ([10, 20, 30, 40, 50] as $perPageOption)
+                            <option value="{{ request()->url() }}?page=1&per_page={{ $perPageOption }}" {{ request('per_page', 10) == $perPageOption ? 'selected' : '' }}>
+                                {{ $perPageOption }} Data
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    @if($products->total() > 0)
+                        Menampilkan {{ $products->firstItem() }} - {{ $products->lastItem() }} dari {{ $products->total() }} data
+                    @else
+                        Tidak ada data
+                    @endif
+                </div>
             </div>
             
             <div class="flex items-center space-x-2">
@@ -155,7 +161,7 @@
                         <i class="fas fa-chevron-left"></i>
                     </span>
                 @else
-                    <a href="{{ $products->previousPageUrl() }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->previousPageUrl() }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 @endif
@@ -177,7 +183,7 @@
                 
                 {{-- First page --}}
                 @if($start > 1)
-                    <a href="{{ $products->url(1) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->url(1) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         1
                     </a>
                     @if($start > 2)
@@ -192,7 +198,7 @@
                             {{ $i }}
                         </span>
                     @else
-                        <a href="{{ $products->url($i) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                        <a href="{{ $products->url($i) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                             {{ $i }}
                         </a>
                     @endif
@@ -203,14 +209,14 @@
                     @if($end < $lastPage - 1)
                         <span class="px-3 py-2 text-gray-600 dark:text-gray-400">...</span>
                     @endif
-                    <a href="{{ $products->url($lastPage) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->url($lastPage) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         {{ $lastPage }}
                     </a>
                 @endif
                 
                 {{-- Next button --}}
                 @if($products->hasMorePages())
-                    <a href="{{ $products->nextPageUrl() }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->nextPageUrl() }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 @else
