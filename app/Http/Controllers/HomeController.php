@@ -16,7 +16,7 @@ class HomeController extends Controller
     public function getTopBrandProducts($brandId)
     {
         $products = Produk::where('id_brand', $brandId)
-            ->with(['brand', 'ulasan'])
+            ->with(['brand', 'ulasan', 'images'])
             ->inRandomOrder()
             ->take(4)
             ->get();
@@ -31,7 +31,7 @@ class HomeController extends Controller
     {
         $mainBanners = SliderBanner::where('active', true)->orderBy('position')->get();
         $kategoris = Kategori::all();
-        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan'])->inRandomOrder()->take(6)->get();
+        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan', 'images'])->inRandomOrder()->take(6)->get();
         $brands = Brand::all();
 
         // Get integrated solutions data
@@ -73,7 +73,7 @@ class HomeController extends Controller
         $inHouseBrandsWithProducts = [];
         foreach ($inHouseBrands as $brand) {
             $brandProducts = Produk::where('id_brand', $brand->id_brand)
-                ->with(['brand', 'ulasan'])
+                ->with(['brand', 'ulasan', 'images'])
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
@@ -98,7 +98,7 @@ class HomeController extends Controller
         if ($topBrands->count() > 0) {
             $selectedTopBrand = $topBrands->first();
             $topBrandProducts = Produk::where('id_brand', $selectedTopBrand->id_brand)
-                ->with(['brand', 'ulasan'])
+                ->with(['brand', 'ulasan', 'images'])
                 ->inRandomOrder()
                 ->take(4)
                 ->get();

@@ -13,6 +13,7 @@ class Produk extends Model
     protected $table = 'produk';
     protected $primaryKey = 'id_produk';
     protected $fillable = ['id_kategori', 'id_subkategori', 'id_brand', 'id_sub_subkategori', 'nama_produk', 'slug', 'sku_produk', 'tipe_produk', 'asal_produk', 'dimensi_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
+    protected $appends = ['image_url'];
 
     public function kategori()
     {
@@ -139,7 +140,8 @@ class Produk extends Model
 
         // Fallback to legacy single image if exists
         if ($this->gambar_produk) {
-            return asset('storage/images/produk/' . $this->gambar_produk);
+            // Use relative path to avoid localhost URL issues
+            return '/storage/images/produk/' . $this->gambar_produk;
         }
 
         return null;
