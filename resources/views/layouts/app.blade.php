@@ -8,7 +8,13 @@
     <title>{{ $perusahaan?->nama_perusahaan ?? 'Arow Ecommerce' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Enhanced Favicon for better visibility -->
+    <link rel="icon" href="{{ asset('fav.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('fav.png') }}" type="image/png" sizes="32x32">
+    <link rel="icon" href="{{ asset('fav.png') }}" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="{{ asset('fav.png') }}" sizes="180x180">
     <link rel="shortcut icon" href="{{ asset('fav.png') }}" type="image/png">
+    <meta name="msapplication-TileImage" content="{{ asset('fav.png') }}">
 </head>
 
 <body class="bg-gray-100 font-sans antialiased">
@@ -48,7 +54,7 @@
                         class="text-lg sm:text-2xl font-bold text-orange-600 flex items-center gap-1 sm:gap-2">
                         @if($perusahaan && $perusahaan->logo_perusahaan)
                             <img src="{{ asset('storage/images/' . $perusahaan->logo_perusahaan) }}" alt="Logo"
-                                class="h-8 sm:h-10 md:h-12 w-auto object-contain" style="max-height: 48px;">
+                                class="h-12 md:h-16 w-auto object-contain">
                         @else
                             <i class="fas fa-shopping-bag hidden sm:inline"></i>
                             <span
