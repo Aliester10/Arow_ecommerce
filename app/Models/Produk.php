@@ -146,4 +146,31 @@ class Produk extends Model
 
         return null;
     }
+
+    /**
+     * Get total sold quantity for this product
+     */
+    public function getTerjualAttribute()
+    {
+        return \App\Models\OrderItem::whereHas('order', function($query) {
+            $query->whereNotIn('status_order', ['pending', 'pending_quotation', 'cancelled']);
+        })->where('id_produk', $this->id_produk)
+        ->sum('qty');
+    }
+
+    /**
+     * Get average rating for this product
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->ulasan()->avg('rating_ulasan') ?? 0;
+    }
+
+    /**
+     * Get total number of reviews for this product
+     */
+    public function getTotalReviewsAttribute()
+    {
+        return $this->ulasan()->count();
+    }
 }

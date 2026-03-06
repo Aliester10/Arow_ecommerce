@@ -92,18 +92,19 @@
 
                     <div class="flex flex-wrap items-center mb-4 text-sm">
                         <div class="flex items-center text-[#ee4d2d] pr-4 border-r border-gray-300">
-                            <span class="font-medium mr-1 border-b border-[#ee4d2d]">4.9</span>
+                            <span class="font-medium mr-1 border-b border-[#ee4d2d]">{{ number_format($product->average_rating, 1) }}</span>
                             <div class="flex space-x-0.5 text-xs">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="{{ $i <= round($product->average_rating) ? 'fas' : 'far' }} fa-star"></i>
+                                @endfor
                             </div>
                         </div>
                         <div class="px-4 border-r border-gray-300 text-gray-700">
-                            <span class="font-medium border-b border-gray-700">13</span> <span
+                            <span class="font-medium border-b border-gray-700">{{ $product->total_reviews }}</span> <span
                                 class="text-gray-500 ml-1">Penilaian</span>
                         </div>
                         <div class="px-4 text-gray-700">
-                            <span class="font-medium">{{ $product->stok_produk > 0 ? rand(10, 500) : 0 }}</span> <span
+                            <span class="font-medium">{{ $product->terjual }}</span> <span
                                 class="text-gray-500 ml-1">Terjual</span>
                         </div>
 
