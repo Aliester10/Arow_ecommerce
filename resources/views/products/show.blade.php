@@ -85,6 +85,30 @@
                         </div>
                     @endif
 
+                    <!-- Category Breadcrumb -->
+                    <div class="mb-3">
+                        <div class="flex flex-wrap items-center gap-2 text-sm">
+                            @if($product->subSubkategori && $product->subSubkategori->subkategori && $product->subSubkategori->subkategori->kategori)
+                                <a href="{{ route('products.index', ['category' => $product->subSubkategori->subkategori->kategori->nama_kategori]) }}" 
+                                   class="text-[#0384FF] hover:text-[#0270cc] hover:underline transition-colors">
+                                    {{ $product->subSubkategori->subkategori->kategori->nama_kategori }}
+                                </a>
+                                <span class="text-gray-400">></span>
+                                <a href="{{ route('products.index', ['category' => $product->subSubkategori->subkategori->nama_subkategori]) }}" 
+                                   class="text-[#0384FF] hover:text-[#0270cc] hover:underline transition-colors">
+                                    {{ $product->subSubkategori->subkategori->nama_subkategori }}
+                                </a>
+                                <span class="text-gray-400">></span>
+                                <a href="{{ route('products.index', ['category' => $product->subSubkategori->nama_sub_subkategori]) }}" 
+                                   class="text-[#0384FF] hover:text-[#0270cc] hover:underline transition-colors">
+                                    {{ $product->subSubkategori->nama_sub_subkategori }}
+                                </a>
+                            @else
+                                <span class="text-gray-500">Kategori tidak tersedia</span>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Title & Ratings -->
                     <h1 class="text-xl md:text-[22px] font-medium text-gray-900 mb-3 leading-tight">
                         {{ $product->nama_produk }}
@@ -107,23 +131,20 @@
                             <span class="font-medium">{{ $product->terjual }}</span> <span
                                 class="text-gray-500 ml-1">Terjual</span>
                         </div>
-
-                        <div class="ml-auto text-gray-400 text-sm hover:text-gray-600 cursor-pointer">
-                            Laporkan
-                        </div>
                     </div>
 
                     <!-- Price Block -->
                     <div class="bg-[#fafafa] px-5 py-4 mb-6 flex flex-col justify-center min-h-[80px]">
+                        <div class="text-xs text-gray-500 mb-1 font-medium">Harga Satuan</div>
                         <div class="flex items-baseline space-x-3">
                             @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
                                 <span
-                                    class="text-base text-gray-400 line-through">Rp{{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                    class="text-base text-gray-400 line-through">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
                                 <span
-                                    class="text-3xl font-medium text-[#ee4d2d]">Rp{{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
+                                    class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
                             @else
                                 <span
-                                    class="text-3xl font-medium text-[#ee4d2d]">Rp{{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                    class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
                             @endif
                         </div>
                     </div>
@@ -141,14 +162,6 @@
                             </div>
                         </div>
 
-                        <div class="flex items-start">
-                            <div class="w-[120px] text-gray-500 font-medium pt-1">Kategori</div>
-                            <div class="flex-1 text-gray-700 font-medium text-[#0384FF] cursor-pointer">
-                                {{ $product->subSubkategori->subkategori->kategori->nama_kategori ?? 'Semua' }} >
-                                {{ $product->subSubkategori->subkategori->nama_subkategori ?? 'Produk' }} >
-                                {{ $product->subSubkategori->nama_sub_subkategori ?? 'Item' }}
-                            </div>
-                        </div>
 
                         <div class="flex items-center mt-6">
                             <div class="w-[120px] text-gray-500 font-medium">Kuantitas</div>
