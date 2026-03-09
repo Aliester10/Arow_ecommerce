@@ -15,9 +15,13 @@ use App\Http\Controllers\AdminFaqController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\AdminPrivacyPolicyController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AdminBlogController;
 use App\Http\Controllers\MitraController;
+use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\TrackOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,11 +37,20 @@ Route::get('/home/top-brand-products/{brandId}', [HomeController::class, 'getTop
 Route::get('/bantuan', [HelpController::class, 'index'])->name('help.index');
 Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
 
+// Track Order
+Route::get('/lacak-pesanan', [TrackOrderController::class, 'index'])->name('track-order.index');
+
 // Privacy Policy
 Route::get('/kebijakan-privasi', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
 
 // About Us
 Route::get('/tentang-kami', [AboutController::class, 'index'])->name('about.index');
+
+// Career
+Route::get('/karir', [JobController::class, 'index'])->name('karir.index');
+
+// Payment Methods
+Route::get('/metode-pembayaran', [PaymentMethodController::class, 'index'])->name('payment-methods.index');
 
 // Blog
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
@@ -281,4 +294,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // Mitra Management
     Route::resource('mitra', App\Http\Controllers\Admin\MitraController::class)->names('mitra');
+
+    // Job Management
+    Route::resource('jobs', App\Http\Controllers\AdminJobController::class)->names('jobs');
 });

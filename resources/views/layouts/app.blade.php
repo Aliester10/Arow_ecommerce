@@ -40,6 +40,8 @@
                 <div id="gtranslate-dropdown" style="position:relative;"></div>
                 <a href="{{ route('about.index') }}"
                     class="hover:underline whitespace-nowrap">{{ __('messages.about_us') }}</a>
+                <a href="{{ route('karir.index') }}"
+                    class="hover:underline whitespace-nowrap">Karir</a>
             </div>
         </div>
     </div>
