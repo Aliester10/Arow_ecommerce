@@ -12,13 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('jobs', function (Blueprint $table) {
-            $table->string('position')->nullable();
-            $table->text('description')->nullable();
-            $table->text('qualifications')->nullable();
-            $table->string('location')->nullable();
-            $table->enum('employment_type', ['Full Time', 'Part Time', 'Contract'])->nullable();
-            $table->string('email')->nullable();
-            $table->boolean('is_active')->default(true)->nullable();
+            if (!Schema::hasColumn('jobs', 'position')) {
+                $table->string('position')->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'description')) {
+                $table->text('description')->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'qualifications')) {
+                $table->text('qualifications')->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'location')) {
+                $table->string('location')->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'employment_type')) {
+                $table->enum('employment_type', ['Full Time', 'Part Time', 'Contract'])->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'email')) {
+                $table->string('email')->nullable();
+            }
+            if (!Schema::hasColumn('jobs', 'is_active')) {
+                $table->boolean('is_active')->default(true)->nullable();
+            }
         });
     }
 
