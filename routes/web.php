@@ -15,7 +15,9 @@ use App\Http\Controllers\AdminFaqController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\AdminPrivacyPolicyController;
 use App\Http\Controllers\AboutController;
-use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\AdminBlogController;
+use App\Http\Controllers\MitraController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,13 @@ Route::get('/kebijakan-privasi', [PrivacyPolicyController::class, 'index'])->nam
 
 // About Us
 Route::get('/tentang-kami', [AboutController::class, 'index'])->name('about.index');
+
+// Blog
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// Mitra
+Route::get('/mitra', [MitraController::class, 'index'])->name('mitra.index');
 
 Route::get('/language/{locale}', function (string $locale) {
     if (!in_array($locale, ['id', 'en'], true)) {
@@ -260,4 +269,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('/privacy-policy/{privacyPolicy}', [AdminPrivacyPolicyController::class, 'update'])->name('privacy-policy.update');
     Route::delete('/privacy-policy/{privacyPolicy}', [AdminPrivacyPolicyController::class, 'destroy'])->name('privacy-policy.destroy');
     Route::patch('/privacy-policy/{privacyPolicy}/toggle-status', [AdminPrivacyPolicyController::class, 'toggleStatus'])->name('privacy-policy.toggle-status');
+
+    // Blog Management
+    Route::get('/blog', [AdminBlogController::class, 'index'])->name('blog.index');
+    Route::get('/blog/create', [AdminBlogController::class, 'create'])->name('blog.create');
+    Route::post('/blog', [AdminBlogController::class, 'store'])->name('blog.store');
+    Route::get('/blog/{blog}/edit', [AdminBlogController::class, 'edit'])->name('blog.edit');
+    Route::put('/blog/{blog}', [AdminBlogController::class, 'update'])->name('blog.update');
+    Route::delete('/blog/{blog}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
+    Route::patch('/blog/{blog}/toggle-status', [AdminBlogController::class, 'toggleStatus'])->name('blog.toggle-status');
+
+    // Mitra Management
+    Route::resource('mitra', App\Http\Controllers\Admin\MitraController::class)->names('mitra');
 });
