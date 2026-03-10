@@ -12,10 +12,16 @@
                 Total: {{ $products->total() }} produk
             </p>
         </div>
-        <a href="{{ route('admin.products.create') }}"
-            class="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
-            <i class="fas fa-plus mr-2"></i> Tambah Produk
-        </a>
+        <div class="flex gap-3">
+            <a href="{{ route('admin.products.import') }}"
+                class="inline-flex items-center justify-center rounded-md bg-green-600 py-4 px-6 text-center font-medium text-white hover:bg-opacity-90 lg:px-6 xl:px-8">
+                <i class="fas fa-file-excel mr-2"></i> Import Excel
+            </a>
+            <a href="{{ route('admin.products.create') }}"
+                class="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
+                <i class="fas fa-plus mr-2"></i> Tambah Produk
+            </a>
+        </div>
     </div>
 
     <div

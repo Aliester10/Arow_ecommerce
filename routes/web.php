@@ -183,6 +183,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::delete('/products/{productId}/delete-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'deleteImage'])->name('products.deleteImage');
     Route::post('/products/{productId}/set-primary-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
 
+    // Product Import
+    Route::get('/products/import', [App\Http\Controllers\ProductImportController::class, 'index'])->name('products.import');
+    Route::post('/products/import', [App\Http\Controllers\ProductImportController::class, 'import'])->name('products.import.store');
+    Route::get('/products/download-template', [App\Http\Controllers\ProductImportController::class, 'downloadTemplate'])->name('products.download-template');
+    
+    // Image Upload for Import
+    Route::post('/products/upload-images', [App\Http\Controllers\ProductImportController::class, 'uploadImages'])->name('products.upload-images');
+    Route::post('/products/delete-image', [App\Http\Controllers\ProductImportController::class, 'deleteImage'])->name('products.delete-image');
+    Route::post('/products/clear-temp-images', [App\Http\Controllers\ProductImportController::class, 'clearTempImages'])->name('products.clear-temp-images');
+
     // Appearance Management
     Route::prefix('appearance')->name('appearance.')->group(function () {
         Route::get('/', function () {
