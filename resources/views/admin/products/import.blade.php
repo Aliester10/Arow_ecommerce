@@ -108,20 +108,42 @@
         <!-- Tabs -->
         <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
             <nav class="-mb-px flex space-x-8">
-                <button onclick="showTab('upload-images')" id="tab-upload-images" class="tab-btn py-2 px-1 border-b-2 border-primary font-medium text-sm text-primary">
+                <button onclick="showTab('template')" id="tab-template" class="tab-btn py-2 px-1 border-b-2 border-primary font-medium text-sm text-primary">
+                    <i class="fas fa-download mr-2"></i> Template
+                </button>
+                <button onclick="showTab('upload-images')" id="tab-upload-images" class="tab-btn py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
                     <i class="fas fa-images mr-2"></i> Upload Gambar
                 </button>
                 <button onclick="showTab('import-excel')" id="tab-import-excel" class="tab-btn py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
                     <i class="fas fa-file-excel mr-2"></i> Import Excel
                 </button>
-                <button onclick="showTab('template')" id="tab-template" class="tab-btn py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                    <i class="fas fa-download mr-2"></i> Template
-                </button>
             </nav>
         </div>
 
         <!-- Tab Content -->
-        <div id="tab-content-upload-images" class="tab-content">
+        <div id="tab-content-template" class="tab-content">
+            <h3 class="text-lg font-semibold text-black dark:text-white mb-4">
+                <i class="fas fa-download mr-2"></i> Download Template Excel
+            </h3>
+            
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Download template Excel untuk memastikan format data yang benar:
+                </p>
+                <a href="{{ route('admin.products.download-template') }}"
+                    class="inline-flex items-center justify-center rounded-md bg-green-600 py-3 px-6 text-center font-medium text-white hover:bg-opacity-90">
+                    <i class="fas fa-file-excel mr-2"></i> Download Template Excel
+                </a>
+                <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <p>• Template berisi contoh data dan petunjuk pengisian</p>
+                    <p>• Brand dan Kategori yang tersedia sudah tercantum</p>
+                    <p>• Hapus baris contoh sebelum mengimport data</p>
+                    <p>• Pastikan nama file gambar sesuai dengan yang akan diupload</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-content-upload-images" class="tab-content hidden">
             <h3 class="text-lg font-semibold text-black dark:text-white mb-4">
                 <i class="fas fa-images mr-2"></i> Upload Gambar Produk
             </h3>
@@ -244,28 +266,6 @@
                 </button>
             </form>
         </div>
-
-        <div id="tab-content-template" class="tab-content hidden">
-            <h3 class="text-lg font-semibold text-black dark:text-white mb-4">
-                <i class="fas fa-download mr-2"></i> Download Template Excel
-            </h3>
-            
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Download template Excel untuk memastikan format data yang benar:
-                </p>
-                <a href="{{ route('admin.products.download-template') }}"
-                    class="inline-flex items-center justify-center rounded-md bg-green-600 py-3 px-6 text-center font-medium text-white hover:bg-opacity-90">
-                    <i class="fas fa-file-excel mr-2"></i> Download Template Excel
-                </a>
-                <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                    <p>• Template berisi contoh data dan petunjuk pengisian</p>
-                    <p>• Brand dan Kategori yang tersedia sudah tercantum</p>
-                    <p>• Hapus baris contoh sebelum mengimport data</p>
-                    <p>• Pastikan nama file gambar sesuai dengan yang diupload</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Instructions -->
@@ -275,25 +275,25 @@
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <h4 class="font-medium text-gray-900 dark:text-white mb-2">📸 Langkah 1: Upload Gambar</h4>
-                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <li>• Upload semua gambar produk terlebih dahulu</li>
-                    <li>• Bisa multiple file sekaligus</li>
-                    <li>• Format: JPG, PNG, GIF, WebP</li>
-                    <li>• Maksimal 2MB per file</li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-medium text-gray-900 dark:text-white mb-2">📊 Langkah 2: Isi Excel</h4>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-2">� Langkah 1: Download Template</h4>
                 <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                     <li>• Download template Excel</li>
-                    <li>• Isi data produk sesuai format</li>
-                    <li>• Kolom gambar: nama file yang diupload</li>
-                    <li>• Pastikan brand & kategori sudah ada</li>
+                    <li>• Lihat contoh data dan format</li>
+                    <li>• Perhatikan brand & kategori tersedia</li>
+                    <li>• Hapus baris contoh sebelum isi</li>
                 </ul>
             </div>
             <div>
-                <h4 class="font-medium text-gray-900 dark:text-white mb-2">🚀 Langkah 3: Import Data</h4>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-2">� Langkah 2: Upload Gambar</h4>
+                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <li>• Upload semua gambar produk</li>
+                    <li>• Bisa multiple file sekaligus</li>
+                    <li>• Format: JPG, PNG, GIF, WebP</li>
+                    <li>• Copy nama file untuk Excel</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-2">🚀 Langkah 3: Import Excel</h4>
                 <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                     <li>• Upload file Excel yang sudah diisi</li>
                     <li>• System akan validasi semua data</li>

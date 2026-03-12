@@ -128,3 +128,102 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the search form from header
+    const searchForm = document.querySelector('form[action="{{ route('products.index') }}"]');
+    const searchInput = searchForm?.querySelector('input[name="search"]');
+    const categorySelect = searchForm?.querySelector('select[name="category"]');
+    const productsContainer = document.querySelector('.grid.grid-cols-2');
+    const titleElement = document.querySelector('h1.text-gray-800');
+    const countElement = document.querySelector('.text-gray-500');
+    
+    if (!searchForm || !searchInput || !productsContainer) return;
+    
+    let searchTimeout;
+    
+    // Function to perform AJAX search
+    function performSearch() {
+        clearTimeout(searchTimeout);
+        
+        searchTimeout = setTimeout(() => {
+            const searchTerm = searchInput.value.trim();
+            const category = categorySelect?.value || '';
+            
+            // Build query parameters
+            const params = new URLSearchParams();
+            if (searchTerm) params.append('search', searchTerm);
+            if (category) params.append('category', category);
+            
+            // Show loading state
+            productsContainer.style.opacity = '0.5';
+            
+            // Perform AJAX request
+            fetch(`{{ route('products.index') }}?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Parse the response HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Update products grid
+                const newProductsContainer = doc.querySelector('.grid.grid-cols-2');
+                if (newProductsContainer) {
+                    productsContainer.innerHTML = newProductsContainer.innerHTML;
+                    productsContainer.style.opacity = '1';
+                }
+                
+                // Update title
+                const newTitleElement = doc.querySelector('h1.text-gray-800');
+                if (newTitleElement && titleElement) {
+                    titleElement.innerHTML = newTitleElement.innerHTML;
+                }
+                
+                // Update count
+                const newCountElement = doc.querySelector('.text-gray-500');
+                if (newCountElement && countElement) {
+                    countElement.innerHTML = newCountElement.innerHTML;
+                }
+                
+                // Update pagination
+                const newPagination = doc.querySelector('.mt-6');
+                const currentPagination = document.querySelector('.mt-6');
+                if (newPagination && currentPagination) {
+                    currentPagination.innerHTML = newPagination.innerHTML;
+                }
+                
+                // Update URL without page reload
+                const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                window.history.pushState({}, '', newUrl);
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                productsContainer.style.opacity = '1';
+            });
+        }, 300); // Debounce for 300ms
+    }
+    
+    // Listen for search input changes
+    searchInput.addEventListener('input', performSearch);
+    
+    // Listen for category changes
+    if (categorySelect) {
+        categorySelect.addEventListener('change', performSearch);
+    }
+    
+    // Handle browser back/forward
+    window.addEventListener('popstate', function() {
+        // Reload the page when user navigates back/forward
+        window.location.reload();
+    });
+});
+</script>
+@endpush

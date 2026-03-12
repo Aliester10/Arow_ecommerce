@@ -75,7 +75,10 @@
                                     class="h-full pl-3 pr-8 bg-transparent text-gray-600 text-sm focus:outline-none appearance-none cursor-pointer hover:bg-gray-100 transition py-2">
                                     <option value="">Semua</option>
                                     @foreach($categories as $cat)
-                                        <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
+                                        <option value="{{ $cat->nama_kategori }}" 
+                                                @if(request('category') == $cat->nama_kategori) selected @endif>
+                                            {{ $cat->nama_kategori }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 <div
@@ -84,7 +87,8 @@
                                 </div>
                             </div>
                             <input type="text" name="search" placeholder="cari sekarang hanya di ayobelanja.co.id"
-                                class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full">
+                                class="flex-1 px-3 py-2 text-xs sm:text-sm focus:outline-none border-none w-full"
+                                value="{{ request('search') }}">
                             <button type="submit"
                                 class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm"
                                 class="text-white px-4 sm:px-6 py-2 hover:bg-orange-700 transition h-full text-sm"

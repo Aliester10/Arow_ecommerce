@@ -15,19 +15,53 @@ class ProductController extends Controller
         $query = Produk::with(['brand', 'subSubkategori.subkategori.kategori', 'ulasan', 'images']);
 
         if ($request->filled('search')) {
-            $query->where('nama_produk', 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            
+            // If category is selected, search within that category only
+            if ($request->filled('category')) {
+                $categoryName = $request->category;
+                
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('nama_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('deskripsi_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('tipe_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('asal_produk', 'like', '%' . $searchTerm . '%');
+                })
+                ->where(function ($q) use ($categoryName) {
+                    $q->whereHas('subSubkategori', function ($subq) use ($categoryName) {
+                        $subq->where('nama_sub_subkategori', $categoryName);
+                    })
+                    ->orWhereHas('subSubkategori.subkategori', function ($subq) use ($categoryName) {
+                        $subq->where('nama_subkategori', $categoryName);
+                    })
+                    ->orWhereHas('subSubkategori.subkategori.kategori', function ($subq) use ($categoryName) {
+                        $subq->where('nama_kategori', $categoryName);
+                    });
+                });
+            } else {
+                // If no category is selected, search across all products
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('nama_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('deskripsi_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('tipe_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('asal_produk', 'like', '%' . $searchTerm . '%');
+                });
+            }
         }
 
-        if ($request->filled('category')) {
-            $query->whereHas('subSubkategori', function ($q) use ($request) {
-                $q->where('nama_sub_subkategori', $request->category);
-            })
-                ->orWhereHas('subSubkategori.subkategori', function ($q) use ($request) {
-                    $q->where('nama_subkategori', $request->category);
+        // Category filtering (only if no search is performed)
+        if (!$request->filled('search') && $request->filled('category')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('subSubkategori', function ($subq) use ($request) {
+                    $subq->where('nama_sub_subkategori', $request->category);
                 })
-                ->orWhereHas('subSubkategori.subkategori.kategori', function ($q) use ($request) {
-                    $q->where('nama_kategori', $request->category);
+                ->orWhereHas('subSubkategori.subkategori', function ($subq) use ($request) {
+                    $subq->where('nama_subkategori', $request->category);
+                })
+                ->orWhereHas('subSubkategori.subkategori.kategori', function ($subq) use ($request) {
+                    $subq->where('nama_kategori', $request->category);
                 });
+            });
         }
 
         // Brand filtering
