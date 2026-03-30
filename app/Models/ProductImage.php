@@ -22,6 +22,6 @@ class ProductImage extends Model
      */
     public function getUrlAttribute()
     {
-        return '/storage/' . $this->image_path;
+        return url('/storage/' . $this->image_path);
     }
 }

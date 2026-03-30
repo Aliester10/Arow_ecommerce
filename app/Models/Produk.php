@@ -140,8 +140,8 @@ class Produk extends Model
 
         // Fallback to legacy single image if exists
         if ($this->gambar_produk) {
-            // Use relative path to avoid localhost URL issues
-            return '/storage/images/produk/' . $this->gambar_produk;
+            // Return absolute URL instead of relative path
+            return url('/storage/images/produk/' . $this->gambar_produk);
         }
 
         return null;
