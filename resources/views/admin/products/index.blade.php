@@ -12,7 +12,7 @@
                 Total: {{ $products->total() }} produk
             </p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 flex-wrap">
             <a href="{{ route('admin.products.import') }}"
                 class="inline-flex items-center justify-center rounded-md bg-green-600 py-4 px-6 text-center font-medium text-white hover:bg-opacity-90 lg:px-6 xl:px-8">
                 <i class="fas fa-file-excel mr-2"></i> Import Excel
@@ -22,6 +22,32 @@
                 <i class="fas fa-plus mr-2"></i> Tambah Produk
             </a>
         </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="mb-6">
+        <form method="GET" action="{{ route('admin.products.index') }}" class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1">
+                <div class="relative">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ request('search') ?? $search ?? '' }}" 
+                           placeholder="Cari produk berdasarkan nama atau merk..." 
+                           class="w-full rounded-md border border-stroke dark:border-gray-700 dark:bg-gray-800 py-3 px-4 pl-12 text-gray-800 dark:text-white focus:outline-none focus:ring focus:border-blue-300">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            <button type="submit" 
+                    class="inline-flex items-center justify-center rounded-md bg-primary py-3 px-6 text-center font-medium text-white hover:bg-opacity-90 transition-colors">
+                <i class="fas fa-search mr-2"></i> Cari
+            </button>
+            @if(request('search'))
+                <a href="{{ route('admin.products.index') }}" 
+                   class="inline-flex items-center justify-center rounded-md bg-gray-500 py-3 px-6 text-center font-medium text-white hover:bg-opacity-90 transition-colors">
+                    <i class="fas fa-times mr-2"></i> Reset
+                </a>
+            @endif
+        </form>
     </div>
 
     <div
@@ -52,6 +78,9 @@
                 <thead>
                     <tr class="bg-gray-2 text-left dark:bg-gray-700">
                         <th class="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white text-center">
+                            <input type="checkbox" id="selectAll" class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                        </th>
+                        <th class="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white text-center">
                             No
                         </th>
                         <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
@@ -77,6 +106,9 @@
                 <tbody>
                     @forelse($products as $index => $product)
                         <tr>
+                            <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
+                                <input type="checkbox" name="selected_products[]" value="{{ $product->id_produk }}" class="product-checkbox form-checkbox h-4 w-4 text-blue-600 rounded">
+                            </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
                                 {{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}
                             </td>
@@ -130,7 +162,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
+                            <td colspan="8" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
                                 Tidak ada produk ditemukan.
                             </td>
                         </tr>
@@ -139,13 +171,42 @@
             </table>
         </div>
 
+        <!-- Bulk Actions Section -->
+        <div id="bulkActions" class="hidden mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700 dark:text-gray-300 font-medium">
+                        <span id="selectedCount">0</span> produk dipilih
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="bulkDelete()" 
+                                class="inline-flex items-center justify-center rounded-md bg-red-600 py-2 px-4 text-center font-medium text-white hover:bg-red-700 transition-colors">
+                            <i class="fas fa-trash mr-2"></i> Hapus
+                        </button>
+                        <button onclick="bulkUpdateStatus('aktif')" 
+                                class="inline-flex items-center justify-center rounded-md bg-green-600 py-2 px-4 text-center font-medium text-white hover:bg-green-700 transition-colors">
+                            <i class="fas fa-check mr-2"></i> Aktifkan
+                        </button>
+                        <button onclick="bulkUpdateStatus('nonaktif')" 
+                                class="inline-flex items-center justify-center rounded-md bg-yellow-600 py-2 px-4 text-center font-medium text-white hover:bg-yellow-700 transition-colors">
+                            <i class="fas fa-times mr-2"></i> Nonaktifkan
+                        </button>
+                        <button onclick="clearSelection()" 
+                                class="inline-flex items-center justify-center rounded-md bg-gray-500 py-2 px-4 text-center font-medium text-white hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-times mr-2"></i> Batal Pilih
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="mt-4 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <div class="flex items-center space-x-4">
                     <label for="perPage" class="text-gray-600 dark:text-gray-400 whitespace-nowrap">Tampilkan</label>
                     <select id="perPage" onchange="window.location.href = this.value" class="rounded-md border border-stroke dark:border-gray-700 dark:bg-gray-800 py-2 px-3 text-gray-800 dark:text-white focus:outline-none focus:ring focus:border-blue-300">
                         @foreach ([10, 20, 30, 40, 50] as $perPageOption)
-                            <option value="{{ request()->url() }}?page=1&per_page={{ $perPageOption }}" {{ request('per_page', 10) == $perPageOption ? 'selected' : '' }}>
+                            <option value="{{ request()->url() }}?page=1&per_page={{ $perPageOption }}@if(request('search'))&search={{ request('search') }}@endif" {{ request('per_page', 10) == $perPageOption ? 'selected' : '' }}>
                                 {{ $perPageOption }} Data
                             </option>
                         @endforeach
@@ -167,7 +228,7 @@
                         <i class="fas fa-chevron-left"></i>
                     </span>
                 @else
-                    <a href="{{ $products->previousPageUrl() }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->previousPageUrl() }}&per_page={{ request('per_page', 10) }}@if(request('search'))&search={{ request('search') }}@endif" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 @endif
@@ -189,7 +250,7 @@
                 
                 {{-- First page --}}
                 @if($start > 1)
-                    <a href="{{ $products->url(1) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->url(1) }}&per_page={{ request('per_page', 10) }}@if(request('search'))&search={{ request('search') }}@endif" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         1
                     </a>
                     @if($start > 2)
@@ -204,7 +265,7 @@
                             {{ $i }}
                         </span>
                     @else
-                        <a href="{{ $products->url($i) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                        <a href="{{ $products->url($i) }}&per_page={{ request('per_page', 10) }}@if(request('search'))&search={{ request('search') }}@endif" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                             {{ $i }}
                         </a>
                     @endif
@@ -215,14 +276,14 @@
                     @if($end < $lastPage - 1)
                         <span class="px-3 py-2 text-gray-600 dark:text-gray-400">...</span>
                     @endif
-                    <a href="{{ $products->url($lastPage) }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->url($lastPage) }}&per_page={{ request('per_page', 10) }}@if(request('search'))&search={{ request('search') }}@endif" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         {{ $lastPage }}
                     </a>
                 @endif
                 
                 {{-- Next button --}}
                 @if($products->hasMorePages())
-                    <a href="{{ $products->nextPageUrl() }}&per_page={{ request('per_page', 10) }}" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
+                    <a href="{{ $products->nextPageUrl() }}&per_page={{ request('per_page', 10) }}@if(request('search'))&search={{ request('search') }}@endif" class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 @else
@@ -233,4 +294,159 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Select All functionality
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            toggleBulkActions();
+        });
+
+        // Individual checkbox change
+        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectAllCheckbox();
+                toggleBulkActions();
+            });
+        });
+
+        // Update select all checkbox based on individual checkboxes
+        function updateSelectAllCheckbox() {
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            if (checkedBoxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedBoxes.length === checkboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        // Toggle bulk actions visibility
+        function toggleBulkActions() {
+            const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+            const bulkActions = document.getElementById('bulkActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (checkedBoxes.length > 0) {
+                bulkActions.classList.remove('hidden');
+                selectedCount.textContent = checkedBoxes.length;
+            } else {
+                bulkActions.classList.add('hidden');
+                selectedCount.textContent = '0';
+            }
+        }
+
+        // Clear selection function
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+            
+            toggleBulkActions();
+        }
+
+        // Get selected product IDs
+        function getSelectedProducts() {
+            const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // Bulk delete function
+        function bulkDelete() {
+            const selectedProducts = getSelectedProducts();
+            
+            console.log('Selected products:', selectedProducts);
+            
+            if (selectedProducts.length === 0) {
+                alert('Pilih setidaknya satu produk untuk dihapus!');
+                return;
+            }
+
+            if (confirm(`Apakah Anda yakin ingin menghapus ${selectedProducts.length} produk yang dipilih?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("admin.products.bulkDelete") }}';
+                
+                console.log('Form action:', form.action);
+                
+                // Add CSRF token
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                // Add selected products
+                selectedProducts.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'selected_products[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Bulk update status function
+        function bulkUpdateStatus(status) {
+            const selectedProducts = getSelectedProducts();
+            
+            if (selectedProducts.length === 0) {
+                alert('Pilih setidaknya satu produk untuk diperbarui!');
+                return;
+            }
+
+            const statusText = status === 'aktif' ? 'mengaktifkan' : 'menonaktifkan';
+            if (confirm(`Apakah Anda yakin ingin ${statusText} ${selectedProducts.length} produk yang dipilih?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("admin.products.bulkUpdateStatus") }}';
+                
+                // Add CSRF token
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                // Add status
+                const statusField = document.createElement('input');
+                statusField.type = 'hidden';
+                statusField.name = 'status';
+                statusField.value = status;
+                form.appendChild(statusField);
+                
+                // Add selected products
+                selectedProducts.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'selected_products[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
 @endsection

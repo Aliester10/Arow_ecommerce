@@ -100,10 +100,22 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])->latest()->paginate(10);
-        return view('admin.products.index', compact('products'));
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+
+        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])
+            ->when($search, function ($query, $search) {
+                $query->where('nama_produk', 'like', '%' . $search . '%')
+                      ->orWhereHas('brand', function ($query) use ($search) {
+                          $query->where('nama_brand', 'like', '%' . $search . '%');
+                      });
+            })
+            ->latest()
+            ->paginate($perPage);
+
+        return view('admin.products.index', compact('products', 'search'));
     }
 
     public function edit($id)
@@ -252,5 +264,72 @@ class AdminProductController extends Controller
         $image->update(['is_primary' => true]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Bulk delete products
+     */
+    public function bulkDelete(Request $request)
+    {
+        try {
+            // Debug: Log request data
+            \Log::info('Bulk delete request:', $request->all());
+            
+            $request->validate([
+                'selected_products' => 'required|array|min:1',
+                'selected_products.*' => 'exists:produk,id_produk'
+            ]);
+
+            $products = Produk::whereIn('id_produk', $request->selected_products)->get();
+            
+            foreach ($products as $product) {
+                // Delete product images
+                foreach ($product->images as $image) {
+                    Storage::disk('public')->delete($image->image_path);
+                    $image->delete();
+                }
+
+                // Delete legacy single image if exists
+                if ($product->gambar_produk) {
+                    Storage::disk('public')->delete('images/produk/' . $product->gambar_produk);
+                }
+
+                $product->delete();
+            }
+
+            return redirect()->route('admin.products.index')->with('success', count($request->selected_products) . ' produk berhasil dihapus!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Bulk delete error: ' . $e->getMessage());
+            return redirect()->route('admin.products.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Bulk update product status
+     */
+    public function bulkUpdateStatus(Request $request)
+    {
+        try {
+            // Debug: Log request data
+            \Log::info('Bulk update status request:', $request->all());
+            
+            $request->validate([
+                'selected_products' => 'required|array|min:1',
+                'selected_products.*' => 'exists:produk,id_produk',
+                'status' => 'required|in:aktif,nonaktif'
+            ]);
+
+            Produk::whereIn('id_produk', $request->selected_products)
+                ->update(['status_produk' => $request->status]);
+
+            $statusText = $request->status == 'aktif' ? 'diaktifkan' : 'dinonaktifkan';
+            
+            return redirect()->route('admin.products.index')->with('success', count($request->selected_products) . ' produk berhasil ' . $statusText . '!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Bulk update status error: ' . $e->getMessage());
+            return redirect()->route('admin.products.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }

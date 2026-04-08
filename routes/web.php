@@ -182,6 +182,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::delete('/products/{id}', [App\Http\Controllers\AdminProductController::class, 'destroy'])->name('products.destroy');
     Route::delete('/products/{productId}/delete-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'deleteImage'])->name('products.deleteImage');
     Route::post('/products/{productId}/set-primary-image/{imageId}', [App\Http\Controllers\AdminProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
+    
+    // Bulk Actions
+    Route::post('/products/bulk-delete', [App\Http\Controllers\AdminProductController::class, 'bulkDelete'])->name('products.bulkDelete');
+    Route::post('/products/bulk-update-status', [App\Http\Controllers\AdminProductController::class, 'bulkUpdateStatus'])->name('products.bulkUpdateStatus');
 
     // Product Import
     Route::get('/products/import', [App\Http\Controllers\ProductImportController::class, 'index'])->name('products.import');
