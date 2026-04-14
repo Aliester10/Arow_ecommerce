@@ -67,7 +67,7 @@ class HomeController extends Controller
         }
 
         // Get in-house brands data
-        $inHouseBrandNames = ['aro baskara esa living', 'aro baskara esa education'];
+        $inHouseBrandNames = ['ABE living', 'ABE edu'];
         $inHouseBrands = Brand::whereIn('nama_brand', $inHouseBrandNames)->get();
 
         $inHouseBrandsWithProducts = [];
