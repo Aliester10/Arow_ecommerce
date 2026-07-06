@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('position');
-            $table->text('description');
-            $table->text('qualifications');
-            $table->string('location');
-            $table->enum('employment_type', ['Full Time', 'Part Time', 'Contract']);
-            $table->string('email');
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('jobs')) {
+            Schema::create('jobs', function (Blueprint $table) {
+                $table->id();
+                $table->string('position');
+                $table->text('description');
+                $table->text('qualifications');
+                $table->string('location');
+                $table->enum('employment_type', ['Full Time', 'Part Time', 'Contract']);
+                $table->string('email');
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -66,9 +66,250 @@
 }
 </style>
 <div class="container mx-auto px-2 sm:px-4">
+    <!-- Alpine wrapper context for mobile category drawer -->
+    <div x-data="{ mobileCategoriesOpen: false, touchStartX: 0, touchStartY: 0 }"
+         x-init="$watch('mobileCategoriesOpen', value => {
+             if (value) {
+                 document.body.style.overflow = 'hidden';
+             } else {
+                 document.body.style.overflow = '';
+             }
+         })"
+         @keydown.escape.window="mobileCategoriesOpen = false">
 
-    <!-- ================= ROW 1 : SIDEBAR + BANNER ================= -->
-    <div class="home-row-layout flex flex-col md:flex-row gap-4 md:gap-6 mb-8 md:mb-10 relative" style="--sidebar-width: 30%; --sidebar-gap: 1.5rem; --mega-height: 30rem;">
+        <!-- Mobile Category Trigger Button (hidden on desktop/tablet > 768px) -->
+        <div class="block md:hidden mb-4 mt-2">
+            <button @click="mobileCategoriesOpen = true"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-[#F7931E] hover:bg-[#e07f12] text-white font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    aria-label="Kategori Produk"
+                    type="button">
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-bars"></i>
+                    <span>Kategori Produk</span>
+                </span>
+                <i class="fas fa-chevron-right text-sm opacity-80"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Slide Drawer -->
+        <div x-show="mobileCategoriesOpen" 
+             class="fixed inset-0 z-50 overflow-hidden md:hidden" 
+             style="display: none;" 
+             role="dialog" 
+             aria-modal="true"
+             aria-label="Menu Kategori Produk">
+            
+            <!-- Overlay -->
+            <div x-show="mobileCategoriesOpen"
+                 x-transition:enter="transition-opacity ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-50"
+                 x-transition:leave="transition-opacity ease-in duration-300"
+                 x-transition:leave-start="opacity-50"
+                 x-transition:leave-end="opacity-0"
+                 @click="mobileCategoriesOpen = false"
+                 class="fixed inset-0 bg-black transition-opacity">
+            </div>
+
+            <!-- Drawer Content -->
+            <div x-show="mobileCategoriesOpen"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="-translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in duration-300 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="-translate-x-full"
+                 class="fixed inset-y-0 left-0 max-w-[80%] w-full bg-white shadow-2xl flex flex-col z-50 rounded-r-2xl overflow-hidden"
+                 @touchstart="touchStartX = $event.touches[0].clientX; touchStartY = $event.touches[0].clientY;"
+                 @touchend="
+                     let diffX = touchStartX - $event.changedTouches[0].clientX;
+                     let diffY = Math.abs(touchStartY - $event.changedTouches[0].clientY);
+                     if (diffX > 50 && diffY < 40) mobileCategoriesOpen = false;
+                 "
+            >
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 text-white" style="background-color:#F7931E">
+                    <div class="flex items-center font-semibold text-sm sm:text-base gap-2">
+                        <i class="fas fa-list"></i>
+                        <span>Kategori Produk</span>
+                    </div>
+                    <button @click="mobileCategoriesOpen = false" 
+                            class="text-white hover:text-orange-100 transition focus:outline-none p-1 rounded-md"
+                            aria-label="Tutup Kategori Produk"
+                            type="button">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- List Kategori -->
+                <div class="flex-1 overflow-y-auto py-2">
+                    <ul class="divide-y divide-gray-100">
+                        @forelse($categories as $category)
+                            <li x-data="{ open: false }" class="border-b border-gray-50 last:border-0">
+                                @php
+                                    $iconPath = $category->icon_kategori;
+                                    $isSvg = $iconPath ? (strtolower(pathinfo($iconPath, PATHINFO_EXTENSION)) === 'svg') : false;
+
+                                    $iconCandidates = $iconPath ? [
+                                        $iconPath,
+                                        'storage/' . ltrim($iconPath, '/'),
+                                        'storage/images/' . ltrim($iconPath, '/'),
+                                    ] : [];
+
+                                    $resolvedIconPath = null;
+                                    $resolvedIconFullPath = null;
+
+                                    foreach ($iconCandidates as $candidate) {
+                                        $full = public_path($candidate);
+                                        if (file_exists($full)) {
+                                            $resolvedIconPath = $candidate;
+                                            $resolvedIconFullPath = $full;
+                                            break;
+                                        }
+                                    }
+
+                                    $iconExists = (bool) $resolvedIconFullPath;
+                                @endphp
+
+                                @if($category->subkategori->count() > 0)
+                                    <!-- Expandable Category Button -->
+                                    <button @click="open = !open" 
+                                            type="button"
+                                            class="flex items-center justify-between w-full min-h-[48px] px-4 py-3 text-left hover:bg-orange-50/50 transition duration-150 focus:outline-none"
+                                            :aria-expanded="open ? 'true' : 'false'">
+                                        <span class="flex items-center gap-3 text-sm text-gray-700 hover:text-orange-600 font-medium truncate flex-1">
+                                            @if($iconExists && $isSvg)
+                                                @php
+                                                    $svg = file_get_contents($resolvedIconFullPath);
+                                                    $svg = preg_replace('/<svg(\\s+)/i', '<svg$1style="width:20px;height:20px;" fill="currentColor" stroke="currentColor" ', $svg, 1);
+                                                    $svg = preg_replace('/\sfill="(?!none)[^"]*"/i', ' fill="currentColor"', $svg);
+                                                    $svg = preg_replace('/\sstroke="(?!none)[^"]*"/i', ' stroke="currentColor"', $svg);
+                                                @endphp
+                                                <span class="flex-shrink-0 text-orange-500" aria-hidden="true">{!! $svg !!}</span>
+                                            @elseif($iconExists)
+                                                <img src="{{ asset($resolvedIconPath) }}" alt="{{ $category->nama_kategori }}" class="w-5 h-5 object-contain flex-shrink-0">
+                                            @else
+                                                <span class="w-5 h-5 flex items-center justify-center flex-shrink-0 text-orange-500">
+                                                    <i class="fas fa-tag"></i>
+                                                </span>
+                                            @endif
+                                            <span class="truncate">{{ $category->nama_kategori }}</span>
+                                        </span>
+                                        <i class="fas fa-chevron-right text-xs text-gray-400 transition-transform duration-200" :class="{ 'rotate-90': open }"></i>
+                                    </button>
+                                @else
+                                    <!-- Direct Category Link -->
+                                    <a href="{{ route('products.index', ['category' => $category->nama_kategori]) }}" 
+                                       class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:text-orange-600 font-medium w-full min-h-[48px] hover:bg-orange-50/50 transition duration-150">
+                                        @if($iconExists && $isSvg)
+                                            @php
+                                                $svg = file_get_contents($resolvedIconFullPath);
+                                                $svg = preg_replace('/<svg(\\s+)/i', '<svg$1style="width:20px;height:20px;" fill="currentColor" stroke="currentColor" ', $svg, 1);
+                                                $svg = preg_replace('/\sfill="(?!none)[^"]*"/i', ' fill="currentColor"', $svg);
+                                                $svg = preg_replace('/\sstroke="(?!none)[^"]*"/i', ' stroke="currentColor"', $svg);
+                                            @endphp
+                                            <span class="flex-shrink-0 text-orange-500" aria-hidden="true">{!! $svg !!}</span>
+                                        @elseif($iconExists)
+                                            <img src="{{ asset($resolvedIconPath) }}" alt="{{ $category->nama_kategori }}" class="w-5 h-5 object-contain flex-shrink-0">
+                                        @else
+                                            <span class="w-5 h-5 flex items-center justify-center flex-shrink-0 text-orange-500">
+                                                <i class="fas fa-tag"></i>
+                                            </span>
+                                        @endif
+                                        <span class="truncate flex-1">{{ $category->nama_kategori }}</span>
+                                    </a>
+                                @endif
+
+                                <!-- Subcategories Accordion -->
+                                @if($category->subkategori->count() > 0)
+                                    <div x-show="open" 
+                                         x-transition:enter="transition-all ease-out duration-200"
+                                         x-transition:enter-start="max-h-0 opacity-0 overflow-hidden"
+                                         x-transition:enter-end="max-h-[1000px] opacity-100 overflow-hidden"
+                                         x-transition:leave="transition-all ease-in duration-200"
+                                         x-transition:leave-start="max-h-[1000px] opacity-100 overflow-hidden"
+                                         x-transition:leave-end="max-h-0 opacity-0 overflow-hidden"
+                                         class="bg-gray-50 border-t border-gray-100 pl-6 pr-4 py-1"
+                                         style="display: none;">
+                                        
+                                        <ul class="divide-y divide-gray-100/50">
+                                            <!-- Link to View All Products of this Category -->
+                                            <li>
+                                                <a href="{{ route('products.index', ['category' => $category->nama_kategori]) }}" 
+                                                   class="block py-2 text-xs text-orange-600 hover:text-orange-700 font-semibold min-h-[44px] flex items-center">
+                                                    Semua {{ $category->nama_kategori }}
+                                                </a>
+                                            </li>
+                                            
+                                            @foreach($category->subkategori as $sub)
+                                                <li x-data="{ openSub: false }">
+                                                    @if($sub->subSubkategori->count() > 0)
+                                                        <!-- Expandable Subcategory Button -->
+                                                        <button @click="openSub = !openSub" 
+                                                                type="button"
+                                                                class="flex items-center justify-between w-full min-h-[44px] py-2 text-left text-xs text-gray-600 hover:text-orange-600 font-medium focus:outline-none"
+                                                                :aria-expanded="openSub ? 'true' : 'false'">
+                                                            <span class="truncate flex-1">{{ $sub->nama_subkategori }}</span>
+                                                            <i class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform duration-200" :class="{ 'rotate-90': openSub }"></i>
+                                                        </button>
+                                                    @else
+                                                        <!-- Direct Subcategory Link -->
+                                                        <a href="{{ route('products.index', ['category' => $sub->nama_subkategori]) }}" 
+                                                           class="block py-2 text-xs text-gray-600 hover:text-orange-600 font-medium truncate min-h-[44px] flex items-center">
+                                                            {{ $sub->nama_subkategori }}
+                                                        </a>
+                                                    @endif
+                                                    
+                                                    <!-- Sub-subcategories Accordion -->
+                                                    @if($sub->subSubkategori->count() > 0)
+                                                        <div x-show="openSub" 
+                                                             x-transition:enter="transition-all ease-out duration-200"
+                                                             x-transition:enter-start="max-h-0 opacity-0 overflow-hidden"
+                                                             x-transition:enter-end="max-h-[500px] opacity-100 overflow-hidden"
+                                                             x-transition:leave="transition-all ease-in duration-200"
+                                                             x-transition:leave-start="max-h-[500px] opacity-100 overflow-hidden"
+                                                             x-transition:leave-end="max-h-0 opacity-0 overflow-hidden"
+                                                             class="bg-gray-100/50 pl-4 py-1 rounded-lg mb-2"
+                                                             style="display: none;">
+                                                            <ul>
+                                                                <!-- Link to View All Products of this Subcategory -->
+                                                                <li>
+                                                                    <a href="{{ route('products.index', ['category' => $sub->nama_subkategori]) }}" 
+                                                                       class="block py-2 text-[11px] text-orange-600 hover:text-orange-700 font-semibold min-h-[40px] flex items-center">
+                                                                        Semua {{ $sub->nama_subkategori }}
+                                                                    </a>
+                                                                </li>
+                                                                
+                                                                @foreach($sub->subSubkategori as $subSub)
+                                                                    <li>
+                                                                        <a href="{{ route('products.index', ['category' => $subSub->nama_sub_subkategori]) }}" 
+                                                                           class="block py-2 text-[11px] text-gray-500 hover:text-orange-600 truncate min-h-[40px] flex items-center">
+                                                                            {{ $subSub->nama_sub_subkategori }}
+                                                                        </a>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </li>
+                        @empty
+                            <li class="px-4 py-6 text-center text-sm text-gray-500">
+                                <i class="fas fa-inbox text-gray-300 text-xl mb-2 block"></i>
+                                Tidak ada kategori
+                            </li>
+                        @endforelse
+                </ul>
+            </div>
+        </div>
+    </div>
+
+        <!-- ================= ROW 1 : SIDEBAR + BANNER ================= -->
+        <div class="home-row-layout flex flex-col md:flex-row gap-4 md:gap-6 mb-8 md:mb-10 relative" style="--sidebar-width: 30%; --sidebar-gap: 1.5rem; --mega-height: 30rem;">
 
         <!-- Sidebar Categories -->
         <aside class="home-sidebar w-full hidden md:block z-20">
@@ -151,7 +392,7 @@
         <div class="relative z-10 container mx-auto px-2 sm:px-4 py-8 md:py-12">
             <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
                 
-                <!-- Left Column: Title and Button -->
+                <!-- Left Column: Title -->
                 <div class="w-full lg:w-1/3 text-center lg:text-left">
                     <!-- Orange horizontal line above title -->
                     <div class="h-2 bg-orange-500 mb-4 mx-auto lg:mx-0" style="height: 6px;"></div>
@@ -163,12 +404,6 @@
                     
                     <!-- Orange horizontal line below title -->
                     <div class="h-2 bg-orange-500 mb-6 mx-auto lg:mx-0" style="height: 6px;"></div>
-                    
-                    <!-- CTA Button -->
-                    <button class="px-8 py-3 text-white font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:shadow-lg"
-                            style="background-color: #FF5F57;">
-                        See Now
-                    </button>
                 </div>
                 
                 <!-- Right Column: Category Cards (Horizontal Layout) -->
@@ -196,20 +431,6 @@
                                 <h3 class="font-bold text-lg text-gray-800 mb-3 text-center">
                                     {{ $categoryData['category']->nama_kategori }}
                                 </h3>
-                                
-                                <!-- Subcategories List (No Background) -->
-                                @if($categoryData['subcategories']->count() > 0)
-                                    <div class="grid grid-cols-2 gap-y-2 gap-x-4 px-2">
-                                        @foreach($categoryData['subcategories'] as $subcategory)
-                                            <div class="flex items-center text-sm text-gray-600 cursor-pointer hover:text-orange-600 transition-colors">
-                                                <i class="fas fa-chevron-right text-xs mr-2 text-orange-500 flex-shrink-0"></i>
-                                                <span class="truncate">{{ $subcategory->nama_subkategori }}</span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <p class="text-sm text-gray-500 italic text-center">No subcategories available</p>
-                                @endif
                             </div>
                             @endif
                         @endforeach
@@ -303,101 +524,60 @@
     </div>
     <!-- ================= END ROW 2.6 ================= -->
 
-    <!-- ================= ROW 2.7 : SPECIAL DEALS ================= -->
-    @if($specialDeal && $specialDealProducts->count() > 0)
-    <div class="mb-8 md:mb-12 relative overflow-hidden rounded-2xl p-4 sm:p-8 lg:p-12"
-         style="background: linear-gradient(to right, #FF8C00, #FFA500, #FFD700);">
-        
-        <div class="relative z-10 flex flex-col lg:flex-row items-center lg:items-stretch gap-6 lg:gap-12">
-            
-            <!-- Left Column: Title and Button -->
-            <div class="w-full lg:w-2/5 text-center lg:text-left flex flex-col justify-center items-center lg:items-start">
-                <h2 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-2 leading-tight drop-shadow-lg">
-                    Special Deals
-                </h2>
-                @if($specialDeal->subtitle)
-                <p class="text-lg sm:text-xl lg:text-3xl text-white mb-6 lg:mb-8 font-medium drop-shadow">
-                    {{ $specialDeal->subtitle }}
-                </p>
-                @endif
-                
-                <!-- CTA Button -->
-                <a href="{{ route('special-deals.public.index') }}" 
-                   class="inline-flex items-center justify-center px-6 py-3 lg:px-8 lg:py-4 bg-white text-orange-600 text-sm lg:text-base font-bold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-orange-50 group">
-                    <span class="mr-2">See All</span>
-                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
-            </div>
-            
-            <!-- Right Column: Product Cards -->
-            <div class="w-full lg:w-3/5 flex justify-center lg:justify-end items-center">
-                <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-                    @foreach($specialDealProducts->take(3) as $product)
-                        <div class="group">
-                            <!-- Product Card with White Background and Enhanced Styling -->
-                            <div class="bg-white rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2 overflow-hidden h-full flex flex-col">
-                                <!-- Product Image Container -->
-                                <div class="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
-                                    @if(isset($product) && $product->image_url)
-                                        <a href="{{ route('products.show', $product->slug) }}" class="block w-full h-full">
-                                            <img src="{{ $product->image_url }}" 
-                                                 alt="{{ $product->nama_produk }}"
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                        </a>
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                            <i class="fas fa-image text-gray-300 lg:text-gray-400 text-4xl lg:text-6xl"></i>
-                                        </div>
-                                    @endif
-                                    
-                                    <!-- Discount Badge -->
-                                    @if($product->special_deal_discount)
-                                    <div class="absolute top-2 right-2 lg:top-4 lg:right-4 bg-red-500 text-white px-2 py-1 lg:px-3 lg:py-2 rounded-full text-[10px] lg:text-sm font-bold shadow-lg z-10">
-                                        {{ $product->special_deal_discount }}%
-                                    </div>
-                                    @endif
-                                </div>
-                                
-                                <!-- Product Info -->
-                                <div class="p-3 lg:p-5 flex flex-col flex-grow">
-                                    <!-- Product Name -->
-                                    <h3 class="font-bold text-sm lg:text-xl text-gray-800 mb-2 lg:mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors">
-                                        {{ $product->nama_produk }}
-                                    </h3>
-                                    
-                                    <!-- Price Section -->
-                                    <div class="space-y-1 mt-auto">
-                                        @if($product->special_deal_price)
-                                            <div class="flex flex-wrap items-baseline gap-1 lg:gap-2">
-                                                <span class="text-sm lg:text-2xl font-bold text-red-600 whitespace-nowrap">
-                                                    Rp {{ number_format($product->special_deal_price, 0, ',', '.') }}
-                                                </span>
-                                                <span class="text-[10px] lg:text-base text-gray-400 line-through whitespace-nowrap">
-                                                    Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                                </span>
-                                            </div>
-                                        @else
-                                            <span class="text-sm lg:text-2xl font-bold text-gray-800 whitespace-nowrap">
-                                                Rp {{ number_format($product->harga_produk, 0, ',', '.') }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    
-                                    <!-- Add to Cart Button -->
-                                    <button onclick="addToCart({{ $product->id_produk }}, 1)" 
-                                            class="mt-3 lg:mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 lg:py-3 px-2 lg:px-4 rounded-lg lg:rounded-xl text-xs lg:text-base transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-1 lg:gap-2">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
-                                </div>
+    <!-- ================= ROW 2.7 : PROMO CAMPAIGN ================= -->
+    @if($activePromos && $activePromos->count() > 0)
+        <div class="space-y-6 mb-8 md:mb-12">
+            @foreach($activePromos as $activePromo)
+                @if($activePromo->banner)
+                    <div>
+                        <a href="{{ route('promo-campaigns.public.show', $activePromo->slug) }}" 
+                           class="block overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 group relative">
+                            <img src="{{ asset('storage/images/' . $activePromo->banner) }}" 
+                                 alt="{{ $activePromo->title }}" 
+                                 class="w-full h-auto object-cover max-h-96 md:max-h-110 lg:max-h-125 min-h-48 group-hover:scale-[1.02] transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6 md:p-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <h3 class="text-white text-2xl md:text-3xl font-extrabold mb-1">{{ $activePromo->title }}</h3>
+                                <p class="text-white/90 text-sm md:text-base font-medium">{{ $activePromo->subtitle }}</p>
+                            </div>
+                        </a>
+                    </div>
+                @else
+                    <!-- Fallback Styled HTML Banner if banner image is not uploaded -->
+                    <div class="relative overflow-hidden rounded-2xl p-6 sm:p-10 lg:p-14 text-white shadow-xl hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 animate-fade-in"
+                         style="background: linear-gradient(135deg, #FF3D00 0%, #FF9100 50%, #FFC400 100%);">
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="text-left">
+                                <span class="inline-block bg-white text-orange-600 font-bold px-3 py-1 rounded-full text-xs uppercase mb-3 tracking-wider shadow">
+                                    PROMO CAMPAIGN
+                                </span>
+                                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 drop-shadow-md">
+                                    {{ $activePromo->title }}
+                                </h2>
+                                @if($activePromo->subtitle)
+                                    <p class="text-lg sm:text-xl lg:text-2xl font-medium drop-shadow opacity-95 mb-4">
+                                        {{ $activePromo->subtitle }}
+                                    </p>
+                                @endif
+                                <p class="text-xs sm:text-sm font-medium bg-black/20 inline-block px-3 py-1 rounded-md">
+                                    Berlaku s/d {{ $activePromo->end_date->format('d M Y H:i') }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <a href="{{ route('promo-campaigns.public.show', $activePromo->slug) }}" 
+                                   class="inline-flex items-center justify-center px-8 py-4 bg-white text-orange-600 text-base font-extrabold rounded-full transition-all duration-300 hover:scale-105 hover:bg-orange-50 group shadow-lg">
+                                    <span>Kunjungi Halaman Promo</span>
+                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                </a>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-            
+                        
+                        <!-- Decorative background elements -->
+                        <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-white/10 blur-xl"></div>
+                        <div class="absolute -left-20 -top-20 w-60 h-60 rounded-full bg-white/10 blur-lg"></div>
+                    </div>
+                @endif
+            @endforeach
         </div>
-    </div>
     @endif
     <!-- ================= END ROW 2.7 ================= -->
 
@@ -431,7 +611,7 @@
                 @endphp
                 
                 <div class="flex-1 relative shadow-xl p-4 md:p-8 transform transition-all duration-500 hover:scale-[1.02] lg:hover:scale-105 hover:shadow-2xl group"
-                     style="background-color: {{ $bgColor }}; border-radius: 30px !important; overflow: hidden;">
+                     style="background: linear-gradient({{ $brand->rgba_overlay }}, {{ $brand->rgba_overlay }}); border-radius: 30px !important; overflow: hidden;">
                     
                     <!-- Background Image Overlay -->
                     @if($brand->gambar_background)
@@ -577,44 +757,131 @@
             </a>
         </div>
 
-        <!-- Brand Menu (Horizontal Scrollable) -->
+        <!-- Brand Menu (Horizontal Scrollable Premium Cards) -->
         <div class="relative mb-6 md:mb-8">
-            <div class="flex gap-3 sm:gap-4 overflow-x-auto py-4 px-2 -mx-2 scrollbar-hide" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <div class="flex gap-4 sm:gap-5 overflow-x-auto py-4 px-2 -mx-2 scrollbar-hide" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 @foreach($topBrands as $brand)
+                    @php
+                        $isActive = $selectedTopBrand && $selectedTopBrand->id_brand == $brand->id_brand;
+                        $rgbaColor = $brand->rgba_overlay ?: 'rgba(14, 165, 233, 0.7)';
+                        $tintBg = str_replace('0.7', '0.04', $rgbaColor);
+                        $softShadow = str_replace('0.7', '0.15', $rgbaColor);
+                        $borderColor = $brand->overlay_color ?: '#0EA5E9';
+                    @endphp
                     <button onclick="loadTopBrandProducts({{ $brand->id_brand }})" 
-                            class="brand-tab flex-shrink-0 group relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden transition-all duration-300
-                                   @if($selectedTopBrand && $selectedTopBrand->id_brand == $brand->id_brand)
-                                       bg-gradient-to-b from-orange-50 to-white ring-2 ring-orange-500 shadow-lg shadow-orange-100 scale-105 brand-active
+                            class="brand-tab flex-shrink-0 group relative flex flex-col items-center justify-between p-4 w-28 h-32 sm:w-32 sm:h-36 rounded-2xl transition-all duration-300 overflow-hidden
+                                   @if($isActive)
+                                       bg-white shadow-xl scale-105 brand-active ring-2
                                    @else
-                                       bg-white ring-1 ring-gray-200 shadow-sm hover:shadow-lg hover:ring-orange-400 hover:-translate-y-1
+                                       bg-white ring-1 ring-gray-100 hover:ring-gray-300 hover:shadow-md hover:-translate-y-0.5
+                                   @endif"
+                            style="@if($isActive)
+                                       border-color: {{ $borderColor }};
+                                       box-shadow: 0 10px 25px -5px {{ $softShadow }};
+                                       background-color: {{ $tintBg }};
                                    @endif"
                             data-brand-id="{{ $brand->id_brand }}"
+                            data-overlay-color="{{ $borderColor }}"
+                            data-rgba-overlay="{{ $rgbaColor }}"
+                            data-banner-image="{{ $brand->banner_image && file_exists(public_path('storage/images/' . $brand->banner_image)) ? asset('storage/images/' . $brand->banner_image) : ($brand->gambar_background && file_exists(public_path('storage/images/' . $brand->gambar_background)) ? asset('storage/images/' . $brand->gambar_background) : '') }}"
+                            data-banner-title="{{ $brand->banner_title }}"
+                            data-banner-subtitle="{{ $brand->banner_subtitle }}"
+                            data-banner-button-text="{{ $brand->banner_button_text }}"
+                            data-banner-button-link="{{ $brand->banner_button_link }}"
+                            data-show-product-count="{{ $brand->show_product_count }}"
+                            data-show-category-count="{{ $brand->show_category_count }}"
+                            data-show-official-badge="{{ $brand->show_official_badge }}"
+                            data-products-count="{{ $brand->products_count }}"
+                            data-categories-count="{{ $brand->categories_count }}"
+                            data-brand-name="{{ $brand->nama_brand }}"
                             title="{{ $brand->nama_brand }}">
                         
-                        {{-- Active bottom bar --}}
-                        @if($selectedTopBrand && $selectedTopBrand->id_brand == $brand->id_brand)
-                            <span class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 rounded-b-2xl"></span>
+                        {{-- Official Badge --}}
+                        @if($brand->show_official_badge)
+                            <span class="absolute top-2.5 right-2.5 text-[8px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-bold uppercase z-10 tracking-wider">OS</span>
                         @endif
 
-                        @if($brand->logo_brand && file_exists(public_path('storage/images/' . $brand->logo_brand)))
-                            <img src="{{ asset('storage/images/' . $brand->logo_brand) }}" 
-                                 alt="{{ $brand->nama_brand }}" 
-                                 class="w-12 h-12 sm:w-14 sm:h-14 object-contain transition-transform duration-300 group-hover:scale-110">
-                        @else
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-1">
-                                    <i class="fas fa-tag text-gray-400 text-sm sm:text-base"></i>
+                        {{-- Logo Brand --}}
+                        <div class="flex-1 flex items-center justify-center w-full min-h-0 pt-2 z-10">
+                            @if($brand->logo_brand && file_exists(public_path('storage/images/' . $brand->logo_brand)))
+                                <img src="{{ asset('storage/images/' . $brand->logo_brand) }}" 
+                                     alt="{{ $brand->nama_brand }}" 
+                                     class="max-w-full max-h-12 sm:max-h-14 object-contain transition-transform duration-300 group-hover:scale-105">
+                            @else
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-tag text-gray-400 text-sm"></i>
+                                    </div>
                                 </div>
-                                <span class="text-[10px] text-gray-500 font-medium truncate max-w-[60px] sm:max-w-[72px]">{{ $brand->nama_brand }}</span>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
+
+                        {{-- Text Info --}}
+                        <div class="w-full text-center mt-3 pb-0.5 border-t border-gray-50 pt-2.5 shrink-0 z-10">
+                            <span class="block text-xs font-bold text-gray-800 truncate leading-tight">{{ $brand->nama_brand }}</span>
+                            
+                            @if($brand->show_product_count)
+                                <span class="block text-[10px] text-gray-500 mt-0.5 font-medium leading-none">{{ $brand->products_count }} Produk</span>
+                            @elseif($brand->show_category_count)
+                                <span class="block text-[10px] text-gray-500 mt-0.5 font-medium leading-none">{{ $brand->categories_count }} Kategori</span>
+                            @else
+                                <span class="block text-[10px] text-gray-400 mt-0.5 font-medium leading-none">Lihat Detail</span>
+                            @endif
+                        </div>
+
+                        {{-- Active Indicator Line --}}
+                        <span class="active-indicator absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r rounded-b-2xl transition-all duration-300 {{ $isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-x-50' }}"
+                              style="background-color: {{ $borderColor }}"></span>
                     </button>
                 @endforeach
             </div>
         </div>
 
-        <!-- Products Display -->
-        <div id="topBrandProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <!-- Brand Hero Banner (Premium Showcase) -->
+        <div id="brandHeroBanner" class="relative overflow-hidden rounded-3xl mb-6 md:mb-8 transition-all duration-500 opacity-100 min-h-[180px] sm:min-h-[220px] md:min-h-[260px] flex flex-col justify-center px-6 py-8 sm:px-12 sm:py-10 text-white shadow-xl"
+             style="background-color: {{ $selectedTopBrand ? ($selectedTopBrand->overlay_color ?: '#0EA5E9') : '#0EA5E9' }};">
+            
+            <!-- Background Image Container -->
+            <div id="brandBannerBgContainer" class="absolute inset-0 z-0 pointer-events-none">
+                @if($selectedTopBrand && $selectedTopBrand->banner_image && file_exists(public_path('storage/images/' . $selectedTopBrand->banner_image)))
+                    <img id="brandBannerBgImg" src="{{ asset('storage/images/' . $selectedTopBrand->banner_image) }}" 
+                         alt="Brand Banner Background" 
+                         class="w-full h-full object-cover transition-all duration-500">
+                @elseif($selectedTopBrand && $selectedTopBrand->gambar_background && file_exists(public_path('storage/images/' . $selectedTopBrand->gambar_background)))
+                    <img id="brandBannerBgImg" src="{{ asset('storage/images/' . $selectedTopBrand->gambar_background) }}" 
+                         alt="Brand Banner Background" 
+                         class="w-full h-full object-cover transition-all duration-500">
+                @else
+                    <div id="brandBannerBgImgPlaceholder" class="w-full h-full bg-gradient-to-r from-black/10 via-white/5 to-black/10 opacity-30"></div>
+                @endif
+            </div>
+
+            <!-- Overlay Tint Layer -->
+            <div id="brandBannerOverlay" class="absolute inset-0 z-10 transition-colors duration-500"
+                 style="background-color: {{ $selectedTopBrand ? ($selectedTopBrand->rgba_overlay ?: 'rgba(14, 165, 233, 0.7)') : 'rgba(14, 165, 233, 0.7)' }};"></div>
+
+            <!-- Content -->
+            <div class="relative z-20 max-w-2xl flex flex-col items-start gap-2.5 sm:gap-4 transition-all duration-500 transform translate-y-0" id="brandBannerContent">
+                @if($selectedTopBrand && $selectedTopBrand->show_official_badge)
+                    <span class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                        <i class="fas fa-check-circle text-blue-300"></i> Official Store
+                    </span>
+                @endif
+
+                <div>
+                    <h1 id="brandBannerTitle" class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight drop-shadow-md">
+                        {{ $selectedTopBrand ? ($selectedTopBrand->banner_title ?: $selectedTopBrand->nama_brand . ' OFFICIAL') : 'OFFICIAL BRAND' }}
+                    </h1>
+                    <p id="brandBannerSubtitle" class="text-sm sm:text-base md:text-lg text-white/90 font-light mt-1.5 sm:mt-2 leading-relaxed drop-shadow max-w-xl">
+                        {{ $selectedTopBrand ? ($selectedTopBrand->banner_subtitle ?: 'Laptop & Accessories Premium') : 'Laptop & Accessories Premium' }}
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Products Display Grid -->
+        <div id="topBrandProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 transition-all duration-300">
             @forelse($topBrandProducts as $product)
                 <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container>
                     <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">
@@ -671,9 +938,18 @@
                     </a>
                 </div>
             @empty
-                <div class="col-span-full w-full text-center py-8 sm:py-12 bg-white border border-dashed border-gray-300">
-                    <i class="fas fa-box-open text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
-                    <p class="text-gray-500 font-medium text-sm sm:text-base">Belum ada produk untuk brand ini.</p>
+                <div id="topBrandEmptyState" class="col-span-full w-full text-center py-12 px-6 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center gap-4 transition-all duration-300">
+                    <div class="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 text-3xl shadow-inner mb-2 animate-bounce">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-gray-800 font-extrabold text-lg sm:text-xl">Produk akan segera hadir</h3>
+                        <p class="text-gray-500 text-xs sm:text-sm mt-1 max-w-md mx-auto">Kami sedang menambahkan produk terbaru untuk brand ini.</p>
+                    </div>
+                    <a href="https://wa.me/6282288886009" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs sm:text-sm rounded-full shadow-md shadow-orange-100 hover:shadow-lg transition-all">
+                        <i class="fab fa-whatsapp text-sm"></i>
+                        Hubungi Kami
+                    </a>
                 </div>
             @endforelse
         </div>
@@ -797,6 +1073,7 @@
 
 
     </div>
+    </div>
 
 <!-- ================= SLIDER SCRIPT ================= -->
 <script>
@@ -835,22 +1112,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ================= TOP BRAND AJAX =================
 function loadTopBrandProducts(brandId) {
-    // Update active tab styling
+    // 1. Update active tab styling
     document.querySelectorAll('.brand-tab').forEach(tab => {
-        // Remove existing active bar
-        const existingBar = tab.querySelector('.active-bar');
-        if (existingBar) existingBar.remove();
-
+        const activeIndicator = tab.querySelector('.active-indicator');
+        
         if (tab.dataset.brandId == brandId) {
-            tab.classList.remove('ring-1', 'ring-gray-200', 'shadow-sm', 'bg-white');
-            tab.classList.add('ring-2', 'ring-orange-500', 'shadow-lg', 'shadow-orange-100', 'scale-105', 'bg-gradient-to-b', 'from-orange-50', 'to-white', 'brand-active');
-            // Add active bottom bar
-            const bar = document.createElement('span');
-            bar.className = 'active-bar absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 rounded-b-2xl';
-            tab.appendChild(bar);
+            const overlayColor = tab.dataset.overlayColor || '#0EA5E9';
+            const rgbaOverlay = tab.dataset.rgbaOverlay || 'rgba(14, 165, 233, 0.7)';
+            
+            const lightBg = rgbaOverlay.replace('0.7', '0.04');
+            const softShadow = rgbaOverlay.replace('0.7', '0.15');
+            
+            tab.className = 'brand-tab flex-shrink-0 group relative flex flex-col items-center justify-between p-4 w-28 h-32 sm:w-32 sm:h-36 rounded-2xl bg-white shadow-xl scale-105 brand-active ring-2 transition-all duration-300';
+            tab.style.borderColor = overlayColor;
+            tab.style.boxShadow = `0 10px 25px -5px ${softShadow}`;
+            tab.style.backgroundColor = lightBg;
+            
+            if (activeIndicator) {
+                activeIndicator.style.backgroundColor = overlayColor;
+                activeIndicator.classList.remove('opacity-0', 'scale-x-50');
+                activeIndicator.classList.add('opacity-100', 'scale-100');
+            }
         } else {
-            tab.classList.remove('ring-2', 'ring-orange-500', 'shadow-lg', 'shadow-orange-100', 'scale-105', 'bg-gradient-to-b', 'from-orange-50', 'to-white', 'brand-active');
-            tab.classList.add('ring-1', 'ring-gray-200', 'shadow-sm', 'bg-white');
+            tab.className = 'brand-tab flex-shrink-0 group relative flex flex-col items-center justify-between p-4 w-28 h-32 sm:w-32 sm:h-36 rounded-2xl bg-white ring-1 ring-gray-100 hover:ring-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
+            tab.style.borderColor = '';
+            tab.style.boxShadow = '';
+            tab.style.backgroundColor = '';
+            
+            if (activeIndicator) {
+                activeIndicator.style.backgroundColor = '';
+                activeIndicator.classList.remove('opacity-100', 'scale-100');
+                activeIndicator.classList.add('opacity-0', 'scale-x-50');
+            }
         }
     });
 
@@ -858,6 +1151,68 @@ function loadTopBrandProducts(brandId) {
     const viewAllLink = document.getElementById('viewAllTopBrand');
     if (viewAllLink) {
         viewAllLink.href = `/products?brand=${brandId}`;
+    }
+
+    // Get active brand tab elements for dynamic update
+    const activeTab = document.querySelector(`.brand-tab[data-brand-id="${brandId}"]`);
+    if (activeTab) {
+        const heroBanner = document.getElementById('brandHeroBanner');
+        const bannerBgContainer = document.getElementById('brandBannerBgContainer');
+        const bannerOverlay = document.getElementById('brandBannerOverlay');
+        const bannerContent = document.getElementById('brandBannerContent');
+        const productsContainer = document.getElementById('topBrandProducts');
+        
+        // Add fade-out effect for transitions
+        heroBanner.style.opacity = '0.5';
+        productsContainer.style.opacity = '0.5';
+        
+        setTimeout(() => {
+            const overlayColor = activeTab.dataset.overlayColor || '#0EA5E9';
+            const rgbaOverlay = activeTab.dataset.rgbaOverlay || 'rgba(14, 165, 233, 0.7)';
+            const bannerImage = activeTab.dataset.bannerImage;
+            const bannerTitle = activeTab.dataset.bannerTitle || `${activeTab.dataset.brandName} OFFICIAL`;
+            const bannerSubtitle = activeTab.dataset.bannerSubtitle || 'Laptop & Accessories Premium';
+            const bannerButtonText = activeTab.dataset.bannerButtonText || 'Lihat Produk';
+            const bannerButtonLink = activeTab.dataset.bannerButtonLink || 'javascript:void(0)';
+            const showOfficial = activeTab.dataset.showOfficialBadge === '1';
+
+            // Update Banner background
+            heroBanner.style.backgroundColor = overlayColor;
+            
+            if (bannerImage) {
+                bannerBgContainer.innerHTML = `<img id="brandBannerBgImg" src="${bannerImage}" alt="Brand Banner Background" class="w-full h-full object-cover transition-all duration-500">`;
+            } else {
+                bannerBgContainer.innerHTML = `<div id="brandBannerBgImgPlaceholder" class="w-full h-full bg-gradient-to-r from-black/10 via-white/5 to-black/10 opacity-30"></div>`;
+            }
+            
+            // Update Overlay Color & Opacity
+            bannerOverlay.style.backgroundColor = rgbaOverlay;
+            
+            // Update Banner Content
+            let officialBadgeHtml = '';
+            if (showOfficial) {
+                officialBadgeHtml = `
+                    <span class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                        <i class="fas fa-check-circle text-blue-300"></i> Official Store
+                    </span>
+                `;
+            }
+            
+            bannerContent.innerHTML = `
+                ${officialBadgeHtml}
+                <div>
+                    <h1 id="brandBannerTitle" class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight drop-shadow-md">
+                        ${bannerTitle}
+                    </h1>
+                    <p id="brandBannerSubtitle" class="text-sm sm:text-base md:text-lg text-white/90 font-light mt-1.5 sm:mt-2 leading-relaxed drop-shadow max-w-xl">
+                        ${bannerSubtitle}
+                    </p>
+                </div>
+            `;
+            
+            // Trigger fade-in
+            heroBanner.style.opacity = '1';
+        }, 150);
     }
 
     // Fetch products via AJAX
@@ -872,7 +1227,7 @@ function loadTopBrandProducts(brandId) {
                 data.products.forEach(product => {
                     let imageHtml = '';
                     if (product.image_url) {
-                        imageHtml = `<div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
+                        imageHtml = `<div class="absolute inset-0 flex items-center justify-center bg-gray-50" style="z-index: 10;">
                                          <img src="${product.image_url}" 
                                               alt="${product.nama_produk}"
                                               class="object-contain max-w-full max-h-full"
@@ -923,15 +1278,29 @@ function loadTopBrandProducts(brandId) {
                 productsContainer.innerHTML = productsHtml;
             } else {
                 productsContainer.innerHTML = `
-                    <div class="col-span-full w-full text-center py-8 sm:py-12 bg-white border border-dashed border-gray-300">
-                        <i class="fas fa-box-open text-gray-300 text-4xl sm:text-5xl mb-2 sm:mb-4"></i>
-                        <p class="text-gray-500 font-medium text-sm sm:text-base">Belum ada produk untuk brand ini.</p>
+                    <div id="topBrandEmptyState" class="col-span-full w-full text-center py-12 px-6 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center gap-4 transition-all duration-300 animate-fade-in">
+                        <div class="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 text-3xl shadow-inner mb-2 animate-bounce">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-800 font-extrabold text-lg sm:text-xl">Produk akan segera hadir</h3>
+                            <p class="text-gray-500 text-xs sm:text-sm mt-1 max-w-md mx-auto">Kami sedang menambahkan produk terbaru untuk brand ini.</p>
+                        </div>
+                        <a href="https://wa.me/6282288886009" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs sm:text-sm rounded-full shadow-md shadow-orange-100 hover:shadow-lg transition-all">
+                            <i class="fab fa-whatsapp text-sm"></i>
+                            Hubungi Kami
+                        </a>
                     </div>
                 `;
             }
+            
+            // Remove opacity transition
+            productsContainer.style.opacity = '1';
         })
         .catch(error => {
             console.error('Error loading top brand products:', error);
+            const productsContainer = document.getElementById('topBrandProducts');
+            productsContainer.style.opacity = '1';
         });
 }
 </script>

@@ -269,7 +269,7 @@
                             @foreach($layoutFooterLinks as $title => $links)
                                 <div class="space-y-6">
                                     <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">{{ $title }}</h4>
-                                    @if(strtoupper($title) === 'PENGIRIMAN' || strtoupper($title) === 'PEMBAYARAN')
+                                    @if(strtoupper($title) === 'PENGIRIMAN' || strtoupper($title) === 'METODE PEMBAYARAN' || strtoupper($title) === 'PEMBAYARAN')
                                         <div class="flex flex-col gap-4">
                                             @foreach($links as $link)
                                                 <a href="{{ $link->url }}" class="hover:opacity-80 transition-opacity"

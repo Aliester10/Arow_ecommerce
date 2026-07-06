@@ -44,7 +44,7 @@ class AdminAppearanceController extends Controller
         $perusahaan = \App\Models\Perusahaan::find(1);
         $footerLinks = \App\Models\FooterLink::all()->groupBy('column_title');
         $shippingLinks = \App\Models\FooterLink::where('column_title', 'PENGIRIMAN')->orderBy('order')->get();
-        $paymentLinks = \App\Models\FooterLink::where('column_title', 'PEMBAYARAN')->orderBy('order')->get();
+        $paymentLinks = \App\Models\FooterLink::where('column_title', 'METODE PEMBAYARAN')->orderBy('order')->get();
         return view('admin.appearance.footer', compact('perusahaan', 'footerLinks', 'shippingLinks', 'paymentLinks'));
     }
 
@@ -128,11 +128,11 @@ class AdminAppearanceController extends Controller
         // Handle new payment method
         if ($request->has('new_payment_label') && $request->new_payment_label) {
             $newData = [
-                'column_title' => 'PEMBAYARAN',
+                'column_title' => 'METODE PEMBAYARAN',
                 'type' => 'image',
                 'label' => $request->new_payment_label,
                 'url' => $request->new_payment_url ?? '#',
-                'order' => \App\Models\FooterLink::where('column_title', 'PEMBAYARAN')->count() + 1,
+                'order' => \App\Models\FooterLink::where('column_title', 'METODE PEMBAYARAN')->count() + 1,
             ];
 
             if ($request->hasFile('new_payment_image')) {

@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mitra', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->string('logo')->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->string('website')->nullable();
-            $table->integer('urutan')->default(0);
-            $table->boolean('aktif')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('mitra')) {
+            Schema::create('mitra', function (Blueprint $table) {
+                $table->id();
+                $table->string('nama');
+                $table->string('logo')->nullable();
+                $table->text('deskripsi')->nullable();
+                $table->string('website')->nullable();
+                $table->integer('urutan')->default(0);
+                $table->boolean('aktif')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

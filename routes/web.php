@@ -84,8 +84,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
-// Special Deals Public Routes
-Route::get('/special-deals', [App\Http\Controllers\SpecialDealController::class, 'index'])->name('special-deals.public.index');
+// Promo Campaign Public Routes
+Route::get('/promo/{slug}', [App\Http\Controllers\PromoCampaignController::class, 'show'])->name('promo-campaigns.public.show');
 
 
 // Protected Routes
@@ -211,6 +211,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     });
 
     // Admin Brand Management
+    Route::get('/brands/settings', [App\Http\Controllers\AdminBrandController::class, 'settings'])->name('brands.settings');
+    Route::post('/brands/settings/update', [App\Http\Controllers\AdminBrandController::class, 'updateSettings'])->name('brands.settings.update');
+    Route::post('/brands/settings/update-ajax', [App\Http\Controllers\AdminBrandController::class, 'updateSettingsAjax'])->name('brands.settings.update-ajax');
     Route::get('/brands', [App\Http\Controllers\AdminBrandController::class, 'index'])->name('brands.index');
     Route::get('/brands/create', [App\Http\Controllers\AdminBrandController::class, 'create'])->name('brands.create');
     Route::post('/brands', [App\Http\Controllers\AdminBrandController::class, 'store'])->name('brands.store');
@@ -265,13 +268,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'update'])->name('banners.update');
     Route::delete('/banners/{id}', [App\Http\Controllers\AdminBannerController::class, 'destroy'])->name('banners.destroy');
 
-    // Special Deals Management
-    Route::get('/special-deals', [App\Http\Controllers\AdminSpecialDealController::class, 'index'])->name('special-deals.index');
-    Route::get('/special-deals/create', [App\Http\Controllers\AdminSpecialDealController::class, 'create'])->name('special-deals.create');
-    Route::post('/special-deals', [App\Http\Controllers\AdminSpecialDealController::class, 'store'])->name('special-deals.store');
-    Route::get('/special-deals/{specialDeal}/edit', [App\Http\Controllers\AdminSpecialDealController::class, 'edit'])->name('special-deals.edit');
-    Route::put('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'update'])->name('special-deals.update');
-    Route::delete('/special-deals/{specialDeal}', [App\Http\Controllers\AdminSpecialDealController::class, 'destroy'])->name('special-deals.destroy');
+    // Promo Campaign Management
+    Route::resource('promo-campaigns', App\Http\Controllers\AdminPromoCampaignController::class);
 
     // FAQ Management
     Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faq.index');

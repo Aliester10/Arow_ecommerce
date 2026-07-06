@@ -38,8 +38,17 @@ class MenuHelper
             ],
             [
                 'icon' => 'ui-elements',
-                'name' => 'Kelola Brand',
-                'path' => '/admin/brands',
+                'name' => 'Master Data',
+                'subItems' => [
+                    [
+                        'name' => 'Brand Management',
+                        'path' => '/admin/brands',
+                    ],
+                    [
+                        'name' => 'Brand Settings',
+                        'path' => '/admin/brands/settings',
+                    ],
+                ],
             ],
             [
                 'icon' => 'task',
@@ -65,9 +74,9 @@ class MenuHelper
                 'path' => '/admin/mitra',
             ],
             [
-                'icon' => 'special-deals',
-                'name' => 'Special Deals',
-                'path' => '/admin/special-deals',
+                'icon' => 'promo-campaign',
+                'name' => 'Promo Campaign',
+                'path' => '/admin/promo-campaigns',
             ],
             [
                 'icon' => 'images',
@@ -201,7 +210,7 @@ class MenuHelper
 
             'privacy' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C9.23858 2 7 4.23858 7 7V9.5C6.44772 9.5 6 9.94772 6 10.5V19.5C6 20.0523 6.44772 20.5 7 20.5H17C17.5523 20.5 18 20.0523 18 19.5V10.5C18 9.94772 17.5523 9.5 17 9.5V7C17 4.23858 14.7614 2 12 2ZM12 4C13.6569 4 15 5.34315 15 7V9.5H9V7C9 5.34315 10.3431 4 12 4ZM8 11.5V18.5H16V11.5H8Z" fill="currentColor"></path></svg>',
 
-            'special-deals' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM8.5 8.5C8.5 7.67157 9.17157 7 10 7H14C14.8284 7 15.5 7.67157 15.5 8.5V10.5C15.5 11.3284 14.8284 12 14 12H10C9.17157 12 8.5 11.3284 8.5 10.5V8.5ZM7 15.5C7 14.6716 7.67157 14 8.5 14H15.5C16.3284 14 17 14.6716 17 15.5C17 16.3284 16.3284 17 15.5 17H8.5C7.67157 17 7 16.3284 7 15.5Z" fill="currentColor"></path></svg>',
+            'promo-campaign' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8 8a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-8-8zM7 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/></svg>',
 
             'email' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 8.187V17.25C3.5 17.6642 3.83579 18 4.25 18H19.75C20.1642 18 20.5 17.6642 20.5 17.25V8.18747L13.2873 13.2171C12.5141 13.7563 11.4866 13.7563 10.7134 13.2171L3.5 8.187ZM20.5 6.2286C20.5 6.23039 20.5 6.23218 20.5 6.23398V6.24336C20.4976 6.31753 20.4604 6.38643 20.3992 6.42905L12.4293 11.9867C12.1716 12.1664 11.8291 12.1664 11.5713 11.9867L3.60116 6.42885C3.538 6.38481 3.50035 6.31268 3.50032 6.23568C3.50028 6.10553 3.60577 6 3.73592 6H20.2644C20.3922 6 20.4963 6.10171 20.5 6.2286ZM22 6.25648V17.25C22 18.4926 20.9926 19.5 19.75 19.5H4.25C3.00736 19.5 2 18.4926 2 17.25V6.23398C2 6.22371 2.00021 6.2135 2.00061 6.20333C2.01781 5.25971 2.78812 4.5 3.73592 4.5H20.2644C21.2229 4.5 22 5.27697 22.0001 6.23549C22.0001 6.24249 22.0001 6.24949 22 6.25648Z" fill="currentColor"></path></svg>',
 

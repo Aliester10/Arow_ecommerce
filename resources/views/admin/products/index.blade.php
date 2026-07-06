@@ -381,7 +381,7 @@
             if (confirm(`Apakah Anda yakin ingin menghapus ${selectedProducts.length} produk yang dipilih?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route("admin.products.bulkDelete") }}';
+                form.action = '{{ url("/admin/products/bulk-delete") }}';
                 
                 console.log('Form action:', form.action);
                 
@@ -401,6 +401,12 @@
                     form.appendChild(input);
                 });
                 
+                // Debug: Log form data
+                console.log('Form action:', form.action);
+                console.log('Form method:', form.method);
+                console.log('CSRF token:', csrfToken.value);
+                console.log('Selected products:', selectedProducts);
+                
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -419,7 +425,7 @@
             if (confirm(`Apakah Anda yakin ingin ${statusText} ${selectedProducts.length} produk yang dipilih?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route("admin.products.bulkUpdateStatus") }}';
+                form.action = '{{ url("/admin/products/bulk-update-status") }}';
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

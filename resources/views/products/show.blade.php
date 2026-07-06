@@ -136,8 +136,14 @@
                     <!-- Price Block -->
                     <div class="bg-[#fafafa] px-5 py-4 mb-6 flex flex-col justify-center min-h-[80px]">
                         <div class="text-xs text-gray-500 mb-1 font-medium">Harga Satuan</div>
-                        <div class="flex items-baseline space-x-3">
-                            @if($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
+                        <div class="flex items-center space-x-3">
+                            @if($product->promo_price)
+                                <span class="text-base text-gray-400 line-through">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                <span class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->promo_price, 0, ',', '.') }}</span>
+                                <span class="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-sm shadow-sm">
+                                    {{ $product->promo_discount_label }}
+                                </span>
+                            @elseif($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
                                 <span
                                     class="text-base text-gray-400 line-through">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
                                 <span

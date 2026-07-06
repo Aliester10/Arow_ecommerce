@@ -15,14 +15,14 @@ class Produk extends Model
     protected $fillable = ['id_kategori', 'id_subkategori', 'id_brand', 'id_sub_subkategori', 'nama_produk', 'slug', 'sku_produk', 'tipe_produk', 'asal_produk', 'dimensi_produk', 'deskripsi_produk', 'gambar_produk', 'harga_produk', 'stok_produk', 'status_produk', 'berat_produk'];
     protected $appends = ['image_url'];
 
-    public function kategori()
+    public function getKategoriAttribute()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori');
+        return $this->subSubkategori?->subkategori?->kategori;
     }
 
-    public function subkategori()
+    public function getSubkategoriAttribute()
     {
-        return $this->belongsTo(Subkategori::class, 'id_subkategori');
+        return $this->subSubkategori?->subkategori;
     }
 
     /**
@@ -89,27 +89,48 @@ class Produk extends Model
         return $this->hasMany(Wishlist::class, 'id_produk');
     }
 
-    public function specialDeals()
+    public function promoCampaigns()
     {
-        return $this->belongsToMany(SpecialDeal::class, 'special_deal_products', 'id_produk', 'special_deal_id')
-            ->withPivot('discount_percentage', 'is_active')
-            ->wherePivot('is_active', true);
+        return $this->belongsToMany(PromoCampaign::class, 'promo_campaign_products', 'product_id', 'promo_campaign_id')
+            ->withPivot('discount_type', 'discount_value')
+            ->withTimestamps();
     }
 
-    public function getSpecialDealPriceAttribute()
+    public function getActivePromoAttribute()
     {
-        $specialDeal = $this->specialDeals()->first();
-        if ($specialDeal) {
-            $discountPercentage = $specialDeal->pivot->discount_percentage;
-            return $this->harga_produk * (1 - $discountPercentage / 100);
+        return $this->promoCampaigns()
+            ->where('status', 'aktif')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+    }
+
+    public function getPromoPriceAttribute()
+    {
+        $promo = $this->active_promo;
+        if ($promo) {
+            $pivot = $promo->pivot;
+            if ($pivot->discount_type === 'percent') {
+                return $this->harga_produk * (1 - $pivot->discount_value / 100);
+            } else { // nominal
+                return max(0, $this->harga_produk - $pivot->discount_value);
+            }
         }
         return null;
     }
 
-    public function getSpecialDealDiscountAttribute()
+    public function getPromoDiscountLabelAttribute()
     {
-        $specialDeal = $this->specialDeals()->first();
-        return $specialDeal ? $specialDeal->pivot->discount_percentage : null;
+        $promo = $this->active_promo;
+        if ($promo) {
+            $pivot = $promo->pivot;
+            if ($pivot->discount_type === 'percent') {
+                return '-' . round($pivot->discount_value) . '%';
+            } else {
+                return '-Rp ' . number_format($pivot->discount_value, 0, ',', '.');
+            }
+        }
+        return null;
     }
 
     public function images()

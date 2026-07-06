@@ -20,6 +20,7 @@ class CartController extends Controller
     public function addToCart(Request $request, $id)
     {
         $product = Produk::findOrFail($id);
+        $price = $product->promo_price ?? $product->harga_produk;
 
         $cart = Cart::firstOrCreate(
             ['id_user' => Auth::user()->id_user, 'status' => 'active']
@@ -31,14 +32,14 @@ class CartController extends Controller
 
         if ($cartDetail) {
             $cartDetail->qty_cart += $request->input('quantity', 1);
-            $cartDetail->harga = $product->harga_produk; // Update price if changed
+            $cartDetail->harga = $price; // Update price if changed
             $cartDetail->save();
         } else {
             $cartDetail = CartDetail::create([
                 'id_cart' => $cart->id_cart,
                 'id_produk' => $product->id_produk, // Fixed: use id_produk
                 'qty_cart' => $request->input('quantity', 1), // custom column name from migration
-                'harga' => $product->harga_produk
+                'harga' => $price
             ]);
         }
 

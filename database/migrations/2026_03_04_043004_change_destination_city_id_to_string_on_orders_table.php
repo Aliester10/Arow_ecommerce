@@ -11,7 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         // Use DB statement to avoid needing doctrine/dbal
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `order` MODIFY COLUMN destination_city_id VARCHAR(20) DEFAULT NULL;");
+        if (Schema::hasColumn('order', 'destination_city_id')) {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE `order` MODIFY COLUMN destination_city_id VARCHAR(20) DEFAULT NULL;");
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `order` MODIFY COLUMN destination_city_id INT DEFAULT NULL;");
+        if (Schema::hasColumn('order', 'destination_city_id')) {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE `order` MODIFY COLUMN destination_city_id INT DEFAULT NULL;");
+        }
     }
 };

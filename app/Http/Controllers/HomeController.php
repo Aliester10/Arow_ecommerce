@@ -9,7 +9,7 @@ use App\Models\Kategori;
 use App\Models\Brand;
 use App\Models\IntegratedSolution;
 use App\Models\IntegratedSolutionCategory;
-use App\Models\SpecialDeal;
+use App\Models\PromoCampaign;
 
 class HomeController extends Controller
 {
@@ -21,9 +21,14 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
+        $brand = Brand::find($brandId);
+        if ($brand) {
+            $brand->append(['categories_count', 'products_count']);
+        }
+
         return response()->json([
             'products' => $products,
-            'brand' => Brand::find($brandId)
+            'brand' => $brand
         ]);
     }
 
@@ -59,15 +64,17 @@ class HomeController extends Controller
             })->filter();
         }
 
-        // Get special deals data
-        $specialDeal = SpecialDeal::active()->with('activeProducts')->first();
-        $specialDealProducts = [];
-        if ($specialDeal) {
-            $specialDealProducts = $specialDeal->getRandomProducts(3);
-        }
+        // Get active promo campaigns data
+        $activePromos = PromoCampaign::where('status', 'aktif')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->with(['products' => function ($query) {
+                $query->where('status_produk', 'aktif');
+            }])
+            ->get();
 
         // Get in-house brands data
-        $inHouseBrandNames = ['ABE living', 'ABE edu'];
+        $inHouseBrandNames = ['ABE living', 'ABE edu', 'aro baskara esa living', 'aro baskara esa education'];
         $inHouseBrands = Brand::whereIn('nama_brand', $inHouseBrandNames)->get();
 
         $inHouseBrandsWithProducts = [];
@@ -91,12 +98,17 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
+        $topBrands->each(function($brand) {
+            $brand->append(['categories_count', 'products_count']);
+        });
+
         // Get first brand's products as default
         $topBrandProducts = [];
         $selectedTopBrand = null;
 
         if ($topBrands->count() > 0) {
             $selectedTopBrand = $topBrands->first();
+            $selectedTopBrand->append(['categories_count', 'products_count']);
             $topBrandProducts = Produk::where('id_brand', $selectedTopBrand->id_brand)
                 ->with(['brand', 'ulasan', 'images'])
                 ->inRandomOrder()
@@ -104,6 +116,6 @@ class HomeController extends Controller
                 ->get();
         }
 
-        return view('home', compact('mainBanners', 'kategoris', 'products', 'brands', 'integratedSolution', 'integratedCategories', 'specialDeal', 'specialDealProducts', 'inHouseBrandsWithProducts', 'topBrands', 'topBrandProducts', 'selectedTopBrand'));
+        return view('home', compact('mainBanners', 'kategoris', 'products', 'brands', 'integratedSolution', 'integratedCategories', 'activePromos', 'inHouseBrandsWithProducts', 'topBrands', 'topBrandProducts', 'selectedTopBrand'));
     }
 }

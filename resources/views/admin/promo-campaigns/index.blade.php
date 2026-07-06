@@ -3,11 +3,11 @@
 @section('content')
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 class="text-title-md2 font-bold text-black dark:text-white">
-            Special Deals
+            Promo Campaign
         </h2>
-        <a href="{{ route('admin.special-deals.create') }}"
+        <a href="{{ route('admin.promo-campaigns.create') }}"
             class="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
-            <i class="fas fa-plus mr-2"></i> Tambah Special Deal
+            <i class="fas fa-plus mr-2"></i> Tambah Promo
         </a>
     </div>
 
@@ -39,10 +39,10 @@
                 <thead>
                     <tr class="bg-gray-2 text-left dark:bg-gray-700">
                         <th class="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                            Judul
+                            Nama Promo
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                            Subtitle
+                        <th class="min-w-[250px] py-4 px-4 font-medium text-black dark:text-white">
+                            Periode
                         </th>
                         <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Jumlah Produk
@@ -56,31 +56,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($specialDeals as $specialDeal)
+                    @forelse($promoCampaigns as $promo)
                         <tr>
                             <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-gray-700 xl:pl-11">
-                                <h5 class="font-medium text-black dark:text-white">{{ $specialDeal->title }}</h5>
+                                <h5 class="font-medium text-black dark:text-white">{{ $promo->title }}</h5>
+                                <p class="text-xs text-gray-500 mt-1">/promo/{{ $promo->slug }}</p>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
-                                <p class="text-black dark:text-white">{{ $specialDeal->subtitle ?? '-' }}</p>
+                                <p class="text-sm text-black dark:text-white">
+                                    {{ $promo->start_date->format('d M Y H:i') }} s/d <br>
+                                    {{ $promo->end_date->format('d M Y H:i') }}
+                                </p>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
-                                <p class="text-black dark:text-white">{{ $specialDeal->products->count() }}</p>
+                                <p class="text-black dark:text-white">{{ $promo->products_count }} Produk</p>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
                                 <p
-                                    class="inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium {{ $specialDeal->is_active ? 'bg-success text-success' : 'bg-danger text-danger' }}">
-                                    {{ $specialDeal->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                    class="inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium {{ $promo->status === 'aktif' ? 'bg-success text-success' : 'bg-danger text-danger' }}">
+                                    {{ $promo->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}
                                 </p>
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-gray-700">
                                 <div class="flex items-center space-x-3.5">
-                                    <a href="{{ route('admin.special-deals.edit', $specialDeal) }}"
+                                    <a href="{{ route('admin.promo-campaigns.edit', $promo) }}"
                                         class="hover:text-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.special-deals.destroy', $specialDeal) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus special deal ini?');"
+                                    <form action="{{ route('admin.promo-campaigns.destroy', $promo) }}" method="POST"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus promo campaign ini?');"
                                         class="inline">
                                         @csrf
                                         @method('DELETE')
@@ -94,12 +98,16 @@
                     @empty
                         <tr>
                             <td colspan="5" class="border-b border-[#eee] py-5 px-4 dark:border-gray-700 text-center">
-                                Tidak ada special deals ditemukan.
+                                Tidak ada promo campaign ditemukan.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        
+        <div class="mt-4 py-4">
+            {{ $promoCampaigns->links() }}
         </div>
     </div>
 @endsection

@@ -208,7 +208,6 @@ CREATE TABLE `footer_links` (
 
 INSERT INTO `footer_links` (`id_footer_link`, `column_title`, `type`, `label`, `url`, `image_path`, `order`, `created_at`, `updated_at`) VALUES
 (1, 'LAYANAN PELANGGAN', 'text', 'Bantuan', '#', NULL, 1, '2026-02-15 22:10:49', '2026-02-15 22:10:49'),
-(2, 'LAYANAN PELANGGAN', 'text', 'Metode Pembayaran', '#', NULL, 2, '2026-02-15 22:10:49', '2026-02-15 22:10:49'),
 (3, 'LAYANAN PELANGGAN', 'text', 'Lacak Pesanan', '#', NULL, 3, '2026-02-15 22:10:49', '2026-02-15 22:10:49'),
 (4, 'LAYANAN PELANGGAN', 'text', 'Kebijakan Privasi', '#', NULL, 4, '2026-02-15 22:10:49', '2026-02-15 22:10:49'),
 (5, 'JELAJAHI', 'text', 'Tentang Kami', '#', NULL, 1, '2026-02-15 22:10:49', '2026-02-15 22:10:49'),
