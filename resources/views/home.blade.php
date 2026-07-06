@@ -696,7 +696,7 @@
                         
                         <!-- Products Grid -->
                         @if($products->count() > 0)
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 {{ count($inHouseBrandsWithProducts) === 1 ? 'lg:grid-cols-6' : 'lg:grid-cols-3' }} gap-3 md:gap-4">
                                 @foreach($products as $product)
                                     <div class="flex flex-col h-full bg-white border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-skeleton-container style="border-radius: 8px; overflow: hidden;">
                                         <a href="{{ route('products.show', $product->slug) }}" class="flex flex-col h-full relative group">

@@ -74,7 +74,7 @@ class HomeController extends Controller
             ->get();
 
         // Get in-house brands data
-        $inHouseBrandNames = ['ABE living', 'ABE edu', 'aro baskara esa living', 'aro baskara esa education'];
+        $inHouseBrandNames = ['ABE living', 'ABE edu', 'aro baskara esa living', 'aro  baskara esa living', 'aro baskara esa education', 'aro  baskara esa education'];
         $inHouseBrands = Brand::whereIn('nama_brand', $inHouseBrandNames)->get();
 
         $inHouseBrandsWithProducts = [];
@@ -83,7 +83,7 @@ class HomeController extends Controller
                 ->where('status_produk', 'aktif')
                 ->with(['brand', 'ulasan', 'images'])
                 ->inRandomOrder()
-                ->take(3)
+                ->take(6)
                 ->get();
 
             if ($brandProducts->count() > 0) {

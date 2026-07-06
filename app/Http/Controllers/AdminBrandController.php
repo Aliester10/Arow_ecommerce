@@ -157,7 +157,7 @@ class AdminBrandController extends Controller
     {
         $brands = Brand::all();
         // Separating in-house brands for cleaner categorization in settings UI
-        $inHouseBrandNames = ['ABE living', 'ABE edu', 'aro baskara esa living', 'aro baskara esa education'];
+        $inHouseBrandNames = ['ABE living', 'ABE edu', 'aro baskara esa living', 'aro  baskara esa living', 'aro baskara esa education', 'aro  baskara esa education'];
         
         $inHouseBrands = $brands->filter(function($brand) use ($inHouseBrandNames) {
             return in_array(strtolower($brand->nama_brand), array_map('strtolower', $inHouseBrandNames));
