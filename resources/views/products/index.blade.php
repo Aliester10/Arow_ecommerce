@@ -18,7 +18,16 @@
             }
         }
     </style>
-    <div class="container mx-auto px-2 sm:px-4">
+    <div class="container mx-auto px-2 sm:px-4"
+        x-data="{ mobileFiltersOpen: false, touchStartX: 0, touchStartY: 0 }"
+        x-init="$watch('mobileFiltersOpen', value => {
+            if (value) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        })"
+        @keydown.escape.window="mobileFiltersOpen = false">
         <div class="products-row-layout flex flex-col md:flex-row gap-4 md:gap-6 relative"
             style="--sidebar-width: 30%; --sidebar-gap: 1.5rem;">
             <!-- Sidebar -->
@@ -44,6 +53,20 @@
                         Menampilkan {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} dari
                         {{ $products->total() }} produk
                     </div>
+                </div>
+
+                <!-- Mobile Filter Trigger Button (hidden on desktop/tablet >= 768px) -->
+                <div class="block md:hidden w-full mb-4">
+                    <button @click="mobileFiltersOpen = true"
+                            class="w-full flex items-center justify-between px-4 py-3 bg-[#F7931E] hover:bg-[#e07f12] text-white font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                            aria-label="Filter & Kategori"
+                            type="button">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter & Kategori Produk</span>
+                        </span>
+                        <i class="fas fa-chevron-right text-sm opacity-80"></i>
+                    </button>
                 </div>
 
                 <!-- Products Grid -->
@@ -124,6 +147,62 @@
                             Semua Produk</a>
                     </div>
                 @endif
+            <!-- Mobile Slide Drawer -->
+            <div x-show="mobileFiltersOpen" 
+                 class="fixed inset-0 z-50 overflow-hidden md:hidden" 
+                 style="display: none;" 
+                 role="dialog" 
+                 aria-modal="true"
+                 aria-label="Filter & Kategori">
+                
+                <!-- Overlay -->
+                <div x-show="mobileFiltersOpen"
+                     x-transition:enter="transition-opacity ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-50"
+                     x-transition:leave="transition-opacity ease-in duration-300"
+                     x-transition:leave-start="opacity-50"
+                     x-transition:leave-end="opacity-0"
+                     @click="mobileFiltersOpen = false"
+                     class="fixed inset-0 bg-black transition-opacity">
+                </div>
+
+                <!-- Drawer Content -->
+                <div x-show="mobileFiltersOpen"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="-translate-x-full"
+                     x-transition:enter-end="translate-x-0"
+                     x-transition:leave="transition ease-in duration-300 transform"
+                     x-transition:leave-start="translate-x-0"
+                     x-transition:leave-end="-translate-x-full"
+                     class="fixed inset-y-0 left-0 max-w-[85%] w-full bg-white shadow-2xl flex flex-col z-50 rounded-r-2xl overflow-hidden"
+                     @touchstart="touchStartX = $event.touches[0].clientX; touchStartY = $event.touches[0].clientY;"
+                     @touchend="
+                         let diffX = touchStartX - $event.changedTouches[0].clientX;
+                         let diffY = Math.abs(touchStartY - $event.changedTouches[0].clientY);
+                         if (diffX > 50 && diffY < 40) mobileFiltersOpen = false;
+                     "
+                >
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 text-white shadow-sm" style="background-color:#F7931E">
+                        <div class="flex items-center font-semibold text-sm sm:text-base gap-2">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter & Kategori</span>
+                        </div>
+                        <button @click="mobileFiltersOpen = false" 
+                                class="text-white hover:text-orange-100 transition focus:outline-none p-1 rounded-md"
+                                aria-label="Tutup Filter"
+                                type="button">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Sidebar content inside Drawer -->
+                    <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                        @include('partials.sidebar')
+                        @include('partials.product-filters')
+                    </div>
+                </div>
             </div>
         </div>
     </div>

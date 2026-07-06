@@ -46,28 +46,30 @@
             </h3>
             <div class="space-y-3">
                 <div>
-                    <label for="min_price" class="block text-xs text-gray-600 mb-1">Minimum</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
-                        <input type="text" 
-                               id="min_price"
-                               name="min_price" 
-                               value="{{ request('min_price') }}"
-                               placeholder="Harga minimum"
-                               class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                    </div>
+                    <label class="block text-xs text-gray-600 mb-1">
+                        Minimum
+                        <div class="relative mt-1">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                            <input type="text" 
+                                   name="min_price" 
+                                   value="{{ request('min_price') }}"
+                                   placeholder="Harga minimum"
+                                   class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                        </div>
+                    </label>
                 </div>
                 <div>
-                    <label for="max_price" class="block text-xs text-gray-600 mb-1">Maksimum</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
-                        <input type="text" 
-                               id="max_price"
-                               name="max_price" 
-                               value="{{ request('max_price') }}"
-                               placeholder="Harga maksimum"
-                               class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                    </div>
+                    <label class="block text-xs text-gray-600 mb-1">
+                        Maksimum
+                        <div class="relative mt-1">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                            <input type="text" 
+                                   name="max_price" 
+                                   value="{{ request('max_price') }}"
+                                   placeholder="Harga maksimum"
+                                   class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                        </div>
+                    </label>
                 </div>
             </div>
         </div>
