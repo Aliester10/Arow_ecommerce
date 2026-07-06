@@ -64,6 +64,22 @@
         margin-right: auto;
     }
 }
+
+/* Custom animations for modern promo banners */
+@keyframes fadeInBanner {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInBanner 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 </style>
 <div class="container mx-auto px-2 sm:px-4">
     <!-- Alpine wrapper context for mobile category drawer -->
@@ -529,15 +545,40 @@
         <div class="space-y-6 mb-8 md:mb-12">
             @foreach($activePromos as $activePromo)
                 @if($activePromo->banner)
-                    <div>
+                    <div class="animate-fade-in">
                         <a href="{{ route('promo-campaigns.public.show', $activePromo->slug) }}" 
-                           class="block overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 group relative">
+                           class="block overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-in-out group relative">
+                            <!-- Background Image with Scale Zoom Effect on Hover -->
                             <img src="{{ asset('storage/images/' . $activePromo->banner) }}" 
                                  alt="{{ $activePromo->title }}" 
-                                 class="w-full h-auto object-cover max-h-96 md:max-h-110 lg:max-h-125 min-h-48 group-hover:scale-[1.02] transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6 md:p-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <h3 class="text-white text-2xl md:text-3xl font-extrabold mb-1">{{ $activePromo->title }}</h3>
-                                <p class="text-white/90 text-sm md:text-base font-medium">{{ $activePromo->subtitle }}</p>
+                                 class="w-full h-auto object-cover max-h-96 md:max-h-110 lg:max-h-125 min-h-48 transition-transform duration-300 ease-in-out group-hover:scale-[1.03]">
+                            
+                            <!-- Premium Dark Gradient Overlay (Always Visible) -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent flex flex-col justify-end p-5 sm:p-8 md:p-10 lg:p-12 z-10 text-white">
+                                <div class="max-w-2xl text-left">
+                                    <!-- Main Title with clear hierarchy -->
+                                    <h3 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold mb-1.5 sm:mb-2 tracking-tight leading-tight drop-shadow-md text-white">
+                                        {{ $activePromo->title }}
+                                    </h3>
+                                    
+                                    <!-- Subtitle with appropriate max-width and line clamping -->
+                                    @if($activePromo->subtitle)
+                                        <p class="text-white/90 text-[11px] sm:text-xs md:text-sm lg:text-base font-medium drop-shadow opacity-95 mb-4 sm:mb-5 max-w-xl line-clamp-2">
+                                            {{ $activePromo->subtitle }}
+                                        </p>
+                                    @endif
+                                    
+                                    <!-- CTA & Info Row -->
+                                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                                        <span class="inline-flex items-center justify-center px-4 py-2.5 sm:px-6 sm:py-3 bg-[#F7931E] hover:bg-[#e07f12] text-white text-[10px] sm:text-xs md:text-sm font-bold rounded-xl shadow-md transition-all duration-300 hover:scale-[1.03]">
+                                            <span>Kunjungi Halaman Promo</span>
+                                            <i class="fas fa-arrow-right ml-1.5 text-[9px] sm:text-[10px] md:text-xs"></i>
+                                        </span>
+                                        <span class="text-[9px] sm:text-[10px] md:text-xs text-white/80 font-medium bg-black/40 backdrop-blur-sm px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-white/10 flex items-center gap-1.5">
+                                            <i class="far fa-clock"></i> Berlaku s.d {{ $activePromo->end_date->format('d M Y') }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -547,9 +588,6 @@
                          style="background: linear-gradient(135deg, #FF3D00 0%, #FF9100 50%, #FFC400 100%);">
                         <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div class="text-left">
-                                <span class="inline-block bg-white text-orange-600 font-bold px-3 py-1 rounded-full text-xs uppercase mb-3 tracking-wider shadow">
-                                    PROMO CAMPAIGN
-                                </span>
                                 <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 drop-shadow-md">
                                     {{ $activePromo->title }}
                                 </h2>
@@ -796,10 +834,7 @@
                             data-brand-name="{{ $brand->nama_brand }}"
                             title="{{ $brand->nama_brand }}">
                         
-                        {{-- Official Badge --}}
-                        @if($brand->show_official_badge)
-                            <span class="absolute top-2.5 right-2.5 text-[8px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-bold uppercase z-10 tracking-wider">OS</span>
-                        @endif
+
 
                         {{-- Logo Brand --}}
                         <div class="flex-1 flex items-center justify-center w-full min-h-0 pt-2 z-10">

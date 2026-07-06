@@ -11,9 +11,6 @@
                          alt="{{ $promoCampaign->title }}" 
                          class="w-full h-auto object-cover max-h-96 md:max-h-110 lg:max-h-125 min-h-48">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 md:p-10 text-white">
-                        <span class="inline-block bg-orange-600 text-white font-bold px-3 py-1 rounded-full text-xs uppercase mb-3 tracking-wider w-max shadow">
-                            PROMO KAMPANYE
-                        </span>
                         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 leading-tight drop-shadow-md">
                             {{ $promoCampaign->title }}
                         </h1>
@@ -32,9 +29,6 @@
                 <div class="relative overflow-hidden rounded-2xl p-6 sm:p-10 lg:p-14 text-white shadow-xl mb-6"
                      style="background: linear-gradient(135deg, #FF3D00 0%, #FF9100 50%, #FFC400 100%);">
                     <div class="relative z-10 text-left max-w-4xl">
-                        <span class="inline-block bg-white text-orange-600 font-bold px-3 py-1 rounded-full text-xs uppercase mb-3 tracking-wider shadow">
-                            PROMO KAMPANYE
-                        </span>
                         <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold mb-2 leading-tight drop-shadow-lg">
                             {{ $promoCampaign->title }}
                         </h1>

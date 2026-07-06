@@ -80,15 +80,18 @@ class HomeController extends Controller
         $inHouseBrandsWithProducts = [];
         foreach ($inHouseBrands as $brand) {
             $brandProducts = Produk::where('id_brand', $brand->id_brand)
+                ->where('status_produk', 'aktif')
                 ->with(['brand', 'ulasan', 'images'])
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
 
-            $inHouseBrandsWithProducts[] = [
-                'brand' => $brand,
-                'products' => $brandProducts
-            ];
+            if ($brandProducts->count() > 0) {
+                $inHouseBrandsWithProducts[] = [
+                    'brand' => $brand,
+                    'products' => $brandProducts
+                ];
+            }
         }
 
         // Get top brands data (excluding in-house brands)
