@@ -105,7 +105,7 @@ class AdminProductController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
 
-        $products = Produk::with(['brand', 'kategori', 'subkategori', 'subSubkategori'])
+        $products = Produk::with(['brand', 'subSubkategori.subkategori.kategori'])
             ->when($search, function ($query, $search) {
                 $query->where('nama_produk', 'like', '%' . $search . '%')
                       ->orWhereHas('brand', function ($query) use ($search) {
