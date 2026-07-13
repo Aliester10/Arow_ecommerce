@@ -630,7 +630,7 @@
             
             <div class="flex items-center justify-center relative z-10 w-full">
                 <div class="flex-1 h-0.5 bg-gradient-to-r from-transparent via-gray-300 to-gray-400"></div>
-                <h2 class="px-6 sm:px-8 text-xl sm:text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 whitespace-nowrap drop-shadow-lg">
+                <h2 class="px-6 sm:px-8 text-xl sm:text-2xl md:text-3xl font-bold text-black whitespace-nowrap drop-shadow-lg">
                     Our In House Brand
                 </h2>
                 <div class="flex-1 h-0.5 bg-gradient-to-l from-transparent via-gray-300 to-gray-400"></div>
@@ -682,7 +682,7 @@
                             @endif
                             
                             <!-- Description -->
-                            <p class="text-white text-xs md:text-base mb-4 md:mb-6">
+                            <p class="text-gray-600 text-xs md:text-base mb-4 md:mb-6">
                                 Our trusted in-house brand, built for quality and performance
                             </p>
                             
@@ -995,20 +995,11 @@
     <!-- ================= ROW 3.0 : KENAPA MEMILIH KAMI ================= -->
     <div class="mb-8 md:mb-12 py-10 md:py-16">
         <!-- Section Header -->
-        <div class="text-center mb-10 md:mb-14">
-            <div class="flex justify-center mb-2 px-4">
-                <svg viewBox="0 0 600 120" class="overflow-visible w-full" style="max-width: 500px; height: auto;">
-                    <defs>
-                        <path id="curve" d="M 50,100 Q 300,0 550,100" fill="transparent" />
-                    </defs>
-                    <text font-size="42" font-weight="800" fill="#111827" font-family="'Poppins', sans-serif" letter-spacing="1">
-                        <textPath href="#curve" startOffset="50%" text-anchor="middle">
-                            Kenapa Memilih Kami
-                        </textPath>
-                    </text>
-                </svg>
-            </div>
-            <p class="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
+        <div class="text-center mb-6 md:mb-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] mb-3 tracking-wide">
+                Kenapa Memilih Kami
+            </h2>
+            <p class="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed px-4">
                 Platform belanja online terpercaya dengan harga terbaik, pengiriman cepat, dan layanan maksimal.
             </p>
         </div>

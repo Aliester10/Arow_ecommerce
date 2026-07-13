@@ -263,12 +263,12 @@
                                              class="max-h-full object-contain">
                                     </template>
                                     <template x-if="!selectedBrand.logo_brand">
-                                        <span class="text-white font-extrabold text-lg tracking-wider" x-text="selectedBrand.nama_brand.toUpperCase()"></span>
+                                        <span class="text-gray-800 font-extrabold text-lg tracking-wider" x-text="selectedBrand.nama_brand.toUpperCase()"></span>
                                     </template>
                                 </div>
 
                                 <!-- Description -->
-                                <p class="text-white text-xs mb-6 opacity-90 leading-relaxed font-light">
+                                <p class="text-gray-600 text-xs mb-6 opacity-90 leading-relaxed font-light">
                                     Our trusted in-house brand, built for quality and performance
                                 </p>
 

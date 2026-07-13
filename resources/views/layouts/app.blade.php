@@ -129,7 +129,7 @@
 
                     </a>
 
-                    <div class="hidden sm:block border-l pl-4 border-gray-300">
+                    <div class="border-l pl-2 sm:pl-4 border-gray-300">
                         @auth
                             <div class="relative group">
                                 <button
@@ -166,12 +166,17 @@
                                 </div>
                             </div>
                         @else
-                            <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
+                            <div class="hidden md:flex items-center gap-2 text-xs sm:text-sm font-medium">
                                 <a href="{{ route('login') }}" class="hover:text-orange-600">{{ __('messages.login') }}</a>
-                                <span class="text-gray-300 hidden sm:inline">|</span>
+                                <span class="text-gray-300">|</span>
                                 <a href="{{ route('register') }}"
                                     class="px-2 py-1 sm:px-4 sm:py-2 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition whitespace-nowrap"
                                     style="background-color:#F7931E">{{ __('messages.register') }}</a>
+                            </div>
+                            <div class="flex md:hidden items-center justify-center">
+                                <a href="{{ route('login') }}" class="hover:text-orange-600 transition flex items-center justify-center">
+                                    <i class="far fa-user text-lg"></i>
+                                </a>
                             </div>
                         @endauth
                     </div>

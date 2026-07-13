@@ -136,21 +136,21 @@
                     <!-- Price Block -->
                     <div class="bg-[#fafafa] px-5 py-4 mb-6 flex flex-col justify-center min-h-[80px]">
                         <div class="text-xs text-gray-500 mb-1 font-medium">Harga Satuan</div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex flex-wrap items-baseline gap-2 md:gap-3">
                             @if($product->promo_price)
-                                <span class="text-base text-gray-400 line-through">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
-                                <span class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->promo_price, 0, ',', '.') }}</span>
-                                <span class="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-sm shadow-sm">
+                                <span class="text-sm md:text-base text-gray-400 line-through whitespace-nowrap">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                <span class="text-2xl md:text-3xl font-medium text-[#ee4d2d] whitespace-nowrap">Rp {{ number_format($product->promo_price, 0, ',', '.') }}</span>
+                                <span class="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-sm shadow-sm whitespace-nowrap self-center">
                                     {{ $product->promo_discount_label }}
                                 </span>
                             @elseif($product->harga_diskon && $product->harga_diskon < $product->harga_produk)
                                 <span
-                                    class="text-base text-gray-400 line-through">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                    class="text-sm md:text-base text-gray-400 line-through whitespace-nowrap">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
                                 <span
-                                    class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
+                                    class="text-2xl md:text-3xl font-medium text-[#ee4d2d] whitespace-nowrap">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
                             @else
                                 <span
-                                    class="text-3xl font-medium text-[#ee4d2d]">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                    class="text-2xl md:text-3xl font-medium text-[#ee4d2d] whitespace-nowrap">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
                             @endif
                         </div>
                     </div>
@@ -196,15 +196,15 @@
                     <!-- Action Buttons -->
                     <div class="flex items-stretch space-x-3 mt-3">
                         <form action="{{ route('cart.add', $product->id_produk) }}" method="POST" id="addToCartForm"
-                            class="flex space-x-3">
+                            class="flex-1 flex space-x-3">
                             @csrf
                             <input type="hidden" name="quantity" id="quantityHidden" value="1">
                             <button type="submit" name="action" value="add_to_cart"
-                                class="px-6 md:px-10 py-3 bg-[#ffeee8] border border-[#ee4d2d] text-[#ee4d2d] font-medium rounded-sm hover:bg-[#ffe4dc] transition flex items-center justify-center min-w-[180px]">
-                                <i class="fas fa-cart-plus mr-2 text-lg"></i> Masukkan Keranjang
+                                class="flex-1 md:flex-none px-3 md:px-8 py-2.5 md:py-3 bg-[#ffeee8] border border-[#ee4d2d] text-[#ee4d2d] text-xs md:text-sm lg:text-base font-medium rounded-sm hover:bg-[#ffe4dc] transition flex items-center justify-center md:min-w-[180px]">
+                                <i class="fas fa-cart-plus mr-1 md:mr-2 text-base md:text-lg"></i> <span class="text-center">Masukkan Keranjang</span>
                             </button>
                             <button type="submit" name="action" value="buy_now"
-                                class="px-6 md:px-10 py-3 bg-[#ee4d2d] text-white font-medium rounded-sm hover:bg-[#d73f22] transition flex flex-col items-center justify-center min-w-[180px] shadow-sm">
+                                class="flex-1 md:flex-none px-3 md:px-8 py-2.5 md:py-3 bg-[#ee4d2d] text-white text-xs md:text-sm lg:text-base font-medium rounded-sm hover:bg-[#d73f22] transition flex items-center justify-center md:min-w-[180px] shadow-sm">
                                 <span>Beli Sekarang</span>
                             </button>
                         </form>
@@ -248,7 +248,7 @@
             </div> <!-- End Flex Top Section -->
 
             <!-- Bottom Specs Section (Full Width) -->
-            <div class="px-6 md:px-8 pb-6 -mt-4">
+            <div class="px-6 md:px-8 pb-6 mt-6">
                 <div class="bg-white rounded-lg border border-gray-100 overflow-hidden w-full">
                     <div class="flex border-b border-gray-100">
                         <button type="button" id="tabSpecBtn"
@@ -262,42 +262,50 @@
                     </div>
 
                     <div id="tabSpec" class="p-4">
+                        <style>
+                            @media (min-width: 768px) {
+                                .spec-dt {
+                                    width: 200px;
+                                    min-width: 200px;
+                                }
+                            }
+                        </style>
                         <dl class="text-sm divide-y divide-gray-100">
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Nama Produk</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Nama Produk</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->nama_produk }}</dd>
                             </div>
 
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Tipe Produk</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Tipe Produk</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->tipe_produk ?? '-' }}</dd>
                             </div>
 
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Dimensi</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Dimensi</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->dimensi_produk ?? '-' }}</dd>
                             </div>
 
                             @if($product->deskripsi_produk)
-                                <div class="flex py-2">
-                                    <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Spesifikasi</dt>
-                                    <dd class="text-gray-800 leading-relaxed break-words" style="max-width: 400px; word-break: break-word;">
+                                <div class="flex flex-col md:flex-row py-2">
+                                    <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Spesifikasi</dt>
+                                    <dd class="text-gray-800 leading-relaxed break-words flex-1">
                                         {!! nl2br(e($product->deskripsi_produk)) !!}</dd>
                                 </div>
                             @endif
 
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Merek</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Merek</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->brand->nama_brand ?? '-' }}</dd>
                             </div>
 
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">SKU</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">SKU</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->sku_produk ?? '-' }}</dd>
                             </div>
 
-                            <div class="flex py-2">
-                                <dt class="text-gray-500" style="width: 200px; min-width: 200px;">Asal Negara</dt>
+                            <div class="flex flex-col md:flex-row py-2">
+                                <dt class="text-gray-500 mb-1 md:mb-0 spec-dt">Asal Negara</dt>
                                 <dd class="flex-1 font-medium text-gray-800">{{ $product->asal_produk ?? '-' }}</dd>
                             </div>
                         </dl>
