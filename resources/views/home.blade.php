@@ -344,12 +344,14 @@
                             @if(Str::startsWith($banner->gambar_slider_banner, 'http'))
                                 <img src="{{ $banner->gambar_slider_banner }}" 
                                     alt="{{ $banner->title ?? 'Banner' }}"
-                                    class="w-full h-full object-cover">
+                                    class="w-full h-full object-cover"
+                                    style="object-position: left center;">
 
                             @elseif(file_exists(public_path('storage/images/' . $banner->gambar_slider_banner)))
                                 <img src="{{ asset('storage/images/' . $banner->gambar_slider_banner) }}" 
                                     alt="{{ $banner->title ?? 'Banner' }}"
-                                    class="w-full h-full object-cover">
+                                    class="w-full h-full object-cover"
+                                    style="object-position: left center;">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-orange-100 text-orange-400">
                                     <div class="text-center px-4">
