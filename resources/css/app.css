@@ -28,7 +28,11 @@
   }
 
   body {
-    @apply relative font-normal font-outfit z-1 bg-gray-50;
+    @apply relative font-normal font-outfit z-1 bg-gray-50 text-body dark:bg-boxdark-2 dark:text-bodydark;
+  }
+
+  input, select, textarea {
+    @apply dark:text-white dark:placeholder-gray-400;
   }
 }
 
