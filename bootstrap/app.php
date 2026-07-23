@@ -21,5 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', \App\Http\Middleware\SetLocale::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, \Illuminate\Http\Request $request) {
+            return redirect()->back()->with('error', 'Ukuran total file (gambar) yang Anda unggah terlalu besar (lebih dari batas maksimal server 8MB). Silakan perkecil ukuran gambar Anda, atau kurangi jumlah gambar yang diunggah sekaligus.');
+        });
     })->create();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Produk;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use App\Models\SubSubkategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -57,6 +58,14 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->all();
+        $data['has_variant'] = $request->has('has_variant') && $request->has_variant;
+        $data['variant_options'] = $request->has('variant_options') ? json_decode($request->variant_options, true) : null;
+        
+        // If has variants, base price and stock can be nullable/0, but variants must have them
+        if ($data['has_variant']) {
+            $data['harga_produk'] = $request->harga_produk ?? 0;
+            $data['stok_produk'] = $request->stok_produk ?? 0;
+        }
         // $data['harga_produk'] = $request->harga_produk; // No need to force 0, let it be null if empty
 
         // nullify if empty strings
@@ -93,8 +102,41 @@ class AdminProductController extends Controller
                 ]);
             }
         } else {
-            // Create product without images
             $product = Produk::create($data);
+        }
+
+        // Handle Variants
+        if ($product->has_variant && $request->has('variants')) {
+            foreach ($request->variants as $index => $variantData) {
+                // Determine combination
+                $combination = is_string($variantData['variant_combination']) 
+                                ? json_decode($variantData['variant_combination'], true) 
+                                : $variantData['variant_combination'];
+
+                $variantModel = new ProductVariant([
+                    'id_produk' => $product->id_produk,
+                    'variant_combination' => $combination,
+                    'harga_produk' => $variantData['harga_produk'] ?? 0,
+                    'stok_produk' => $variantData['stok_produk'] ?? 0,
+                    'sku_produk' => $variantData['sku_produk'] ?? null,
+                ]);
+
+                // Handle variant image
+                if (isset($variantData['gambar_produk']) && $variantData['gambar_produk']->isValid()) {
+                    $image = $variantData['gambar_produk'];
+                    $imageName = time() . '_variant_' . $index . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs('images/produk/variants', $imageName, 'public');
+                    
+                    $fullPath = storage_path('app/public/' . $path);
+                    try {
+                        ImageOptimizer::optimize($fullPath);
+                    } catch (\Exception $e) {}
+
+                    $variantModel->gambar_produk = $path;
+                }
+
+                $variantModel->save();
+            }
         }
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
@@ -120,7 +162,7 @@ class AdminProductController extends Controller
 
     public function edit($id)
     {
-        $product = Produk::with('images')->findOrFail($id);
+        $product = Produk::with(['images', 'variants'])->findOrFail($id);
         $brands = Brand::all();
         $kategoris = \App\Models\Kategori::all();
 
@@ -159,6 +201,13 @@ class AdminProductController extends Controller
         ]);
 
         $data = $request->all();
+        $data['has_variant'] = $request->has('has_variant') && $request->has_variant;
+        $data['variant_options'] = $request->has('variant_options') ? json_decode($request->variant_options, true) : null;
+        
+        if ($data['has_variant']) {
+            $data['harga_produk'] = $request->harga_produk ?? 0;
+            $data['stok_produk'] = $request->stok_produk ?? 0;
+        }
         // $data['harga_produk'] = $request->harga_produk; // Allow null update
 
         // nullify if empty strings
@@ -203,6 +252,60 @@ class AdminProductController extends Controller
 
         // Update the product
         $product->update($data);
+
+        // Handle Variants
+        if ($product->has_variant && $request->has('variants')) {
+            $updatedVariantIds = [];
+            foreach ($request->variants as $index => $variantData) {
+                // Determine combination
+                $combination = is_string($variantData['variant_combination']) 
+                                ? json_decode($variantData['variant_combination'], true) 
+                                : $variantData['variant_combination'];
+
+                $variantModel = null;
+                if (!empty($variantData['id_variant'])) {
+                    $variantModel = ProductVariant::find($variantData['id_variant']);
+                }
+
+                if (!$variantModel) {
+                    $variantModel = new ProductVariant();
+                    $variantModel->id_produk = $product->id_produk;
+                }
+
+                $variantModel->variant_combination = $combination;
+                $variantModel->harga_produk = $variantData['harga_produk'] ?? 0;
+                $variantModel->stok_produk = $variantData['stok_produk'] ?? 0;
+                $variantModel->sku_produk = $variantData['sku_produk'] ?? null;
+
+                // Handle variant image
+                if (isset($variantData['gambar_produk']) && $variantData['gambar_produk']->isValid()) {
+                    if ($variantModel->gambar_produk) {
+                        Storage::disk('public')->delete($variantModel->gambar_produk);
+                    }
+                    $image = $variantData['gambar_produk'];
+                    $imageName = time() . '_variant_' . $index . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs('images/produk/variants', $imageName, 'public');
+                    
+                    $fullPath = storage_path('app/public/' . $path);
+                    try {
+                        ImageOptimizer::optimize($fullPath);
+                    } catch (\Exception $e) {}
+
+                    $variantModel->gambar_produk = $path;
+                }
+
+                $variantModel->save();
+                $updatedVariantIds[] = $variantModel->id_variant;
+            }
+            
+            // Delete variants that were removed
+            ProductVariant::where('id_produk', $product->id_produk)
+                ->whereNotIn('id_variant', $updatedVariantIds)
+                ->delete();
+        } else {
+            // Delete all variants if has_variant is unchecked
+            ProductVariant::where('id_produk', $product->id_produk)->delete();
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui!');
     }

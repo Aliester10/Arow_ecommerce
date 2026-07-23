@@ -9,29 +9,47 @@
                     <div
                         class="aspect-square bg-white overflow-hidden relative group w-full border border-gray-100 rounded-lg">
                         <!-- Product Images (z-10) -->
-                        @if($product->images->count() > 0)
+                        @php
+                            $galleryImages = collect();
+                            
+                            if ($product->images->count() > 0) {
+                                foreach($product->images->sortBy('sort_order') as $img) {
+                                    $galleryImages->push([
+                                        'url' => $img->url,
+                                        'is_primary' => $img->is_primary
+                                    ]);
+                                }
+                            } elseif ($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk))) {
+                                $galleryImages->push([
+                                    'url' => asset('storage/images/produk/' . $product->gambar_produk),
+                                    'is_primary' => true
+                                ]);
+                            }
+                            
+                            if ($product->has_variant && $product->variants) {
+                                $variantImages = $product->variants->whereNotNull('gambar_produk')->pluck('gambar_produk')->unique();
+                                foreach($variantImages as $vImg) {
+                                    $url = asset('storage/' . $vImg);
+                                    if (!$galleryImages->contains('url', $url)) {
+                                        $galleryImages->push([
+                                            'url' => $url,
+                                            'is_primary' => false
+                                        ]);
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        @if($galleryImages->count() > 0)
                             @php
-                                $primaryImage = $product->images->where('is_primary', true)->first();
+                                $primaryImage = $galleryImages->where('is_primary', true)->first();
                                 if (!$primaryImage) {
-                                    $primaryImage = $product->images->sortBy('sort_order')->first();
+                                    $primaryImage = $galleryImages->first();
                                 }
                             @endphp
                             <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                <img id="mainProductImage" src="{{ $primaryImage->url }}" alt="{{ $product->nama_produk }}"
+                                <img id="mainProductImage" src="{{ $primaryImage['url'] }}" alt="{{ $product->nama_produk }}"
                                     class="object-contain w-full h-full cursor-pointer" onclick="openZoomModal()">
-                            </div>
-                            <!-- Search Icon Overlay -->
-                            <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-white/90 p-2 rounded-full shadow-md text-gray-600 cursor-pointer"
-                                    onclick="openZoomModal()">
-                                    <i class="fas fa-search-plus"></i>
-                                </div>
-                            </div>
-                        @elseif($product->gambar_produk && file_exists(public_path('storage/images/produk/' . $product->gambar_produk)))
-                            <div class="absolute inset-0 flex items-center justify-center" style="z-index: 10;">
-                                <img id="mainProductImage" src="{{ asset('storage/images/produk/' . $product->gambar_produk) }}"
-                                    alt="{{ $product->nama_produk }}" class="object-contain w-full h-full cursor-pointer"
-                                    onclick="openZoomModal()">
                             </div>
                             <!-- Search Icon Overlay -->
                             <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -48,12 +66,12 @@
                     </div>
 
                     <!-- Thumbnail Gallery -->
-                    @if($product->images->count() > 0)
+                    @if($galleryImages->count() > 0)
                         <div class="flex gap-2 overflow-x-auto pb-2">
-                            @foreach($product->images->sortBy('sort_order') as $image)
-                                <div class="w-16 h-16 bg-gray-50 rounded-sm border border-gray-200 cursor-pointer hover:border-[#ee4d2d] transition overflow-hidden flex-shrink-0 {{ $image->is_primary ? 'border-[#ee4d2d]' : '' }}"
-                                    onclick="changeMainImage('{{ $image->url }}', this)">
-                                    <img src="{{ $image->url }}" alt="{{ $product->nama_produk }}"
+                            @foreach($galleryImages as $imgData)
+                                <div class="w-16 h-16 bg-gray-50 rounded-sm border border-gray-200 cursor-pointer hover:border-[#ee4d2d] transition overflow-hidden flex-shrink-0 {{ $imgData['is_primary'] ? 'border-[#ee4d2d]' : '' }} thumbnail-item"
+                                    onclick="changeMainImage('{{ $imgData['url'] }}', this)">
+                                    <img src="{{ $imgData['url'] }}" alt="{{ $product->nama_produk }}"
                                         class="w-full h-full object-contain p-1">
                                 </div>
                             @endforeach
@@ -168,6 +186,7 @@
                             </div>
                         </div>
 
+                        @include('products._variant_selector')
 
                         <div class="flex items-center mt-6">
                             <div class="w-[120px] text-gray-500 font-medium">Kuantitas</div>
@@ -186,7 +205,7 @@
                                         <i class="fas fa-plus text-[10px]"></i>
                                     </button>
                                 </div>
-                                <div class="text-gray-500">
+                                <div class="text-gray-500 tersisa-text">
                                     Tersisa {{ $product->stok_produk }} Buah
                                 </div>
                             </div>

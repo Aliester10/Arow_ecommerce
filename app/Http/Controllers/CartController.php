@@ -20,7 +20,15 @@ class CartController extends Controller
     public function addToCart(Request $request, $id)
     {
         $product = Produk::findOrFail($id);
+        $idVariant = $request->input('id_variant');
+        
         $price = $product->promo_price ?? $product->harga_produk;
+        if ($idVariant) {
+            $variant = \App\Models\ProductVariant::find($idVariant);
+            if ($variant) {
+                $price = $variant->harga_produk;
+            }
+        }
 
         $cart = Cart::firstOrCreate(
             ['id_user' => Auth::user()->id_user, 'status' => 'active']
@@ -28,6 +36,11 @@ class CartController extends Controller
 
         $cartDetail = CartDetail::where('id_cart', $cart->id_cart)
             ->where('id_produk', $product->id_produk)
+            ->when($idVariant, function($query) use ($idVariant) {
+                return $query->where('id_product_variant', $idVariant);
+            }, function($query) {
+                return $query->whereNull('id_product_variant');
+            })
             ->first();
 
         if ($cartDetail) {
@@ -37,8 +50,9 @@ class CartController extends Controller
         } else {
             $cartDetail = CartDetail::create([
                 'id_cart' => $cart->id_cart,
-                'id_produk' => $product->id_produk, // Fixed: use id_produk
-                'qty_cart' => $request->input('quantity', 1), // custom column name from migration
+                'id_produk' => $product->id_produk,
+                'id_product_variant' => $idVariant,
+                'qty_cart' => $request->input('quantity', 1),
                 'harga' => $price
             ]);
         }

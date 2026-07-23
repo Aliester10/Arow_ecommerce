@@ -230,6 +230,8 @@
                                 </div>
                             </div>
 
+                            @include('admin.products._variant_builder')
+
                             <div class="mb-4">
                                 <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
                                     Spesifikasi Produk <span class="text-meta-1">*</span>

@@ -13,6 +13,10 @@ class OrderItem extends Model
     protected $primaryKey = 'id_order_item';
     protected $guarded = [];
 
+    protected $casts = [
+        'variant_details' => 'array',
+    ];
+
     public function order()
     {
         return $this->belongsTo(Order::class, 'id_order');
@@ -21,5 +25,10 @@ class OrderItem extends Model
     public function produk()
     {
         return $this->belongsTo(Produk::class, 'id_produk');
+    }
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'id_product_variant', 'id_variant');
     }
 }

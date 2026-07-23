@@ -247,7 +247,19 @@
                                 <div class="flex items-center">
                                     <span
                                         class="bg-gray-100 text-gray-500 w-6 h-6 rounded flex items-center justify-center text-xs mr-2">{{ $detail->qty_cart }}x</span>
-                                    <span class="text-gray-600 line-clamp-1">{{ $detail->produk->nama_produk }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-gray-600 line-clamp-1">{{ $detail->produk->nama_produk }}</span>
+                                        @if($detail->id_product_variant && $detail->variant)
+                                            <span class="text-xs text-gray-500 mt-0.5">
+                                                Variasi: 
+                                                @if(is_array($detail->variant->variant_combination))
+                                                    {{ implode(', ', array_values($detail->variant->variant_combination)) }}
+                                                @else
+                                                    {{ implode(', ', array_values(json_decode($detail->variant->variant_combination, true) ?? [])) }}
+                                                @endif
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                                 <span class="font-medium text-gray-800">Rp
                                     {{ number_format($detail->harga * $detail->qty_cart, 0, ',', '.') }}</span>

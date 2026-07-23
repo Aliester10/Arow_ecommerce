@@ -38,7 +38,11 @@
                                             <div class="flex items-center">
                                                 <div
                                                     class="h-16 w-16 flex-shrink-0 bg-white rounded-md overflow-hidden border border-gray-200 flex items-center justify-center mr-4">
-                                                    @if(isset($detail->produk) && $detail->produk->image_url)
+                                                    @if($detail->id_product_variant && $detail->variant && $detail->variant->gambar_produk)
+                                                        <img src="{{ asset('storage/'.$detail->variant->gambar_produk) }}"
+                                                            alt="{{ $detail->produk->nama_produk }}"
+                                                            class="object-contain w-full h-full p-1">
+                                                    @elseif(isset($detail->produk) && $detail->produk->image_url)
                                                         <img src="{{ $detail->produk->image_url ?? asset('images/default-product.jpg') }}"
                                                             alt="{{ $detail->produk->nama_produk }}"
                                                             class="object-contain w-full h-full p-1">
@@ -54,6 +58,16 @@
                                                     <div class="text-xs text-gray-500 mt-1">
                                                         {{ $detail->produk->brand->nama_brand ?? 'Brand' }}
                                                     </div>
+                                                    @if($detail->id_product_variant && $detail->variant)
+                                                        <div class="text-xs text-gray-500 mt-1">
+                                                            Variasi: 
+                                                            @if(is_array($detail->variant->variant_combination))
+                                                                {{ implode(', ', array_values($detail->variant->variant_combination)) }}
+                                                            @else
+                                                                {{ implode(', ', array_values(json_decode($detail->variant->variant_combination, true) ?? [])) }}
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>

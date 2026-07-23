@@ -252,6 +252,8 @@
                                 </div>
                             </div>
 
+                            @include('admin.products._variant_builder')
+
                             <div class="mb-4">
                                 <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
                                     Spesifikasi Produk <span class="text-meta-1">*</span>
@@ -311,8 +313,6 @@
                                             mengganti semua gambar yang ada. Gambar pertama akan menjadi gambar utama.</p>
                                     </div>
                                 </div>
-                            </div>
-
                             <div class="mb-6">
                                 <label class="mb-1.5 block text-sm font-medium text-black dark:text-white">
                                     Status <span class="text-meta-1">*</span>

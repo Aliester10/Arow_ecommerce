@@ -140,6 +140,7 @@ class OrderController extends Controller
                 OrderItem::create([
                     'id_order' => $order->id_order,
                     'id_produk' => $detail->id_produk,
+                    'id_variant' => $detail->id_variant,
                     'qty' => $detail->qty_cart,
                     'price' => $detail->harga,
                 ]);
